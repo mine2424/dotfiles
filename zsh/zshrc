@@ -445,6 +445,13 @@ if command -v fzf &> /dev/null; then
 fi
 
 # ========================================
+# Environment Variables for Better Scrolling
+# ========================================
+
+# Enable mouse support in less (used by many CLI tools)
+export LESS='-R -F -X -i --mouse'
+
+# ========================================
 # Tool Integrations
 # ========================================
 

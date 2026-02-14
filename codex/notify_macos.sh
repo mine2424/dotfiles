@@ -19,4 +19,9 @@ fi
 last_message="${last_message//$'\n'/ }"
 last_message="${last_message//\"/\\\"}"
 
+sound_file="/System/Library/Sounds/submarine.aiff"
+if [[ -f "$sound_file" ]] && command -v afplay >/dev/null 2>&1; then
+    afplay "$sound_file" >/dev/null 2>&1 &
+fi
+
 osascript -e "display notification \"${last_message}\" with title \"Codex\""

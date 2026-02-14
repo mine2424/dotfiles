@@ -1,13 +1,14 @@
 model_reasoning_effort = "high"
 network_access = true
+web_search = "live"
+approval_policy = "never"
+sandbox_mode = "workspace-write"
 
 # macOS desktop notification for Codex task completion.
 notify = ["bash", "/Users/mine/.codex/notify_macos.sh"]
 
 [features]
 skills = true
-# Allow Codex to request web search results when needed.
-web_search = "live"
 
 # API_KEYを自分のやつに変えてください。
 [mcp_servers.context7]
@@ -26,8 +27,3 @@ args = [
     "--open-web-dashboard",
     "False",
 ]
-
-[mcp_servers.qa_knowledge]
-command = "/Users/mine/development/qa-knowledge-v2/venv/bin/python"
-args = ["/Users/mine/development/qa-knowledge-v2/tools/mcp-server/main.py"]
-env = { QA_KNOWLEDGE_ROOT = "/Users/mine/development/qa-knowledge-v2", PYTHONPATH = "/Users/mine/development/qa-knowledge-v2" }
