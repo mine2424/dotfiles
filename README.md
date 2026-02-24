@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**🚀 Neovim + Zellij + Claude Code 並列開発環境**
+**🚀 Neovim + Ghostty ネイティブ分割 + Claude Code 並列開発環境**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)]()
@@ -17,13 +17,13 @@
 
 ## 🎯 概要
 
-このdotfilesプロジェクトは、Neovim + Zellij + Claude Codeを統合した並列開発環境を提供します。
+このdotfilesプロジェクトは、Neovim + Ghostty ネイティブ分割 + Claude Codeを統合した並列開発環境を提供します。
 
 | カテゴリ | ツール | 説明 |
 |---------|--------|------|
 | **エディタ** | [Neovim](https://neovim.io/) + [lazy.nvim](https://github.com/folke/lazy.nvim) | モダンなNeovim設定（LSP、15言語対応） |
-| **マルチプレクサ** | [Zellij](https://zellij.dev/) + [Tmux](https://github.com/tmux/tmux) | ターミナルワークスペース、セッション管理 |
-| **ターミナル** | [Ghostty](https://ghostty.org/) + [WezTerm](https://wezfurlong.org/wezterm/) | 高速ターミナル、GPU加速、統合ナビゲーション |
+| **ターミナル** | [Ghostty](https://ghostty.org/) + [WezTerm](https://wezfurlong.org/wezterm/) | 高速ターミナル、GPU加速、ネイティブペイン分割 |
+| **マルチプレクサ** | [Tmux](https://github.com/tmux/tmux) + [Zellij](https://zellij.dev/)（オプション） | セッション管理・永続化が必要な場合に使用 |
 | **AI開発** | [OpenCode](https://opencode.ai/) + [Z.AI](https://z.ai/) | GLMモデルを使用したAIコーディングエージェント |
 | **AI開発** | [Cursor](https://cursor.sh/) | Claude Code併用ワークフロー |
 | **シェル** | [Zsh](https://www.zsh.org/) + [Starship](https://starship.rs/) | 高速で美しいシェル環境 |
@@ -108,7 +108,7 @@ dotfiles/
 │   ├── config.kdl                           # Tokyo Night、Ghosttyキー衝突回避
 │   └── layouts/                             # カスタムレイアウト
 ├── ghostty/                                  # 🖥️ Ghostty設定
-│   └── config                               # Tokyo Night、Alt+Superキーバインド
+│   └── config                               # ネイティブペイン分割キーバインド（Cmd+D等）
 ├── wezterm/.config/wezterm/                 # 🖥️ WezTerm設定
 │   └── wezterm.lua                          # OS別キーバインド、カラー統合
 ├── zsh/                                     # 🐚 Zsh設定
@@ -377,88 +377,34 @@ Ctrl+A t        時計を表示
 Ctrl+A Space    レイアウトを切り替え
 ```
 
-**Zellij（Standard Mode）:**
+**Ghostty ネイティブ分割（macOS）:**
 
-**基本操作:**
+**ペイン分割:**
 ```
-Ctrl+p        Paneモード
-Ctrl+n        Resizeモード
-Ctrl+t        Tabモード
-Ctrl+s        Scrollモード
-Ctrl+o        Sessionモード
-Ctrl+a        Tmuxプレフィックスモード
+Cmd+D             右に分割
+Cmd+Shift+D       下に分割
 ```
 
-**Paneモード (`Ctrl+p`):**
+**ペイン間移動:**
 ```
-h/←/j/↓/k/→  ペイン移動
-n             新規ペイン
-d             ペインを下に分割
-r             ペインを右に分割
-s             スタックペイン作成
-x             ペインを閉じる
-f             フルスクリーン切替
-w             フローティングペイン切替
+Cmd+Alt+←         左のペインへ移動
+Cmd+Alt+→         右のペインへ移動
+Cmd+Alt+↑         上のペインへ移動
+Cmd+Alt+↓         下のペインへ移動
 ```
 
-**Resizeモード (`Ctrl+n`):**
+**ペインリサイズ:**
 ```
-h/←/j/↓/k/→  拡大
-H/J/K/L       縮小
-=/+           拡大
--             縮小
-```
-
-**Tabモード (`Ctrl+t`):**
-```
-n             新規タブ
-1-9           タブ1-9へ移動（Tabモード維持）
-h/←/k/↑      前のタブ
-l/→/j/↓      次のタブ
-r             タブ名変更
-x             タブを閉じる
+Cmd+Shift+Alt+←   左にリサイズ
+Cmd+Shift+Alt+→   右にリサイズ
+Cmd+Shift+Alt+↑   上にリサイズ
+Cmd+Shift+Alt+↓   下にリサイズ
 ```
 
-**Scrollモード (`Ctrl+s`):**
+**その他:**
 ```
-j/↓           下にスクロール
-k/↑           上にスクロール
-Ctrl+f        ページダウン
-Ctrl+b        ページアップ
-d             半ページダウン
-u             半ページアップ
-Ctrl+c        スクロールモード終了
-```
-
-**Sessionモード (`Ctrl+o`):**
-```
-d             デタッチ
-w             セッションマネージャー
-c             設定
-p             プラグインマネージャー
-```
-
-**Tmuxプレフィックスモード (`Ctrl+a`):**
-```
-c             新規タブ
-%             ペインを右に分割
-"             ペインを下に分割
-n             次のタブ
-p             前のタブ
-d             デタッチ
-x             ペインを閉じる
-h/j/k/l       ペイン移動
-Ctrl+a        Ctrl+aを端末に送信
-```
-
-**Lockモード（デフォルト推奨）:**
-```
-Alt+Super+z   Lockモード終了
-Alt+Super+←/→/↑/↓  ペイン/タブ移動
-Alt+Super+f   フローティングペイン切替
-Alt+Super+,   拡大
-Alt+Super+.   縮小
-Alt+Super+p   新規ペイン
+Cmd+W             ペインを閉じる
+Cmd+Shift+,       設定をリロード
 ```
 
 **WezTerm（macOS: Cmd、Windows/Linux: Ctrl）:**
@@ -550,14 +496,22 @@ git commit -m "Update configurations from local"
 - **conform.nvim**: 自動フォーマット（15言語）
 - **nvim-lint**: リアルタイムLint
 
-### Zellij
+### Ghostty ネイティブ分割
+
+- **ペイン分割**: `Cmd+D`（右）/ `Cmd+Shift+D`（下）
+- **ペイン移動**: `Cmd+Alt+矢印`
+- **リサイズ**: `Cmd+Shift+Alt+矢印`
+- **ペインを閉じる**: `Cmd+W`
+- **設定リロード**: `Cmd+Shift+,`
+- **macOS との親和性**: Cmd キー主体で直感的な操作
+
+### Zellij（オプション）
+
+セッション永続化が必要な場合に使用します。
 
 - **Prefix**: `Ctrl+A`
 - **Standard Zellij keybindings** (not tmux-like)
 - **Tab bar at bottom**: 下部にタブバー表示
-- **Tips on startup**: 起動時にチップス表示
-- **No session persistence**: セッション永続化なし（新しいタブで新規セッション）
-- **Ghostty key conflict resolution**: Alt+Superキーで衝突回避
 - **Tokyo Night Night**: カラースキーム
 - **Mouse support**: マウス操作有効
 
@@ -595,7 +549,8 @@ git commit -m "Update configurations from local"
 | [要件定義](docs/requirements/neovim-tmux-claude-parallel-dev.md) | 完全な要件と設計 | 3,700行 |
 | [キーバインディング](docs/keybindings.md) | 全キーバインド一覧 | 1,000行 |
 | [Mac移行手順書](docs/guides/migration.md) | 新しいMacへの移行手順・アプリ一覧 | - |
-| [Zellijガイド](docs/zellij-guide.md) | Zellij設定・キーバインド・Ghostty互換 | - |
+| [Ghosttyガイド](docs/ghostty-guide.md) | Ghosttyネイティブ分割・キーバインドガイド | - |
+| [Zellijガイド](docs/zellij-guide.md) | Zellij設定・キーバインド（オプション） | - |
 | [OpenCodeセットアップ](docs/opencode-setup.md) | OpenCode + Z.AIセットアップガイド | - |
 | [カラースキーム統合](docs/colorscheme-integration.md) | 色の設定ガイド | - |
 | [セットアップガイド](docs/setup-guide-neovim-tmux.md) | インストール手順 | - |

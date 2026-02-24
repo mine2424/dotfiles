@@ -69,15 +69,6 @@ use = ["zsh-history-substring-search.zsh"]
 github = "zdharma-continuum/fast-syntax-highlighting"
 
 # ========================================
-# Directory Navigation
-# ========================================
-
-# Directory environment management
-[plugins.direnv]
-github = "ohmyzsh/ohmyzsh"
-dir = "plugins/direnv"
-
-# ========================================
 # Development Tools
 # ========================================
 

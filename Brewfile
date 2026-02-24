@@ -26,3 +26,6 @@ brew "mise"
 # GUI アプリケーション
 cask "wezterm"
 cask "ghostty"
+
+# フォント
+cask "font-hack-nerd-font"
