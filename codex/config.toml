@@ -1,8 +1,11 @@
+model = "gpt-5.3-codex"
 model_reasoning_effort = "high"
-network_access = true
 web_search = "live"
 approval_policy = "never"
-sandbox_mode = "workspace-write"
+sandbox_mode = "danger-full-access"
+
+[sandbox_workspace_write]
+network_access = true
 
 # macOS desktop notification for Codex task completion.
 notify = ["bash", "/Users/mine/.codex/notify_macos.sh"]
