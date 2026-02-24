@@ -201,6 +201,19 @@ alias gc='git commit'
 
 # Codex: run inside tmux to preserve scrollback in Ghostty
 codex() {
+    local codex_args=("$@")
+    local has_search_flag=0
+    local arg
+    for arg in "${codex_args[@]}"; do
+        if [[ "$arg" == "--search" ]]; then
+            has_search_flag=1
+            break
+        fi
+    done
+    if [[ $has_search_flag -eq 0 ]]; then
+        codex_args=(--search "${codex_args[@]}")
+    fi
+
     if command -v tmux >/dev/null 2>&1 && [[ -z "${TMUX-}" ]]; then
         local tty_name session_name
         tty_name="$(tty 2>/dev/null | awk -F/ '{print $NF}')"
@@ -209,9 +222,9 @@ codex() {
         else
             session_name="codex-$$"
         fi
-        tmux new-session -A -s "$session_name" -- command codex "$@"
+        tmux new-session -A -s "$session_name" -- command codex "${codex_args[@]}"
     else
-        command codex "$@"
+        command codex "${codex_args[@]}"
     fi
 }
 alias gcm='git commit -m'
@@ -378,6 +391,30 @@ fkill() {
     if [[ -n "$pid" ]]; then
         echo "$pid" | xargs kill -"${1:-9}"
     fi
+}
+
+# GCP config profile switcher with peco
+gcp_profile_update() {
+  CONFIGS=$(gcloud config configurations list --format='value(name)')
+  CONFIG_ARRAY=($(echo "$CONFIGS"))
+
+  SELECTED_CONFIG=$(echo "$CONFIGS" | peco)
+
+  if [[ -n "$SELECTED_CONFIG" && " ${CONFIG_ARRAY[@]} " =~ " ${SELECTED_CONFIG} " ]]; then
+    gcloud config configurations activate "$SELECTED_CONFIG"
+    echo "Activated GCP config: $SELECTED_CONFIG"
+
+    PROJECT_ID=$(gcloud config get-value project 2>/dev/null)
+
+    if [[ -n "$PROJECT_ID" ]]; then
+      gcloud auth application-default set-quota-project "$PROJECT_ID"
+      echo "Updated ADC Quota Project: $PROJECT_ID"
+    else
+      echo "No project set in this config. Skipping quota project update."
+    fi
+  else
+    echo "No GCP config selected or invalid config."
+  fi
 }
 
 # OpenCode helper functions
