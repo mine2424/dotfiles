@@ -38,9 +38,11 @@ dotfilesの設定を適用し、必要なツールをインストールします
   --terminal         ターミナル設定のみ（WezTerm）
   --cli              CLIツール設定のみ（Git, tmux等）
   --claude           Claude設定のみ
+  --ssh              SSH設定のみ（~/.ssh/config）
+  --macos            macOSシステム設定のみ
 
  オプション:
-   --install          依存関係もインストール
+   --install          依存関係もインストール（npmグローバルパッケージを含む）
    --dry-run          実際には適用せず、何が行われるか表示
    --force            確認なしで実行
    -h, --help         このヘルプを表示
@@ -89,6 +91,14 @@ parse_arguments() {
                 ;;
             --claude)
                 COMPONENT="claude"
+                shift
+                ;;
+            --ssh)
+                COMPONENT="ssh"
+                shift
+                ;;
+            --macos)
+                COMPONENT="macos"
                 shift
                 ;;
             --install)
@@ -188,61 +198,31 @@ install_dependencies_macos() {
         log_info "Homebrewをインストールしています..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    
+
     log_info "パッケージをインストールしています..."
-    
-    local packages=()
-    
-    case "$COMPONENT" in
-        all|nvim)
-            packages+=("neovim" "ripgrep" "fd" "lazygit" "imagemagick" "tectonic" "luarocks")
-            ;;
-    esac
 
-    case "$COMPONENT" in
-        all|terminal)
-            packages+=("--cask wezterm" "--cask ghostty")
-            ;;
-    esac
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local brewfile="$dotfiles_root/Brewfile"
 
-    case "$COMPONENT" in
-        all|cli)
-            packages+=("git" "tmux" "zellij" "fzf" "bat" "eza")
-            ;;
-    esac
-    
-    case "$COMPONENT" in
-        all|shell)
-            packages+=("zsh" "sheldon" "starship")
-            ;;
-    esac
-    
-    case "$COMPONENT" in
-        all|terminal)
-            packages+=("--cask wezterm")
-            ;;
-    esac
-    
-    case "$COMPONENT" in
-        all|cli)
-            packages+=("git" "tmux" "zellij" "fzf" "bat" "eza")
-            ;;
-    esac
-    
-    if [[ ${#packages[@]} -gt 0 ]]; then
-        brew install "${packages[@]}" || log_warn "一部のパッケージのインストールに失敗しました"
+    if [[ -f "$brewfile" ]]; then
+        log_info "Brewfileからインストール: $brewfile"
+        brew bundle install --file="$brewfile" || log_warn "一部のパッケージのインストールに失敗しました"
+    else
+        # Brewfileがない場合のフォールバック（新規セットアップ時）
+        log_warn "Brewfileが見つかりません: $brewfile"
+        log_warn "scripts/backup.sh --brew を実行してBrewfileを生成してください"
+        log_info "フォールバック: パッケージを直接インストールします..."
+        brew install neovim ripgrep fd lazygit imagemagick tectonic luarocks \
+            git tmux zellij fzf bat eza zsh sheldon starship mise \
+            || log_warn "一部のパッケージのインストールに失敗しました"
+        brew install --cask wezterm ghostty \
+            || log_warn "一部のcaskパッケージのインストールに失敗しました"
     fi
-    
-    # npmツールのインストール
-    if check_command npm; then
-        case "$COMPONENT" in
-            all|nvim)
-                log_info "npmツールをインストールしています..."
-                npm install -g tree-sitter-cli @mermaid-js/mermaid-cli || log_warn "一部のnpmツールのインストールに失敗しました"
-                ;;
-        esac
-    fi
-    
+
+    # npmグローバルパッケージのインストール
+    install_npm_packages
+
     log_success "依存関係のインストールが完了しました"
 }
 
@@ -522,6 +502,20 @@ setup_cli_tools() {
         fi
     fi
 
+    # mise設定
+    local mise_src="$dotfiles_root/mise"
+    local mise_dest="$(get_config_dir mise)"
+
+    if [[ -d "$mise_src" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY RUN] mise設定を適用: $mise_src -> $mise_dest"
+        else
+            if safe_symlink "$mise_src" "$mise_dest"; then
+                log_success "mise設定を適用しました"
+            fi
+        fi
+    fi
+
     # Tmux設定
     local tmux_src="$dotfiles_root/tmux"
     local tmux_dest="$HOME/.tmux"
@@ -595,6 +589,118 @@ setup_claude() {
 }
 
 #######################################
+# SSH設定を適用
+#######################################
+setup_ssh() {
+    log_section "SSH設定の適用"
+
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local ssh_src="$dotfiles_root/ssh/config"
+    local ssh_dir="$HOME/.ssh"
+    local ssh_dest="$ssh_dir/config"
+
+    if [[ ! -f "$ssh_src" ]]; then
+        log_warn "SSH設定が見つかりません: $ssh_src"
+        log_info "backup.sh --ssh でバックアップしてください"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY RUN] SSH設定を適用: $ssh_src -> $ssh_dest"
+        return 0
+    fi
+
+    # ~/.ssh/ ディレクトリを作成
+    safe_mkdir "$ssh_dir" || return 1
+    chmod 700 "$ssh_dir"
+
+    # 既存の ~/.ssh/config をバックアップ
+    if [[ -f "$ssh_dest" ]]; then
+        local backup_dest="${ssh_dest}.bak.$(date '+%Y%m%d%H%M%S')"
+        log_info "既存のSSH設定をバックアップ: $backup_dest"
+        cp "$ssh_dest" "$backup_dest" || log_warn "バックアップに失敗しました"
+    fi
+
+    # ファイルをコピーして権限を設定
+    if cp "$ssh_src" "$ssh_dest" 2>/dev/null; then
+        chmod 600 "$ssh_dest"
+        log_success "SSH設定を適用しました: $ssh_dest"
+    else
+        log_error "SSH設定の適用に失敗しました"
+        return 1
+    fi
+}
+
+#######################################
+# macOSシステム設定を適用
+#######################################
+apply_macos_defaults() {
+    log_section "macOSシステム設定の適用"
+
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local macos_script="$dotfiles_root/macos/defaults.sh"
+
+    if [[ ! -f "$macos_script" ]]; then
+        log_warn "macOS設定スクリプトが見つかりません: $macos_script"
+        log_info "backup.sh --macos でバックアップしてください"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY RUN] 以下のmacOS設定を適用します:"
+        cat "$macos_script"
+        return 0
+    fi
+
+    log_info "macOS設定を適用中..."
+    if bash "$macos_script"; then
+        log_success "macOS設定を適用しました"
+        log_info "ターミナルの再起動が必要な場合があります"
+    else
+        log_error "macOS設定の適用に失敗しました"
+        return 1
+    fi
+}
+
+#######################################
+# npmグローバルパッケージをインストール
+#######################################
+install_npm_packages() {
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local packages_file="$dotfiles_root/npm/packages.txt"
+
+    if ! check_command npm; then
+        log_warn "npmが見つかりません。npmグローバルパッケージのインストールをスキップします"
+        return 0
+    fi
+
+    if [[ ! -f "$packages_file" ]]; then
+        log_warn "npmパッケージ一覧が見つかりません: $packages_file"
+        log_info "backup.sh --npm でバックアップしてください"
+        return 0
+    fi
+
+    log_info "npmグローバルパッケージをインストール中..."
+
+    while IFS= read -r package; do
+        [[ -z "$package" ]] && continue
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY RUN] npm install -g $package"
+        else
+            log_info "インストール: $package"
+            npm install -g "$package" || log_warn "$package のインストールに失敗しました"
+        fi
+    done < "$packages_file"
+
+    if [[ "$DRY_RUN" != "true" ]]; then
+        log_success "npmグローバルパッケージのインストールが完了しました"
+    fi
+}
+
+#######################################
 # すべての設定を適用
 #######################################
 setup_all() {
@@ -603,6 +709,8 @@ setup_all() {
     setup_terminal
     setup_cli_tools
     setup_claude
+    setup_ssh
+    apply_macos_defaults
 }
 
 #######################################
@@ -627,6 +735,8 @@ confirm_setup() {
             echo "  - ターミナル設定（WezTerm + Ghostty）"
             echo "  - CLIツール設定（Git, tmux, Zellij等）"
             echo "  - Claude設定"
+            echo "  - SSH設定（~/.ssh/config）"
+            echo "  - macOSシステム設定"
             ;;
         nvim)
             echo "  - Neovim設定"
@@ -638,10 +748,16 @@ confirm_setup() {
             echo "  - ターミナル設定（WezTerm + Ghostty）"
             ;;
         cli)
-            echo "  - CLIツール設定（Git, tmux, Zellij等）"
+            echo "  - CLIツール設定（Git, tmux, Zellij, mise等）"
             ;;
         claude)
             echo "  - Claude設定"
+            ;;
+        ssh)
+            echo "  - SSH設定（~/.ssh/config）"
+            ;;
+        macos)
+            echo "  - macOSシステム設定"
             ;;
     esac
     
@@ -731,6 +847,12 @@ main() {
             ;;
         claude)
             setup_claude
+            ;;
+        ssh)
+            setup_ssh
+            ;;
+        macos)
+            apply_macos_defaults
             ;;
         *)
             log_error "不明なコンポーネント: $COMPONENT"

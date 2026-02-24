@@ -594,6 +594,7 @@ git commit -m "Update configurations from local"
 |-------------|------|------|
 | [要件定義](docs/requirements/neovim-tmux-claude-parallel-dev.md) | 完全な要件と設計 | 3,700行 |
 | [キーバインディング](docs/keybindings.md) | 全キーバインド一覧 | 1,000行 |
+| [Mac移行手順書](docs/guides/migration.md) | 新しいMacへの移行手順・アプリ一覧 | - |
 | [Zellijガイド](docs/zellij-guide.md) | Zellij設定・キーバインド・Ghostty互換 | - |
 | [OpenCodeセットアップ](docs/opencode-setup.md) | OpenCode + Z.AIセットアップガイド | - |
 | [カラースキーム統合](docs/colorscheme-integration.md) | 色の設定ガイド | - |
