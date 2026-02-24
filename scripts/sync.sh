@@ -38,6 +38,7 @@ dotfilesとローカルPC間で設定を同期します。
   --shell            シェル設定のみ
   --terminal         ターミナル設定のみ
   --cli              CLIツール設定のみ
+  --codex            Codex設定のみ
   --claude           Claude設定のみ
 
 オプション:
@@ -95,6 +96,10 @@ parse_arguments() {
                 ;;
             --cli)
                 COMPONENT="cli"
+                shift
+                ;;
+            --codex)
+                COMPONENT="codex"
                 shift
                 ;;
             --claude)
@@ -531,6 +536,24 @@ sync_cli_tools() {
 }
 
 #######################################
+# Codex設定を同期
+#######################################
+sync_codex() {
+    log_section "Codex設定の同期"
+
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local codex_home
+    codex_home="$(get_codex_home)"
+
+    if [[ "$DIRECTION" == "push" ]]; then
+        sync_file "$dotfiles_root/codex/config.toml" "$codex_home/config.toml" "Codex設定 (config.toml)"
+    else
+        sync_file "$codex_home/config.toml" "$dotfiles_root/codex/config.toml" "Codex設定 (config.toml)"
+    fi
+}
+
+#######################################
 # Claude設定を同期
 #######################################
 sync_claude() {
@@ -637,6 +660,9 @@ confirm_sync() {
             echo "  - CLIツール設定（Git, tmux等）"
             echo "  - dev/agentコマンド"
             ;;
+        codex)
+            echo "  - Codex設定（config.toml）"
+            ;;
         claude)
             echo "  - Claude設定"
             ;;
@@ -711,6 +737,9 @@ main() {
             ;;
         cli)
             sync_cli_tools
+            ;;
+        codex)
+            sync_codex
             ;;
         claude)
             sync_claude
