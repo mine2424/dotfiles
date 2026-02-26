@@ -1,0 +1,4 @@
+[mgr]
+# parent / current / preview
+# Keep parent+current narrow and make preview slightly wider.
+ratio = [1, 1, 4]
