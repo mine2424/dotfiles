@@ -22,10 +22,15 @@ brew "zsh"
 brew "sheldon"
 brew "starship"
 brew "mise"
+brew "claude-code"
+brew "codex"
+brew "node"
+brew "uv"
 
 # GUI アプリケーション
 cask "wezterm"
 cask "ghostty"
+cask "docker-desktop"
 
 # フォント
 cask "font-hack-nerd-font"

@@ -199,33 +199,13 @@ alias ga='git add'
 alias gaa='git add --all'
 alias gc='git commit'
 
-# Codex: run inside tmux to preserve scrollback in Ghostty
+# Codex: launch the official CLI directly (no wrapper behavior)
 codex() {
-    local codex_args=("$@")
-    local has_search_flag=0
-    local arg
-    for arg in "${codex_args[@]}"; do
-        if [[ "$arg" == "--search" ]]; then
-            has_search_flag=1
-            break
-        fi
-    done
-    if [[ $has_search_flag -eq 0 ]]; then
-        codex_args=(--search "${codex_args[@]}")
+    if [[ -x "/opt/homebrew/bin/codex" ]]; then
+        command /opt/homebrew/bin/codex "$@"
+        return
     fi
-
-    if command -v tmux >/dev/null 2>&1 && [[ -z "${TMUX-}" ]]; then
-        local tty_name session_name
-        tty_name="$(tty 2>/dev/null | awk -F/ '{print $NF}')"
-        if [[ -n "$tty_name" ]]; then
-            session_name="codex-${tty_name//./-}"
-        else
-            session_name="codex-$$"
-        fi
-        tmux new-session -A -s "$session_name" -- command codex "${codex_args[@]}"
-    else
-        command codex "${codex_args[@]}"
-    fi
+    command codex "$@"
 }
 alias gcm='git commit -m'
 alias gca='git commit --amend'
@@ -530,3 +510,14 @@ fi
 if [[ -d "$HOME/development/dotfiles/codex/bin" ]]; then
     export PATH="$HOME/development/dotfiles/codex/bin:$PATH"
 fi
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/mine2424/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/mine2424/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/mine2424/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/mine2424/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/mine2424/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

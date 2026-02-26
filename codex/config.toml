@@ -13,10 +13,9 @@ notify = ["bash", "/Users/mine/.codex/notify_macos.sh"]
 [features]
 skills = true
 
-# API_KEYを自分のやつに変えてください。
 [mcp_servers.context7]
 command = "npx"
-args = ["-y", "@upstash/context7-mcp", "--api-key", "API_KEY"]
+args = ["-y", "@upstash/context7-mcp"]
 
 [mcp_servers.serena]
 command = "uvx"
