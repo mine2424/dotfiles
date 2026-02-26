@@ -18,7 +18,7 @@
 ./setup.sh --nvim        # Neovim 設定
 ./setup.sh --shell       # Zsh + Starship
 ./setup.sh --terminal    # Ghostty + WezTerm
-./setup.sh --cli         # Git, tmux, Zellij 等
+./setup.sh --cli         # Git, Zellij, Yazi 等
 ./setup.sh --claude      # Claude 設定
 ./setup.sh --ssh         # SSH 設定（~/.ssh/config）
 ./setup.sh --macos       # macOS システム設定
@@ -62,5 +62,4 @@
 - **バックアップ**: backup.sh
 - **環境セットアップ**: setup.sh
 - **検証**: verify-setup.sh
-- **開発起動**: dev, ocdev, agent
 - **同期**: sync.sh

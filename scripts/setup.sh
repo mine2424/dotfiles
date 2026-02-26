@@ -36,7 +36,7 @@ dotfilesの設定を適用し、必要なツールをインストールします
   --nvim             Neovim設定のみ
   --shell            シェル設定のみ（Zsh + Starship）
   --terminal         ターミナル設定のみ（WezTerm）
-  --cli              CLIツール設定のみ（Git, tmux等）
+  --cli              CLIツール設定のみ（Git, Zellij等）
   --claude           Claude設定のみ
   --ssh              SSH設定のみ（~/.ssh/config）
   --macos            macOSシステム設定のみ
@@ -214,7 +214,7 @@ install_dependencies_macos() {
         log_warn "scripts/backup.sh --brew を実行してBrewfileを生成してください"
         log_info "フォールバック: パッケージを直接インストールします..."
         brew install neovim ripgrep fd lazygit imagemagick tectonic luarocks \
-            git tmux zellij fzf bat eza zsh sheldon starship mise \
+            git zellij fzf bat eza yazi zsh sheldon starship mise \
             || log_warn "一部のパッケージのインストールに失敗しました"
         brew install --cask wezterm ghostty \
             || log_warn "一部のcaskパッケージのインストールに失敗しました"
@@ -275,7 +275,7 @@ install_dependencies_debian() {
     
     case "$COMPONENT" in
         all|cli)
-            packages+=("git" "tmux" "zellij" "fzf")
+            packages+=("git" "zellij" "fzf")
             ;;
     esac
     
@@ -502,6 +502,20 @@ setup_cli_tools() {
         fi
     fi
 
+    # Yazi設定
+    local yazi_src="$dotfiles_root/yazi/.config/yazi"
+    local yazi_dest="$(get_config_dir yazi)"
+
+    if [[ -d "$yazi_src" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY RUN] Yazi設定を適用: $yazi_src -> $yazi_dest"
+        else
+            if safe_symlink "$yazi_src" "$yazi_dest"; then
+                log_success "Yazi設定を適用しました"
+            fi
+        fi
+    fi
+
     # mise設定
     local mise_src="$dotfiles_root/mise"
     local mise_dest="$(get_config_dir mise)"
@@ -512,20 +526,6 @@ setup_cli_tools() {
         else
             if safe_symlink "$mise_src" "$mise_dest"; then
                 log_success "mise設定を適用しました"
-            fi
-        fi
-    fi
-
-    # Tmux設定
-    local tmux_src="$dotfiles_root/tmux"
-    local tmux_dest="$HOME/.tmux"
-
-    if [[ -d "$tmux_src" ]]; then
-        if [[ "$DRY_RUN" == "true" ]]; then
-            log_info "[DRY RUN] Tmux設定を適用: $tmux_src -> $tmux_dest"
-        else
-            if safe_symlink "$tmux_src" "$tmux_dest"; then
-                log_success "Tmux設定を適用しました"
             fi
         fi
     fi
@@ -733,7 +733,7 @@ confirm_setup() {
             echo "  - Neovim設定"
             echo "  - シェル設定（Zsh + Starship）"
             echo "  - ターミナル設定（WezTerm + Ghostty）"
-            echo "  - CLIツール設定（Git, tmux, Zellij等）"
+            echo "  - CLIツール設定（Git, Zellij等）"
             echo "  - Claude設定"
             echo "  - SSH設定（~/.ssh/config）"
             echo "  - macOSシステム設定"
@@ -748,7 +748,7 @@ confirm_setup() {
             echo "  - ターミナル設定（WezTerm + Ghostty）"
             ;;
         cli)
-            echo "  - CLIツール設定（Git, tmux, Zellij, mise等）"
+            echo "  - CLIツール設定（Git, Zellij, mise等）"
             ;;
         claude)
             echo "  - Claude設定"

@@ -33,7 +33,7 @@ show_usage() {
    --nvim             Neovim設定のみ
    --shell            シェル設定のみ（Zsh, Bash）
    --terminal         ターミナル設定のみ（WezTerm, Starship）
-   --cli              CLIツール設定のみ（Git, tmux等）
+   --cli              CLIツール設定のみ（Git, Zellij等）
  
  オプション:
    --dry-run          実際には削除せず、何が削除されるか表示
@@ -229,7 +229,7 @@ clean_cli_tools() {
     local items=(
         "$HOME/.gitconfig:Git設定"
         "$HOME/.gitignore_global:Gitグローバル除外設定"
-        "$HOME/.tmux.conf:tmux設定"
+        "$(get_config_dir yazi):Yazi設定"
         "$HOME/.vimrc:Vim設定"
     )
     
@@ -276,7 +276,7 @@ confirm_clean() {
             echo "  - Neovim設定"
             echo "  - シェル設定（Zsh, Bash）"
             echo "  - ターミナル設定（WezTerm, Starship）"
-            echo "  - CLIツール設定（Git, tmux等）"
+            echo "  - CLIツール設定（Git, Zellij等）"
             ;;
         nvim)
             echo "  - Neovim設定"
@@ -288,7 +288,7 @@ confirm_clean() {
             echo "  - ターミナル設定（WezTerm, Starship）"
             ;;
         cli)
-            echo "  - CLIツール設定（Git, tmux等）"
+            echo "  - CLIツール設定（Git, Zellij等）"
             ;;
     esac
     

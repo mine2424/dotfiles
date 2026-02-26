@@ -286,9 +286,9 @@ verify_cli_tools() {
     verify_command_exists "git" "Gitコマンド" "critical"
     verify_file_exists "$HOME/.gitconfig" "Git設定ファイル" "warning"
     
-    # tmuxの確認
-    verify_command_exists "tmux" "tmuxコマンド" "warning"
-    verify_file_exists "$HOME/.tmux.conf" "tmux設定ファイル" "warning"
+    # Yaziの確認
+    verify_command_exists "yazi" "Yaziコマンド" "warning"
+    verify_file_exists "$(get_config_dir yazi)/yazi.toml" "Yazi設定ファイル" "warning"
     
     # その他の便利ツール
     verify_command_exists "fzf" "fzf（ファジーファインダー）" "warning"
