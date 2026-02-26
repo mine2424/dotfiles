@@ -39,6 +39,9 @@ starship/gcloud/
 coverage/
 *.coverage
 
+# バックアップファイル
+*.backup.*
+
 # Node.js（ドキュメント生成などで使用する場合）
 node_modules/
 package-lock.json
