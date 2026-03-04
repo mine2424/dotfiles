@@ -31,7 +31,7 @@ return {
         "python", "ruby",
         
         -- Other
-        "latex", "norg", "typst", "vue", "svelte",
+        "vue", "svelte",
         "regex", "dockerfile", "gitignore",
         "sql", "graphql", "proto",
       },
@@ -43,6 +43,10 @@ return {
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
+        disable = function(_, buf)
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          return ok and stats and stats.size > 100 * 1024 -- disable for files > 100KB
+        end,
       },
       
       -- Indentation

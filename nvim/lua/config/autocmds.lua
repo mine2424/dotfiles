@@ -108,56 +108,18 @@ autocmd("BufReadPost", {
 })
 
 -- ========================================
--- LSP
+-- Folding
 -- ========================================
 
--- Show diagnostics on cursor hold
-augroup("LspDiagnostics", { clear = true })
-autocmd("CursorHold", {
-  group = "LspDiagnostics",
-  callback = function()
-    local opts = {
-      focusable = false,
-      close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-      border = "rounded",
-      source = "always",
-      prefix = " ",
-      scope = "cursor",
-    }
-    vim.diagnostic.open_float(nil, opts)
-  end,
-})
-
--- ========================================
--- Config Auto-Reload
--- ========================================
-
--- Auto-reload config files on save
-augroup("ConfigReload", { clear = true })
-autocmd("BufWritePost", {
-  group = "ConfigReload",
-  pattern = { "*/nvim/**/*.lua" },
-  callback = function()
-    local filepath = vim.fn.expand("%:p")
-    
-    -- Skip if it's a plugin file (those need Lazy reload)
-    if filepath:match("/lazy/") then
-      return
-    end
-    
-    -- Clear module cache
-    for module_name, _ in pairs(package.loaded) do
-      if module_name:match("^config%.") then
-        package.loaded[module_name] = nil
-      end
-    end
-    
-    -- Reload config (but not plugins)
-    local ok, err = pcall(dofile, vim.env.MYVIMRC)
-    if ok then
-      vim.notify("Config reloaded: " .. vim.fn.fnamemodify(filepath, ":t"), vim.log.levels.INFO)
-    else
-      vim.notify("Config reload failed: " .. err, vim.log.levels.ERROR)
+-- Treesitter folding per-buffer (delayed to avoid startup evaluation)
+augroup("TreesitterFold", { clear = true })
+autocmd("BufReadPost", {
+  group = "TreesitterFold",
+  callback = function(ev)
+    local ft = vim.bo[ev.buf].filetype
+    if ft ~= "" and ft ~= "help" and ft ~= "lazy" then
+      vim.opt_local.foldmethod = "expr"
+      vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     end
   end,
 })
@@ -177,24 +139,6 @@ autocmd("TermOpen", {
     vim.cmd("startinsert")
   end,
 })
-
--- ========================================
--- Tmux Integration
--- ========================================
-
--- OSC 52 clipboard integration for Tmux
-if vim.env.TMUX then
-  augroup("TmuxClipboard", { clear = true })
-  autocmd("TextYankPost", {
-    group = "TmuxClipboard",
-    callback = function()
-      if vim.v.event.operator == "y" then
-        local copy = vim.fn.getreg('"')
-        vim.fn.system("tmux load-buffer -", copy)
-      end
-    end,
-  })
-end
 
 -- ========================================
 -- Performance

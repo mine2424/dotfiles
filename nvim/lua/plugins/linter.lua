@@ -39,13 +39,13 @@ return {
 
       -- Auto-lint on these events
       local lint_augroup = vim.api.nvim_create_augroup("Lint", { clear = true })
-      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+      vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
         group = lint_augroup,
         callback = function()
           -- Only lint if linter is available
           local ft = vim.bo.filetype
           if lint.linters_by_ft[ft] then
-            lint.try_lint()
+            lint.try_lint(nil, { ignore_errors = true })
           end
         end,
       })

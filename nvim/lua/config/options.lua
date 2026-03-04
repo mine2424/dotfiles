@@ -15,7 +15,7 @@ opt.backup = false                    -- Disable backup
 opt.writebackup = false               -- Disable backup before overwriting
 opt.undofile = true                   -- Enable persistent undo
 opt.undodir = vim.fn.stdpath("data") .. "/undo"  -- Undo directory
-opt.updatetime = 300                  -- Faster completion
+opt.updatetime = 200                  -- Faster completion
 opt.timeoutlen = 400                  -- Faster key sequence completion
 opt.confirm = true                    -- Confirm before closing unsaved buffer
 
@@ -81,8 +81,7 @@ opt.shortmess:append("c")             -- Don't show completion messages
 -- Folding
 -- ========================================
 
-opt.foldmethod = "expr"               -- Use expression for folding
-opt.foldexpr = "nvim_treesitter#foldexpr()"  -- Treesitter folding
+opt.foldmethod = "manual"             -- Manual fold at startup; per-buffer treesitter via autocmd
 opt.foldlevel = 99                    -- Open all folds by default
 opt.foldlevelstart = 99               -- Open all folds when opening file
 opt.foldenable = true                 -- Enable folding

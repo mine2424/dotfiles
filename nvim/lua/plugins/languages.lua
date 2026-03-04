@@ -97,35 +97,25 @@ return {
   -- ========================================
   -- Rust
   -- ========================================
-  
+
   {
-    "simrat39/rust-tools.nvim",
+    "mrcjkb/rustaceanvim",
+    version = "^5",
+    lazy = false,
     ft = "rust",
-    dependencies = {
-      "neovim/nvim-lspconfig",
-    },
     opts = {
       server = {
-        on_attach = function(_, bufnr)
-          -- Hover actions
-          vim.keymap.set("n", "<C-space>", require("rust-tools").hover_actions.hover_actions, {
-            buffer = bufnr,
-            desc = "Rust hover actions",
-          })
-          
-          -- Code action groups
-          vim.keymap.set("n", "<leader>ca", require("rust-tools").code_action_group.code_action_group, {
-            buffer = bufnr,
-            desc = "Rust code action group",
-          })
-        end,
         settings = {
           ["rust-analyzer"] = {
             cargo = {
               allFeatures = true,
+              loadOutDirsFromCheck = true,
             },
             checkOnSave = {
               command = "clippy",
+            },
+            procMacro = {
+              enable = true,
             },
           },
         },
@@ -134,12 +124,11 @@ return {
         hover_actions = {
           auto_focus = true,
         },
-        inlay_hints = {
-          auto = true,
-          show_parameter_hints = true,
-        },
       },
     },
+    config = function(_, opts)
+      vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts)
+    end,
   },
 
   -- Cargo.toml support
@@ -373,16 +362,16 @@ return {
         MkdnTableNewRowAbove = { "n", "<leader>iR" },
         MkdnTableNewColAfter = { "n", "<leader>ic" },
         MkdnTableNewColBefore = { "n", "<leader>iC" },
-        MkdnFoldSection = { "n", "<leader>f" },
-        MkdnUnfoldSection = { "n", "<leader>F" },
+        MkdnFoldSection = { "n", "<leader>mf" },
+        MkdnUnfoldSection = { "n", "<leader>mF" },
       },
     },
     keys = {
       { "<leader>p", "<cmd>MkdnCreateLinkFromClipboard<cr>", desc = "Create Link from Clipboard", mode = { "n", "v" } },
       { "<leader>y", "<cmd>MkdnYankFileAnchor<cr>", desc = "Yank File Anchor" },
       { "<leader>nn", "<cmd>MkdnUpdateNumbering<cr>", desc = "Update Numbering" },
-      { "<leader>f", "<cmd>MkdnFoldSection<cr>", desc = "Fold Section" },
-      { "<leader>F", "<cmd>MkdnUnfoldSection<cr>", desc = "Unfold Section" },
+      { "<leader>mf", "<cmd>MkdnFoldSection<cr>", desc = "Fold Section (Markdown)" },
+      { "<leader>mF", "<cmd>MkdnUnfoldSection<cr>", desc = "Unfold Section (Markdown)" },
     },
   },
 }

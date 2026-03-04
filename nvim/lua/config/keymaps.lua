@@ -3,7 +3,6 @@
 -- ========================================
 
 local keymap = vim.keymap.set
-local opts = { noremap = true, silent = true }
 
 -- ========================================
 -- Basic Operations
@@ -33,8 +32,8 @@ keymap("n", "<leader>Y", '"+Y', { desc = "Yank line to system clipboard" })
 keymap({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
 keymap({ "n", "v" }, "<leader>P", '"+P', { desc = "Paste before from system clipboard" })
 
--- Delete without yanking
-keymap({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
+-- Delete without yanking (renamed from <leader>d to avoid conflict with diagnostics)
+keymap({ "n", "v" }, "<leader>D", '"_d', { desc = "Delete without yanking" })
 
 -- ========================================
 -- Navigation
@@ -53,16 +52,13 @@ keymap({ "n", "v" }, "H", "^", { desc = "Go to line start" })
 keymap({ "n", "v" }, "L", "$", { desc = "Go to line end" })
 
 -- ========================================
--- Window Navigation (Tmux Integration)
+-- Window Navigation (native, no tmux)
 -- ========================================
--- Note: vim-tmux-navigator handles Ctrl+h/j/k/l
--- These will be set up by the plugin
 
--- Fallback window navigation (if not using tmux-navigator)
--- keymap("n", "<C-h>", "<C-w>h", { desc = "Navigate left" })
--- keymap("n", "<C-j>", "<C-w>j", { desc = "Navigate down" })
--- keymap("n", "<C-k>", "<C-w>k", { desc = "Navigate up" })
--- keymap("n", "<C-l>", "<C-w>l", { desc = "Navigate right" })
+keymap("n", "<C-h>", "<C-w>h", { desc = "Navigate left" })
+keymap("n", "<C-j>", "<C-w>j", { desc = "Navigate down" })
+keymap("n", "<C-k>", "<C-w>k", { desc = "Navigate up" })
+keymap("n", "<C-l>", "<C-w>l", { desc = "Navigate right" })
 
 -- ========================================
 -- Window Management
@@ -116,6 +112,14 @@ keymap("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 keymap("n", "<leader>h", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 
 -- ========================================
+-- Diagnostics
+-- ========================================
+
+-- Show diagnostics float (LazyVim also provides this, but keep explicit binding)
+keymap("n", "<leader>d", vim.diagnostic.open_float, { desc = "Show diagnostics" })
+keymap("n", "<leader>dl", "<cmd>Telescope diagnostics<cr>", { desc = "List diagnostics" })
+
+-- ========================================
 -- File Explorer (neo-tree)
 -- ========================================
 -- LazyVim uses neo-tree by default
@@ -125,66 +129,13 @@ keymap("n", "<leader>h", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight
 -- Telescope (File & Search)
 -- ========================================
 -- LazyVim includes telescope with default keymaps
--- Only add custom keymaps that are not in LazyVim defaults
 keymap("n", "<leader>fw", "<cmd>Telescope grep_string<cr>", { desc = "Find word under cursor" })
 
 -- ========================================
--- LSP
+-- Terminal (snacks.terminal)
 -- ========================================
 
--- Navigation
-keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
-keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-keymap("n", "gr", vim.lsp.buf.references, { desc = "Find references" })
-keymap("n", "gt", vim.lsp.buf.type_definition, { desc = "Go to type definition" })
-
--- Hover & Signature
-keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
-keymap("n", "<C-k>", vim.lsp.buf.signature_help, { desc = "Signature help" })
-keymap("i", "<C-k>", vim.lsp.buf.signature_help, { desc = "Signature help" })
-
--- Code actions
-keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-keymap("v", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-
--- Rename
-keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename" })
-
--- Format
-keymap("n", "<leader>f", vim.lsp.buf.format, { desc = "Format" })
-keymap("v", "<leader>f", vim.lsp.buf.format, { desc = "Format selection" })
-
--- Diagnostics
-keymap("n", "<leader>d", vim.diagnostic.open_float, { desc = "Show diagnostics" })
-keymap("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
-keymap("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-keymap("n", "<leader>dl", "<cmd>Telescope diagnostics<cr>", { desc = "List diagnostics" })
-
--- ========================================
--- Git (Gitsigns & Telescope)
--- ========================================
--- LazyVim includes gitsigns and telescope git integration
--- Gitsigns keymaps are configured in plugins/git.lua
--- Telescope git keymaps are in LazyVim defaults
-
--- ========================================
--- Terminal (Toggleterm)
--- ========================================
-
-keymap("n", "<C-\\>", "<cmd>ToggleTerm<cr>", { desc = "Toggle terminal" })
-keymap("t", "<C-\\>", "<cmd>ToggleTerm<cr>", { desc = "Toggle terminal" })
 keymap("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-
-keymap("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "Float terminal" })
-keymap("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", { desc = "Horizontal terminal" })
-keymap("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", { desc = "Vertical terminal" })
-
--- ========================================
--- Trouble (Diagnostics)
--- ========================================
--- LazyVim includes trouble with default keymaps
--- Default: <leader>xx toggles diagnostics
 
 -- ========================================
 -- Lazy (Plugin Manager)
@@ -205,7 +156,7 @@ keymap("n", "<leader>R", function()
       package.loaded[module_name] = nil
     end
   end
-  
+
   -- Reload config
   dofile(vim.env.MYVIMRC)
   vim.notify("Config reloaded!", vim.log.levels.INFO)

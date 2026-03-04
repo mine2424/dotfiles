@@ -4,14 +4,42 @@
 -- Override LazyVim's default settings
 
 return {
+  -- Catppuccin colorscheme
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      flavour = "mocha",
+      transparent_background = false,
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        telescope = { enabled = true },
+        treesitter = true,
+        mini = { enabled = true },
+        which_key = true,
+        snacks = true,
+        lsp_trouble = true,
+        mason = true,
+        native_lsp = {
+          enabled = true,
+          underlines = {
+            errors = { "undercurl" },
+            hints = { "undercurl" },
+            warnings = { "undercurl" },
+            information = { "undercurl" },
+          },
+        },
+      },
+    },
+  },
+
   {
     "LazyVim/LazyVim",
     opts = {
-      -- Disable LazyVim's default colorscheme (tokyonight)
-      colorscheme = function()
-        -- Use Neovim's built-in colorscheme instead
-        vim.cmd([[colorscheme habamax]])
-      end,
+      colorscheme = "catppuccin",
     },
   },
 
@@ -25,6 +53,7 @@ return {
       notifier = { enabled = true },
       quickfile = { enabled = true },
       words = { enabled = true },
+      lazygit = { enabled = true },
       styles = {
         notification = {
           wo = { wrap = false },
@@ -45,7 +74,6 @@ return {
       },
       indent = { enabled = true },
       input = { enabled = true },
-      notifier = { enabled = true },
       scroll = { enabled = true },
       terminal = { enabled = true },
       toggle = { enabled = true },
@@ -53,14 +81,28 @@ return {
     },
     keys = {
       { "<leader>.", function() require("snacks").scratch() end, desc = "Toggle Scratch Buffer" },
-      { "<leader>s", function() require("snacks").picker.smart() end, desc = "Smart Find" },
-      { "<leader>S", function() require("snacks").picker.files() end, desc = "Find Files" },
       { "<leader>z", function() require("snacks").zen() end, desc = "Toggle Zen Mode" },
       { "<leader>Z", function() require("snacks").zen.zoom() end, desc = "Toggle Zoom" },
       { "<leader>cR", function() require("snacks").rename() end, desc = "Rename File" },
       { "<leader>gb", function() require("snacks").gitbrowse() end, desc = "Git Browse" },
-      { "<leader>gf", function() require("snacks").lazy.log() end, desc = "Lazy Log" },
-      { "<leader>gg", function() require("snacks").lazy() end, desc = "Lazy" },
+      -- Lazygit
+      { "<leader>gg", function() require("snacks").lazygit() end, desc = "Lazygit" },
+      { "<leader>gG", function() require("snacks").lazygit.log() end, desc = "Git Log (Project)" },
+      { "<leader>gl", function() require("snacks").lazygit.log_file() end, desc = "Git Log (File)" },
+      -- Snacks picker keymaps (unified fuzzy finder)
+      { "<C-p>", function() require("snacks").picker.smart() end, desc = "Smart Pick" },
+      { "<leader>ff", function() require("snacks").picker.files() end, desc = "Find Files" },
+      { "<leader>fg", function() require("snacks").picker.grep() end, desc = "Live Grep" },
+      { "<leader>fr", function() require("snacks").picker.recent() end, desc = "Recent Files" },
+      { "<leader>fb", function() require("snacks").picker.buffers() end, desc = "Buffers" },
+      { "<leader>fh", function() require("snacks").picker.help() end, desc = "Help Pages" },
+      { "<leader>fk", function() require("snacks").picker.keymaps() end, desc = "Keymaps" },
+      { "<leader>fc", function() require("snacks").picker.commands() end, desc = "Commands" },
+      { "<leader>fd", function() require("snacks").picker.diagnostics() end, desc = "Diagnostics" },
+      { "<leader>fw", function() require("snacks").picker.grep_word() end, desc = "Grep Word" },
+      { "<leader>fs", function() require("snacks").picker.lsp_symbols() end, desc = "LSP Symbols" },
+      { "<leader>fS", function() require("snacks").picker.git_status() end, desc = "Git Status" },
+      -- Toggle
       { "<leader>uh", function() require("snacks").toggle.hl_scope() end, desc = "Toggle Hl Scope" },
       { "<leader>ui", function() require("snacks").toggle.inlay_hints() end, desc = "Toggle Inlay Hints" },
       { "<leader>uL", function() require("snacks").toggle.line_number() end, desc = "Toggle Line Numbers" },

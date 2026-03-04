@@ -1,11 +1,11 @@
 -- ========================================
 -- LSP Configuration
 -- ========================================
--- LazyVim includes Mason and LSP setup, but we can extend configuration here
+-- Use LazyVim's opts.servers pattern instead of direct lspconfig.setup() calls
+-- to avoid double LSP instantiation.
 
 return {
   -- Mason: LSP server manager
-  -- LazyVim includes Mason, but we can extend its configuration
   {
     "mason-org/mason.nvim",
     opts = {
@@ -20,8 +20,7 @@ return {
     },
   },
 
-  -- Mason-LSPConfig: Auto-setup LSP servers
-  -- LazyVim includes mason-lspconfig, but we can add more servers here
+  -- Mason-LSPConfig: ensure servers are installed
   {
     "mason-org/mason-lspconfig.nvim",
     opts = {
@@ -32,87 +31,52 @@ return {
         "jsonls",
         "yamlls",
         "marksman",
-        
+
         -- Web development
-        "tsserver",
+        "ts_ls",       -- was tsserver (deprecated)
         "html",
         "cssls",
         "tailwindcss",
         "eslint",
-        
+
         -- Mobile development
-        "dartls",
         "kotlin_language_server",
-        
+
         -- System programming
         "rust_analyzer",
         "gopls",
         "clangd",
-        
+
         -- Scripting languages
         "pyright",
-        "ruff_lsp",
+        "ruff",        -- was ruff_lsp (deprecated)
         "solargraph",
       },
       automatic_installation = true,
     },
   },
 
-  -- LSPConfig: LSP configuration
-  -- LazyVim includes nvim-lspconfig, but we can add custom server configs here
+  -- nvim-lspconfig: server configuration via LazyVim's opts.servers pattern
+  -- LazyVim's config function processes opts.servers via mason-lspconfig handlers.
+  -- Do NOT add a config function here — let LazyVim handle setup.
   {
     "neovim/nvim-lspconfig",
-    dependencies = {
-      "mason-org/mason.nvim",
-      "mason-org/mason-lspconfig.nvim",
-      "hrsh7th/cmp-nvim-lsp",
-    },
     opts = {
-      -- Add custom server configurations that are not in LazyVim defaults
-    },
-    config = function()
-      local lspconfig = require("lspconfig")
-
-      -- Common on_attach function
-      local on_attach = function(client, bufnr)
-        -- Enable completion triggered by <c-x><c-o>
-        vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-
-        -- Format on save (if supported)
-        if client.supports_method("textDocument/formatting") then
-          vim.api.nvim_create_autocmd("BufWritePre", {
-            buffer = bufnr,
-            callback = function()
-              vim.lsp.buf.format({ bufnr = bufnr })
-            end,
-          })
-        end
-      end
-
-      -- LSP server configurations
-      local servers = {
+      servers = {
         -- ========================================
         -- Lua
         -- ========================================
         lua_ls = {
           settings = {
             Lua = {
-              runtime = {
-                version = "LuaJIT",
-              },
-              diagnostics = {
-                globals = { "vim" },
-              },
+              runtime = { version = "LuaJIT" },
+              diagnostics = { globals = { "vim" } },
               workspace = {
                 library = vim.api.nvim_get_runtime_file("", true),
                 checkThirdParty = false,
               },
-              telemetry = {
-                enable = false,
-              },
-              format = {
-                enable = false,  -- Use stylua instead
-              },
+              telemetry = { enable = false },
+              format = { enable = false },  -- Use stylua via conform
             },
           },
         },
@@ -120,7 +84,7 @@ return {
         -- ========================================
         -- TypeScript/JavaScript
         -- ========================================
-        tsserver = {
+        ts_ls = {
           settings = {
             typescript = {
               inlayHints = {
@@ -163,33 +127,7 @@ return {
           },
         },
 
-        ruff_lsp = {
-          init_options = {
-            settings = {
-              args = {},
-            },
-          },
-        },
-
-        -- ========================================
-        -- Rust
-        -- ========================================
-        rust_analyzer = {
-          settings = {
-            ["rust-analyzer"] = {
-              cargo = {
-                allFeatures = true,
-                loadOutDirsFromCheck = true,
-              },
-              checkOnSave = {
-                command = "clippy",
-              },
-              procMacro = {
-                enable = true,
-              },
-            },
-          },
-        },
+        ruff = {},  -- was ruff_lsp (deprecated)
 
         -- ========================================
         -- Go
@@ -203,19 +141,6 @@ return {
               },
               staticcheck = true,
               gofumpt = true,
-            },
-          },
-        },
-
-        -- ========================================
-        -- Dart/Flutter
-        -- ========================================
-        dartls = {
-          settings = {
-            dart = {
-              enableSnippets = true,
-              lineLength = 100,
-              completeFunctionCalls = true,
             },
           },
         },
@@ -262,13 +187,10 @@ return {
         cssls = {},
         tailwindcss = {},
         eslint = {},
-      }
 
-      -- Setup all servers
-      for server, config in pairs(servers) do
-        config.on_attach = on_attach
-        lspconfig[server].setup(config)
-      end
-    end,
+        -- Note: rust_analyzer is managed by rustaceanvim (languages.lua)
+        -- Note: dartls is managed by flutter-tools.nvim (languages.lua)
+      },
+    },
   },
 }
