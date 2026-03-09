@@ -213,7 +213,7 @@ install_dependencies_macos() {
         log_warn "Brewfileが見つかりません: $brewfile"
         log_warn "scripts/backup.sh --brew を実行してBrewfileを生成してください"
         log_info "フォールバック: パッケージを直接インストールします..."
-        brew install neovim ripgrep fd lazygit imagemagick tectonic luarocks \
+        brew install neovim ripgrep fd lazygit imagemagick tectonic luarocks plantuml \
             git zellij fzf bat eza yazi zsh sheldon starship mise \
             || log_warn "一部のパッケージのインストールに失敗しました"
         brew install --cask wezterm ghostty \
