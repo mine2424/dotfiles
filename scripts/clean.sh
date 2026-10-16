@@ -34,6 +34,7 @@ show_usage() {
    --shell            シェル設定のみ（Zsh, Bash）
    --terminal         ターミナル設定のみ（WezTerm, Starship）
    --cli              CLIツール設定のみ（Git, Zellij等）
+   --shogun           multi-agent-shogun設定のみ
  
  オプション:
    --dry-run          実際には削除せず、何が削除されるか表示
@@ -77,6 +78,10 @@ parse_arguments() {
                 ;;
             --cli)
                 COMPONENT="cli"
+                shift
+                ;;
+            --shogun)
+                COMPONENT="shogun"
                 shift
                 ;;
             --dry-run)
@@ -249,11 +254,36 @@ clean_cli_tools() {
 #######################################
 # すべての設定をクリーニング
 #######################################
+clean_shogun() {
+    log_section "multi-agent-shogun設定のクリーニング"
+
+    local items=(
+        "$HOME/.local/share/shogun:shogunインストールディレクトリ"
+        "$HOME/.local/bin/shogun:shogunコマンド"
+        "$HOME/.local/bin/shogun-init:shogun-initコマンド"
+        "$HOME/.local/bin/shogun-sync:shogun-syncコマンド"
+        "$(get_config_dir)/zellij/layouts/shogun.kdl:Zellij shogunレイアウト"
+    )
+
+    local removed_count=0
+    for item in "${items[@]}"; do
+        IFS=':' read -r path description <<< "$item"
+        if remove_item "$path" "$description"; then
+            ((removed_count++))
+        fi
+    done
+
+    if [[ "$DRY_RUN" == "false" ]]; then
+        log_success "shogun設定をクリーニングしました（${removed_count}アイテム）"
+    fi
+}
+
 clean_all() {
     clean_nvim
     clean_shell
     clean_terminal
     clean_cli_tools
+    clean_shogun
 }
 
 #######################################
@@ -277,6 +307,7 @@ confirm_clean() {
             echo "  - シェル設定（Zsh, Bash）"
             echo "  - ターミナル設定（WezTerm, Starship）"
             echo "  - CLIツール設定（Git, Zellij等）"
+            echo "  - multi-agent-shogun設定"
             ;;
         nvim)
             echo "  - Neovim設定"
@@ -289,6 +320,9 @@ confirm_clean() {
             ;;
         cli)
             echo "  - CLIツール設定（Git, Zellij等）"
+            ;;
+        shogun)
+            echo "  - multi-agent-shogun設定"
             ;;
     esac
     
@@ -353,6 +387,9 @@ main() {
             ;;
         cli)
             clean_cli_tools
+            ;;
+        shogun)
+            clean_shogun
             ;;
         *)
             log_error "不明なコンポーネント: $COMPONENT"

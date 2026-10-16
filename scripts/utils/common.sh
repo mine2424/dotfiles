@@ -307,8 +307,12 @@ safe_symlink() {
             fi
         fi
         
-        log_warn "既存ファイルを削除: $target"
-        rm -rf "$target"
+        local backup_root backup_dir
+        backup_root="$HOME/.local/state/dotfiles/backups"
+        mkdir -p "$backup_root" || return 1
+        backup_dir="$(mktemp -d "$backup_root/link.XXXXXX")" || return 1
+        log_warn "既存設定を退避: $target -> $backup_dir/$(basename "$target")"
+        mv "$target" "$backup_dir/$(basename "$target")" || return 1
     fi
     
     # シンボリックリンクの作成

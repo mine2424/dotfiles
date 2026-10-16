@@ -46,3 +46,20 @@ coverage/
 node_modules/
 package-lock.json
 yarn.lock
+
+# multi-agent-shogun runtime
+.shogun/
+
+# Local credentials and runtime state (never snapshot entire application homes)
+**/auth.json
+**/credentials.json
+**/credentials.db
+**/access_tokens.db
+**/application_default_credentials.json
+**/hosts.yml
+**/sessions/
+**/history.jsonl
+**/state_*.sqlite*
+**/settings.local.json
+__pycache__/
+*.pyc

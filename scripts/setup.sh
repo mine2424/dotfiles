@@ -37,7 +37,9 @@ dotfilesの設定を適用し、必要なツールをインストールします
   --shell            シェル設定のみ（Zsh + Starship）
   --terminal         ターミナル設定のみ（WezTerm）
   --cli              CLIツール設定のみ（Git, Zellij等）
+  --desktop          Cursor / Zed設定のみ
   --claude           Claude設定のみ
+  --shogun           multi-agent-shogun設定のみ
   --ssh              SSH設定のみ（~/.ssh/config）
   --macos            macOSシステム設定のみ
 
@@ -89,8 +91,16 @@ parse_arguments() {
                 COMPONENT="cli"
                 shift
                 ;;
+            --desktop)
+                COMPONENT="desktop"
+                shift
+                ;;
             --claude)
                 COMPONENT="claude"
+                shift
+                ;;
+            --shogun)
+                COMPONENT="shogun"
                 shift
                 ;;
             --ssh)
@@ -135,7 +145,7 @@ check_requirements() {
     local missing_commands=()
     
     # 基本コマンドの確認
-    local required_commands=("git" "curl")
+    local required_commands=("git" "curl" "jq" "python3")
     
     for cmd in "${required_commands[@]}"; do
         if ! check_command "$cmd"; then
@@ -220,7 +230,8 @@ install_dependencies_macos() {
             || log_warn "一部のcaskパッケージのインストールに失敗しました"
     fi
 
-    # npmグローバルパッケージのインストール
+    # Install the declared runtimes before restoring their global tools.
+    mise -C "$dotfiles_root" install || return 1
     install_npm_packages
 
     log_success "依存関係のインストールが完了しました"
@@ -359,6 +370,8 @@ setup_shell() {
     local dotfiles_root
     dotfiles_root="$(get_dotfiles_root)"
 
+    apply_config_files shell
+
     # Zsh設定
     local zshrc_src="$dotfiles_root/zsh/zshrc"
     local zshrc_dest="$HOME/.zshrc"
@@ -409,21 +422,7 @@ setup_shell() {
         if [[ "$DRY_RUN" == "true" ]]; then
             log_info "[DRY RUN] Starship設定を適用: $starship_config_src -> $starship_config_dest"
         else
-            # 既存設定を削除
-            if [[ -e "$starship_config_dest" ]]; then
-                log_warn "既存設定を削除: $starship_config_dest"
-                rm -rf "$starship_config_dest"
-            fi
-
-            # ファイルをコピー
-            if cp "$starship_config_src" "$starship_config_dest" 2>/dev/null; then
-                log_success "Starship設定を適用しました"
-            else
-                log_error "Starship設定の適用に失敗しました"
-                log_error "ソース: $starship_config_src"
-                log_error "ターゲット: $starship_config_dest"
-                return 1
-            fi
+            safe_symlink "$starship_config_src" "$starship_config_dest" || return 1
         fi
     else
         log_warn "Starship設定が見つかりません: $starship_config_src"
@@ -477,6 +476,8 @@ setup_cli_tools() {
     local dotfiles_root
     dotfiles_root="$(get_dotfiles_root)"
 
+    apply_config_files cli
+
     # Zellij設定
     local zellij_src="$dotfiles_root/zellij"
     local zellij_dest="$(get_config_dir zellij)"
@@ -485,20 +486,7 @@ setup_cli_tools() {
         if [[ "$DRY_RUN" == "true" ]]; then
             log_info "[DRY RUN] Zellij設定を適用: $zellij_src -> $zellij_dest"
         else
-            # Zellij設定はディレクトリをコピー（シンボリックリンクではなく）
-            # 既存設定を削除
-            if [[ -e "$zellij_dest" ]] || [[ -L "$zellij_dest" ]]; then
-                log_warn "既存設定を削除: $zellij_dest"
-                rm -rf "$zellij_dest"
-            fi
-
-            # ディレクトリをコピー
-            if cp -r "$zellij_src" "$zellij_dest" 2>/dev/null; then
-                log_success "Zellij設定を適用しました"
-            else
-                log_error "Zellij設定の適用に失敗しました"
-                return 1
-            fi
+            safe_symlink "$zellij_src" "$zellij_dest" || return 1
         fi
     fi
 
@@ -530,19 +518,18 @@ setup_cli_tools() {
         fi
     fi
 
-    # Git設定
-    local gitconfig_src="$dotfiles_root/.gitconfig"
-    local gitconfig_dest="$HOME/.gitconfig"
 
-    if [[ -f "$gitconfig_src" ]]; then
-        if [[ "$DRY_RUN" == "true" ]]; then
-            log_info "[DRY RUN] Git設定を適用: $gitconfig_src -> $gitconfig_dest"
-        else
-            if safe_symlink "$gitconfig_src" "$gitconfig_dest"; then
-                log_success "Git設定を適用しました"
-            fi
-        fi
-    fi
+}
+
+# Apply only explicitly listed files; never replace an application state directory.
+apply_config_files() {
+    local args=(apply --group "$1")
+    [[ "$DRY_RUN" == "true" ]] && args+=(--dry-run)
+    python3 "$SCRIPT_DIR/config-files.py" "${args[@]}"
+}
+
+setup_desktop() {
+    apply_config_files desktop
 }
 
 #######################################
@@ -550,42 +537,253 @@ setup_cli_tools() {
 #######################################
 setup_claude() {
     log_section "Claude設定の適用"
-    
+
     local dotfiles_root
     dotfiles_root="$(get_dotfiles_root)"
     local claude_src="$dotfiles_root/.claude"
     local claude_dest="$HOME/.claude"
-    
+
     if [[ ! -d "$claude_src" ]]; then
         log_warn "Claude設定が見つかりません: $claude_src"
         return 0
     fi
-    
+
     if [[ "$DRY_RUN" == "true" ]]; then
-        log_info "[DRY RUN] Claude設定を適用: $claude_src -> $claude_dest"
+        log_info "[DRY RUN] Claude設定をマージ: $claude_src -> $claude_dest"
         return 0
     fi
-    
-    # ディレクトリをコピー（シンボリックリンクではなく、ファイルをコピー）
-    # これは.claudeディレクトリ全体をコピーするため
-    # 既存設定を削除
-    if [[ -e "$claude_dest" ]] || [[ -L "$claude_dest" ]]; then
-        log_warn "既存設定を削除: $claude_dest"
-        rm -rf "$claude_dest"
+
+    # ターゲットディレクトリが無ければ作成（既存は削除しない）
+    [[ ! -d "$claude_dest" ]] && mkdir -p "$claude_dest"
+
+    # 1. scripts ディレクトリをコピー
+    if [[ -d "$claude_src/scripts" ]]; then
+        mkdir -p "$claude_dest/scripts"
+        cp -r "$claude_src/scripts/"* "$claude_dest/scripts/" 2>/dev/null
+        chmod +x "$claude_dest/scripts/"*.sh 2>/dev/null
+        log_success "Claude scripts を適用しました"
     fi
-    
-    # ディレクトリをコピー
-    if cp -r "$claude_src" "$claude_dest" 2>/dev/null; then
-        # deny-check.shに実行権限を付与
-        if [[ -f "$claude_dest/scripts/deny-check.sh" ]]; then
-            chmod +x "$claude_dest/scripts/deny-check.sh"
+
+    # 2. settings.local.json をコピー（allow list は dotfiles が完全管理）
+    if [[ -f "$claude_src/settings.local.json" ]]; then
+        cp "$claude_src/settings.local.json" "$claude_dest/settings.local.json"
+        log_success "Claude settings.local.json を適用しました"
+    fi
+
+    # 3. settings.json をマージ（permissions + hooks は dotfiles、それ以外は既存を保持）
+    if [[ -f "$claude_src/settings.json" ]]; then
+        if [[ -f "$claude_dest/settings.json" ]] && command -v jq &>/dev/null; then
+            local tmp_merged
+            tmp_merged="$(jq -s '
+                .[0] as $home | .[1] as $dotfiles |
+                $home * {
+                    permissions: $dotfiles.permissions,
+                    hooks: $dotfiles.hooks
+                } * {
+                    enabledPlugins: (($home.enabledPlugins // {}) * ($dotfiles.enabledPlugins // {})),
+                    extraKnownMarketplaces: (($home.extraKnownMarketplaces // {}) * ($dotfiles.extraKnownMarketplaces // {}))
+                }
+            ' "$claude_dest/settings.json" "$claude_src/settings.json")"
+            echo "$tmp_merged" > "$claude_dest/settings.json"
+            log_success "Claude settings.json をマージしました"
+        else
+            cp "$claude_src/settings.json" "$claude_dest/settings.json"
+            log_success "Claude settings.json を適用しました"
         fi
-        log_success "Claude設定を適用しました"
-        return 0
-    else
-        log_error "Claude設定の適用に失敗しました"
-        return 1
     fi
+
+    # 4. agents, commands, rules ディレクトリをコピー（dotfiles が完全管理）
+    local claude_dirs=("agents" "commands" "rules")
+    for dir in "${claude_dirs[@]}"; do
+        if [[ -d "$claude_src/$dir" ]]; then
+            rm -rf "$claude_dest/$dir"
+            cp -r "$claude_src/$dir" "$claude_dest/$dir"
+            log_success "Claude $dir を適用しました"
+        fi
+    done
+
+    # 5. プラグインの自動インストール
+    if command -v claude &>/dev/null && command -v jq &>/dev/null; then
+        log_info "Claude プラグインの同期を開始します..."
+
+        # dotfiles の settings.json から管理対象のマーケットプレイスとプラグインを取得
+        local marketplaces plugins
+        marketplaces="$(jq -r '.extraKnownMarketplaces // {} | to_entries[] | "\(.key)=\(.value.source.source):\(.value.source.repo // .value.source.path)"' "$claude_src/settings.json" 2>/dev/null)"
+        plugins="$(jq -r '.enabledPlugins // {} | keys[]' "$claude_src/settings.json" 2>/dev/null)"
+
+        # マーケットプレイスの登録（未登録のもののみ）
+        local known_marketplaces_file="$claude_dest/plugins/known_marketplaces.json"
+        while IFS='=' read -r mp_name mp_source; do
+            [[ -z "$mp_name" ]] && continue
+            if [[ -f "$known_marketplaces_file" ]] && jq -e --arg name "$mp_name" '.[$name]' "$known_marketplaces_file" &>/dev/null; then
+                log_info "マーケットプレイス '$mp_name' は登録済みです"
+            else
+                local source_type="${mp_source%%:*}"
+                local source_value="${mp_source#*:}"
+                if [[ "$source_type" == "github" ]]; then
+                    log_info "マーケットプレイス '$mp_name' を登録中..."
+                    if claude plugin marketplace add "$source_value" 2>&1; then
+                        log_success "マーケットプレイス '$mp_name' を登録しました"
+                    else
+                        log_warn "マーケットプレイス '$mp_name' の登録に失敗しました"
+                    fi
+                elif [[ "$source_type" == "directory" ]]; then
+                    log_info "ローカルマーケットプレイス '$mp_name' を登録中..."
+                    if claude plugin marketplace add "$source_value" 2>&1; then
+                        log_success "マーケットプレイス '$mp_name' を登録しました"
+                    else
+                        log_warn "マーケットプレイス '$mp_name' の登録に失敗しました"
+                    fi
+                fi
+            fi
+        done <<< "$marketplaces"
+
+        # プラグインのインストール（未インストールのもののみ）
+        local installed_plugins_file="$claude_dest/plugins/installed_plugins.json"
+        while IFS= read -r plugin_name; do
+            [[ -z "$plugin_name" ]] && continue
+            if [[ -f "$installed_plugins_file" ]] && jq -e --arg name "$plugin_name" '.plugins[$name]' "$installed_plugins_file" &>/dev/null; then
+                log_info "プラグイン '$plugin_name' はインストール済みです"
+            else
+                log_info "プラグイン '$plugin_name' をインストール中..."
+                if claude plugin install "$plugin_name" 2>&1; then
+                    log_success "プラグイン '$plugin_name' をインストールしました"
+                else
+                    log_warn "プラグイン '$plugin_name' のインストールに失敗しました（ネットワーク接続を確認してください）"
+                fi
+            fi
+        done <<< "$plugins"
+    else
+        log_warn "claude CLI が見つかりません。プラグインの手動インストールが必要です"
+        log_info "  claude plugin marketplace add samber/cc-skills-golang"
+        log_info "  claude plugin install cc-skills-golang@samber"
+    fi
+
+    log_success "Claude設定の適用が完了しました"
+}
+
+#######################################
+# multi-agent-shogun設定を適用
+#######################################
+setup_shogun() {
+    log_section "multi-agent-shogun設定の適用"
+
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local shogun_src="$dotfiles_root/shogun"
+    local shogun_home="$HOME/.local/share/shogun"
+    local upstream_repo="https://github.com/yohey-w/multi-agent-shogun.git"
+
+    if [[ ! -d "$shogun_src" ]]; then
+        log_warn "shogun設定が見つかりません: $shogun_src"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY RUN] shogun設定を適用: $shogun_src -> $shogun_home"
+        log_info "[DRY RUN] upstream clone: $upstream_repo -> $shogun_home/upstream/"
+        log_info "[DRY RUN] bin/ リンク: $shogun_src/bin/* -> ~/.local/bin/"
+        log_info "[DRY RUN] Zellij レイアウト: shogun.kdl -> ~/.config/zellij/layouts/"
+        return 0
+    fi
+
+    # 1. 依存チェック
+    local missing_deps=()
+    command -v zellij >/dev/null 2>&1 || missing_deps+=("zellij")
+    command -v python3 >/dev/null 2>&1 || missing_deps+=("python3")
+    if [[ ${#missing_deps[@]} -gt 0 ]]; then
+        log_warn "shogun の依存が不足しています: ${missing_deps[*]}"
+        log_info "brew install ${missing_deps[*]} でインストールしてください"
+        return 0
+    fi
+
+    # 2. ディレクトリ作成
+    mkdir -p "$shogun_home"
+    mkdir -p "$HOME/.local/bin"
+
+    # 3. upstream clone / pull
+    if [[ -d "$shogun_home/upstream/.git" ]]; then
+        log_info "upstream を更新しています..."
+        git -C "$shogun_home/upstream" pull origin main --quiet 2>/dev/null || true
+    else
+        log_info "upstream を clone しています..."
+        git clone --quiet "$upstream_repo" "$shogun_home/upstream"
+    fi
+    local ref
+    ref="$(git -C "$shogun_home/upstream" rev-parse HEAD)"
+    echo "$ref" > "$shogun_home/.upstream-ref"
+    log_success "upstream ref: ${ref:0:12}"
+
+    # 4. lib/, scripts/ を upstream からコピー
+    for dir in lib scripts; do
+        if [[ -d "$shogun_home/upstream/$dir" ]]; then
+            rm -rf "${shogun_home:?}/$dir"
+            cp -r "$shogun_home/upstream/$dir" "$shogun_home/$dir"
+            find "$shogun_home/$dir" -name "*.sh" -exec chmod +x {} \;
+        fi
+    done
+    log_success "lib/, scripts/ をコピーしました"
+
+    # 5. instructions をマージ（upstream + dotfiles オーバーライド）
+    if [[ -d "$shogun_home/upstream/instructions" ]]; then
+        rm -rf "${shogun_home:?}/instructions"
+        cp -r "$shogun_home/upstream/instructions" "$shogun_home/instructions"
+    fi
+    if [[ -d "$shogun_src/instructions" ]] && [[ -n "$(ls -A "$shogun_src/instructions" 2>/dev/null)" ]]; then
+        cp -r "$shogun_src/instructions"/* "$shogun_home/instructions/" 2>/dev/null || true
+    fi
+    log_success "instructions/ をマージしました"
+
+    # 6. skills をマージ
+    if [[ -d "$shogun_home/upstream/skills" ]]; then
+        rm -rf "${shogun_home:?}/skills"
+        cp -r "$shogun_home/upstream/skills" "$shogun_home/skills"
+    fi
+    if [[ -d "$shogun_src/skills" ]] && [[ -n "$(ls -A "$shogun_src/skills" 2>/dev/null)" ]]; then
+        cp -r "$shogun_src/skills"/* "$shogun_home/skills/" 2>/dev/null || true
+    fi
+    log_success "skills/ をマージしました"
+
+    # 7. config をマージ（dotfiles 優先）
+    mkdir -p "$shogun_home/config"
+    if [[ -d "$shogun_home/upstream/config" ]]; then
+        cp -r "$shogun_home/upstream/config"/* "$shogun_home/config/" 2>/dev/null || true
+    fi
+    if [[ -d "$shogun_src/config" ]]; then
+        cp -r "$shogun_src/config"/* "$shogun_home/config/"
+    fi
+    log_success "config/ をマージしました"
+
+    # 8. Python venv
+    if [[ ! -d "$shogun_home/.venv" ]]; then
+        log_info "Python venv を作成しています..."
+        python3 -m venv "$shogun_home/.venv"
+        "$shogun_home/.venv/bin/pip" install --quiet PyYAML
+        log_success "venv を作成しました"
+    fi
+
+    # 9. bin/ スクリプトをシンボリックリンク
+    if [[ -d "$shogun_src/bin" ]]; then
+        for script in "$shogun_src/bin"/*; do
+            local name
+            name="$(basename "$script")"
+            chmod +x "$script"
+            ln -sf "$script" "$HOME/.local/bin/$name"
+        done
+        log_success "bin/ スクリプトをリンクしました"
+    fi
+
+    # 10. Zellij shogun レイアウトをコピー
+    local zellij_layouts_src="$dotfiles_root/zellij/layouts"
+    local zellij_layouts_dest
+    zellij_layouts_dest="$(get_config_dir)/zellij/layouts"
+    if [[ -f "$zellij_layouts_src/shogun.kdl" ]]; then
+        mkdir -p "$zellij_layouts_dest"
+        cp "$zellij_layouts_src/shogun.kdl" "$zellij_layouts_dest/shogun.kdl"
+        log_success "Zellij shogun レイアウトを適用しました"
+    fi
+
+    log_success "multi-agent-shogun設定の適用が完了しました"
 }
 
 #######################################
@@ -683,6 +881,13 @@ install_npm_packages() {
         return 0
     fi
 
+    local node_bin=""
+    if check_command mise; then
+        node_bin="$(mise -C "$dotfiles_root" where node)/bin" || return 1
+    else
+        node_bin="$(dirname "$(command -v node)")"
+    fi
+
     log_info "npmグローバルパッケージをインストール中..."
 
     while IFS= read -r package; do
@@ -691,7 +896,7 @@ install_npm_packages() {
             log_info "[DRY RUN] npm install -g $package"
         else
             log_info "インストール: $package"
-            npm install -g "$package" || log_warn "$package のインストールに失敗しました"
+            env PATH="$node_bin:$PATH" npm install -g "$package" || log_warn "$package のインストールに失敗しました"
         fi
     done < "$packages_file"
 
@@ -708,7 +913,9 @@ setup_all() {
     setup_shell
     setup_terminal
     setup_cli_tools
+    setup_desktop
     setup_claude
+    setup_shogun
     setup_ssh
     apply_macos_defaults
 }
@@ -735,6 +942,7 @@ confirm_setup() {
             echo "  - ターミナル設定（WezTerm + Ghostty）"
             echo "  - CLIツール設定（Git, Zellij等）"
             echo "  - Claude設定"
+            echo "  - multi-agent-shogun設定"
             echo "  - SSH設定（~/.ssh/config）"
             echo "  - macOSシステム設定"
             ;;
@@ -752,6 +960,9 @@ confirm_setup() {
             ;;
         claude)
             echo "  - Claude設定"
+            ;;
+        shogun)
+            echo "  - multi-agent-shogun設定"
             ;;
         ssh)
             echo "  - SSH設定（~/.ssh/config）"
@@ -845,8 +1056,14 @@ main() {
         cli)
             setup_cli_tools
             ;;
+        desktop)
+            setup_desktop
+            ;;
         claude)
             setup_claude
+            ;;
+        shogun)
+            setup_shogun
             ;;
         ssh)
             setup_ssh

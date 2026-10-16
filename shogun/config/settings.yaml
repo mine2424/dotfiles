@@ -1,0 +1,19 @@
+# multi-agent-shogun 設定
+# dotfiles/shogun/config/settings.yaml
+# setup.sh --shogun で ~/.local/share/shogun/config/ にマージされる
+
+language: ja
+
+cli:
+  default: claude-code
+  kessen_model: opus
+
+max_agents: 7
+
+session_manager: zellij
+
+# ntfy 通知（任意）
+# ntfy:
+#   enabled: false
+#   topic: shogun-notify
+#   server: https://ntfy.sh

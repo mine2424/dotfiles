@@ -35,6 +35,7 @@ show_usage() {
   --shell            シェル設定のみ検証
   --terminal         ターミナル設定のみ検証
   --cli              CLIツール設定のみ検証
+  --shogun           multi-agent-shogun設定のみ検証
 
 オプション:
   --verbose          詳細な情報を表示
@@ -79,6 +80,10 @@ parse_arguments() {
                 COMPONENT="cli"
                 shift
                 ;;
+            --shogun)
+                COMPONENT="shogun"
+                shift
+                ;;
             --verbose)
                 VERBOSE=true
                 shift
@@ -115,21 +120,22 @@ run_test() {
         log_info "テスト: $test_name"
     fi
     
-    if eval "$test_command" >/dev/null 2>&1; then
+    if python3 "$SCRIPT_DIR/utils/run-check.py" "$test_command" >/dev/null 2>&1; then
         if [[ "$VERBOSE" == "true" ]]; then
             log_success "✓ $test_name"
         fi
-        ((TESTS_PASSED++))
+        ((TESTS_PASSED+=1))
         return 0
     else
         if [[ "$severity" == "warning" ]]; then
             log_warn "⚠ $test_name"
-            ((TESTS_WARNINGS++))
+            ((TESTS_WARNINGS+=1))
         else
             log_error "✗ $test_name"
-            ((TESTS_FAILED++))
+            ((TESTS_FAILED+=1))
         fi
-        return 1
+        # Record failures and let generate_report decide the final status.
+        return 0
     fi
 }
 
@@ -271,7 +277,7 @@ verify_terminal() {
     if check_command wezterm; then
         local wezterm_config="$(get_config_dir wezterm)/wezterm.lua"
         if [[ -f "$wezterm_config" ]]; then
-            run_test "WezTerm設定の構文チェック" "wezterm --config-file '$wezterm_config' --version" "warning"
+            run_test "WezTermバージョン確認（構文検証ではありません）" "wezterm --version" "warning"
         fi
     fi
 }
@@ -301,11 +307,45 @@ verify_cli_tools() {
 #######################################
 # すべての設定を検証
 #######################################
+verify_shogun() {
+    log_section "multi-agent-shogun設定の検証"
+
+    local shogun_home="$HOME/.local/share/shogun"
+
+    # コマンドの確認
+    verify_command_exists "zellij" "Zellijコマンド" "critical" || true
+    verify_command_exists "fswatch" "fswatch（ファイル監視）" "warning" || true
+    verify_command_exists "python3" "Python3" "critical" || true
+
+    # bin/ スクリプトの確認
+    verify_file_exists "$HOME/.local/bin/shogun" "shogunコマンド" "critical" || true
+    verify_file_exists "$HOME/.local/bin/shogun-init" "shogun-initコマンド" "critical" || true
+    verify_file_exists "$HOME/.local/bin/shogun-sync" "shogun-syncコマンド" "critical" || true
+
+    # インストール先の確認
+    verify_file_exists "$shogun_home/upstream/.git" "upstream キャッシュ" "critical" || true
+    verify_file_exists "$shogun_home/.upstream-ref" "upstream refファイル" "warning" || true
+    verify_file_exists "$shogun_home/.venv/bin/python" "Python venv" "critical" || true
+    verify_file_exists "$shogun_home/config/settings.yaml" "shogun設定ファイル" "warning" || true
+    verify_file_exists "$shogun_home/lib" "lib/ ディレクトリ" "warning" || true
+    verify_file_exists "$shogun_home/instructions" "instructions/ ディレクトリ" "warning" || true
+
+    # Zellij レイアウトの確認
+    verify_file_exists "$(get_config_dir)/zellij/layouts/shogun.kdl" "Zellij shogunレイアウト" "critical" || true
+
+    # PyYAML の確認
+    if [[ -f "$shogun_home/.venv/bin/python" ]]; then
+        run_test "PyYAML インストール確認" "$shogun_home/.venv/bin/python -c 'import yaml'" "warning" || true
+    fi
+}
+
 verify_all() {
     verify_nvim
     verify_shell
     verify_terminal
     verify_cli_tools
+    verify_shogun
+    run_test "管理対象ファイルとローカル設定の一致" "python3 '$SCRIPT_DIR/config-files.py' audit" "warning"
 }
 
 #######################################
@@ -404,6 +444,9 @@ main() {
             ;;
         cli)
             verify_cli_tools
+            ;;
+        shogun)
+            verify_shogun
             ;;
         *)
             log_error "不明なコンポーネント: $COMPONENT"

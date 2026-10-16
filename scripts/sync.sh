@@ -38,7 +38,7 @@ dotfilesとローカルPC間で設定を同期します。
   --shell            シェル設定のみ
   --terminal         ターミナル設定のみ
   --cli              CLIツール設定のみ
-  --codex            Codex設定のみ
+  --codex            Codex共通指示・通知スクリプトのみ（config.tomlは手動マージ）
   --claude           Claude設定のみ
 
 オプション:
@@ -167,11 +167,11 @@ sync_file() {
     target_dir="$(dirname "$target")"
     safe_mkdir "$target_dir" || return 1
 
-    # ディレクトリ同期は内容をミラー（ネストを避ける）
+    # ディレクトリの内容をマージし、ローカル専用ファイルは保持する
     if [[ -d "$source" ]]; then
         safe_mkdir "$target" || return 1
         if check_command rsync; then
-            if rsync -a --delete "$source"/ "$target"/ 2>/dev/null; then
+            if rsync -a "$source"/ "$target"/ 2>/dev/null; then
                 log_success "同期完了: ${description}"
                 return 0
             fi
@@ -290,7 +290,7 @@ sync_nvim() {
                 
                 # ディレクトリの内容をコピー（既存のファイルは上書き）
                 log_info "ファイルをコピー中..."
-                if rsync -a --delete "$nvim_dotfiles/" "$nvim_config/" 2>/dev/null || \
+                if rsync -a "$nvim_dotfiles/" "$nvim_config/" 2>/dev/null || \
                    { cp -r "$nvim_dotfiles"/* "$nvim_config/" 2>/dev/null && \
                      cp -r "$nvim_dotfiles"/.[!.]* "$nvim_config/" 2>/dev/null; }; then
                     log_success "Neovim設定を同期しました"
@@ -318,7 +318,7 @@ sync_nvim() {
                 safe_mkdir "$nvim_dotfiles" || return 1
                 
                 # ディレクトリの内容をコピー（既存のファイルは上書き）
-                if rsync -a --delete "$nvim_config/" "$nvim_dotfiles/" 2>/dev/null || \
+                if rsync -a "$nvim_config/" "$nvim_dotfiles/" 2>/dev/null || \
                    { cp -r "$nvim_config"/* "$nvim_dotfiles/" 2>/dev/null && \
                      cp -r "$nvim_config"/.[!.]* "$nvim_dotfiles/" 2>/dev/null; }; then
                     log_success "Neovim設定を同期しました"
@@ -434,27 +434,22 @@ sync_cli_tools() {
     codex_home="$(get_codex_home)"
     
     if [[ "$DIRECTION" == "push" ]]; then
-        # dotfiles -> local
-        if [[ -f "$dotfiles_root/cli-tools/gitconfig" ]]; then
-            sync_file "$dotfiles_root/cli-tools/gitconfig" "$HOME/.gitconfig" "Git設定"
-        fi
+        local args=(apply --group cli)
+        [[ "$DRY_RUN" == "true" ]] && args+=(--dry-run)
+        python3 "$SCRIPT_DIR/config-files.py" "${args[@]}"
         if [[ -f "$dotfiles_root/yazi/.config/yazi/yazi.toml" ]]; then
             sync_file "$dotfiles_root/yazi/.config/yazi/yazi.toml" "$(get_config_dir yazi)/yazi.toml" "Yazi設定"
         fi
-        if [[ -d "$dotfiles_root/codex" ]]; then
-            sync_file "$dotfiles_root/codex" "$codex_home" "Codex設定 ($codex_home)"
-        fi
+        sync_codex
     else
         # local -> dotfiles
         if [[ -f "$HOME/.gitconfig" ]]; then
-            sync_file "$HOME/.gitconfig" "$dotfiles_root/cli-tools/gitconfig" "Git設定"
+            sync_file "$HOME/.gitconfig" "$dotfiles_root/git/gitconfig" "Git設定"
         fi
         if [[ -f "$(get_config_dir yazi)/yazi.toml" ]]; then
             sync_file "$(get_config_dir yazi)/yazi.toml" "$dotfiles_root/yazi/.config/yazi/yazi.toml" "Yazi設定"
         fi
-        if [[ -d "$codex_home" ]]; then
-            sync_file "$codex_home" "$dotfiles_root/codex" "Codex設定 ($codex_home)"
-        fi
+        sync_codex
     fi
 }
 
@@ -469,11 +464,15 @@ sync_codex() {
     local codex_home
     codex_home="$(get_codex_home)"
 
-    if [[ "$DIRECTION" == "push" ]]; then
-        sync_file "$dotfiles_root/codex/config.toml" "$codex_home/config.toml" "Codex設定 (config.toml)"
-    else
-        sync_file "$codex_home/config.toml" "$dotfiles_root/codex/config.toml" "Codex設定 (config.toml)"
-    fi
+    local file
+    for file in AGENTS.md notify_macos.sh; do
+        if [[ "$DIRECTION" == "push" ]]; then
+            sync_file "$dotfiles_root/codex/$file" "$codex_home/$file" "Codex $file"
+        else
+            sync_file "$codex_home/$file" "$dotfiles_root/codex/$file" "Codex $file"
+        fi
+    done
+    log_warn "Codex config.toml は認証・信頼・アプリ固有設定を含むため手動マージしてください（docs/local-pc-audit.md）"
 }
 
 #######################################
@@ -487,46 +486,16 @@ sync_claude() {
     local claude_dotfiles="$dotfiles_root/.claude"
     local claude_local="$HOME/.claude"
     
-    if [[ "$DIRECTION" == "push" ]]; then
-        # dotfiles -> local
-        if [[ -d "$claude_dotfiles" ]]; then
-            # ディレクトリ全体をコピー
-            if [[ "$DRY_RUN" == "true" ]]; then
-                log_info "[DRY RUN] Claude設定を同期予定: $claude_dotfiles -> $claude_local"
-            else
-                # ディレクトリをコピー
-                if cp -r "$claude_dotfiles" "$claude_local" 2>/dev/null; then
-                    # deny-check.shに実行権限を付与
-                    if [[ -f "$claude_local/scripts/deny-check.sh" ]]; then
-                        chmod +x "$claude_local/scripts/deny-check.sh"
-                    fi
-                    log_success "Claude設定を同期しました"
-                else
-                    log_error "Claude設定の同期に失敗しました"
-                    return 1
-                fi
-            fi
+    # Never sync ~/.claude wholesale: it contains sessions, credentials and plugins.
+    local file
+    for file in agents commands rules scripts; do
+        if [[ "$DIRECTION" == "push" ]]; then
+            sync_file "$claude_dotfiles/$file" "$claude_local/$file" "Claude $file"
         else
-            log_warn "Claude設定が見つかりません: $claude_dotfiles"
+            sync_file "$claude_local/$file" "$claude_dotfiles/$file" "Claude $file"
         fi
-    else
-        # local -> dotfiles
-        if [[ -d "$claude_local" ]]; then
-            if [[ "$DRY_RUN" == "true" ]]; then
-                log_info "[DRY RUN] Claude設定を同期予定: $claude_local -> $claude_dotfiles"
-            else
-                # ディレクトリをコピー
-                if cp -r "$claude_local" "$claude_dotfiles" 2>/dev/null; then
-                    log_success "Claude設定を同期しました"
-                else
-                    log_error "Claude設定の同期に失敗しました"
-                    return 1
-                fi
-            fi
-        else
-            log_warn "Claude設定が見つかりません: $claude_local"
-        fi
-    fi
+    done
+    log_warn "Claude settings*.json は手動レビュー対象です。設定の適用には setup.sh --claude を使用してください"
 }
 
 #######################################

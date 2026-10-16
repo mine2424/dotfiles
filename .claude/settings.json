@@ -2,10 +2,44 @@
   "permissions": {
     "deny": [
       "Bash(git config *)",
-      "Bash(brew install *)",
       "Bash(chmod 777 *)",
       "Bash(rm -rf /*)",
-      "Bash(gh repo delete:*)"
+      "Bash(gh repo delete:*)",
+
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(*.key)",
+      "Read(credentials/*)",
+      "Read(~/.ssh/*)",
+      "Read(*id_rsa*)",
+      "Read(*id_ed25519*)",
+      "Read(*.pem)",
+      "Read(*.p12)",
+      "Read(*.pfx)",
+      "Read(*credentials.json)",
+      "Read(*.secret)",
+      "Read(*token*)",
+      "Read(*secret*key*)",
+
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(~/.ssh/*)",
+
+      "Bash(eval *)",
+      "Bash(sudo *)",
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(env)",
+      "Bash(printenv)",
+      "Bash(cat ~/.ssh/*)",
+      "Bash(cat *id_rsa*)",
+      "Bash(cat *id_ed25519*)",
+      "Bash(cat *.pem)",
+      "Bash(cat .env*)",
+      "Bash(nc *)",
+      "Bash(netcat *)",
+      "Bash(ncat *)"
     ]
   },
   "hooks": {
@@ -20,5 +54,16 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "cc-skills-golang@samber": true
+  },
+  "extraKnownMarketplaces": {
+    "samber": {
+      "source": {
+        "source": "github",
+        "repo": "samber/cc"
+      }
+    }
   }
 }

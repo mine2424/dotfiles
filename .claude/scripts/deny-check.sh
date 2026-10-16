@@ -46,6 +46,7 @@ done <<<"$deny_patterns"
 temp_command="${command//;/$'\n'}"
 temp_command="${temp_command//&&/$'\n'}"
 temp_command="${temp_command//\|\|/$'\n'}"
+temp_command="${temp_command//|/$'\n'}"
 
 IFS=$'\n'
 for cmd_part in $temp_command; do

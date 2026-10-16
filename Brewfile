@@ -1,37 +1,50 @@
-# Brewfile - Homebrew パッケージ一覧
-# ./scripts/backup.sh --brew で自動更新される
+# Homebrew roots observed on this Mac, 2026-10-16.
+# Dependencies are resolved by Homebrew; native/manual apps are in docs/local-pc-audit.md.
 
-# パッケージ管理補助
-brew "mas"
+tap "supabase/tap"
 
-# CLI / 開発ツール
-brew "neovim"
-brew "ripgrep"
-brew "fd"
-brew "lazygit"
-brew "imagemagick"
-brew "tectonic"
-brew "luarocks"
-brew "plantuml"
-brew "git"
-brew "zellij"
-brew "fzf"
+# CLI / development tools
 brew "bat"
 brew "eza"
-brew "yazi"
-brew "zsh"
+brew "fd"
+brew "ffmpeg"
+brew "fzf"
+# Required by the existing shogun integration (currently missing locally).
+brew "fswatch"
+brew "gh"
+brew "git"
+brew "git-lfs"
+brew "imagemagick"
+brew "lazygit"
+brew "libyaml"
+brew "luarocks"
+brew "mas"
+brew "mise"
+brew "mpdecimal"
+brew "neovim"
+brew "node"
+brew "plantuml"
+brew "poppler"
+brew "ripgrep"
 brew "sheldon"
 brew "starship"
-brew "mise"
-brew "claude-code"
-brew "codex"
-brew "node"
+brew "supabase/tap/supabase"
+brew "tectonic"
+brew "tmux"
 brew "uv"
+brew "whisper.cpp"
+brew "wimlib"
+brew "yazi"
+brew "zellij"
+brew "zsh"
 
-# GUI アプリケーション
-cask "wezterm"
-cask "ghostty"
+# Applications and fonts managed by Homebrew
+cask "android-commandlinetools"
+cask "codex"
+cask "discord"
 cask "docker-desktop"
-
-# フォント
 cask "font-hack-nerd-font"
+cask "gcloud-cli"
+cask "ghostty"
+cask "slack"
+cask "wezterm"

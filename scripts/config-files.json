@@ -1,0 +1,57 @@
+[
+  {
+    "group": "shell",
+    "source": "zsh/zshenv",
+    "target": ".zshenv"
+  },
+  {
+    "group": "shell",
+    "source": "zsh/zprofile",
+    "target": ".zprofile"
+  },
+  {
+    "group": "shell",
+    "source": "npm/npmrc",
+    "target": ".npmrc"
+  },
+  {
+    "group": "shell",
+    "source": "npm/.config/npm/npmrc",
+    "target": ".config/npm/npmrc"
+  },
+  {
+    "group": "cli",
+    "source": "git/gitconfig",
+    "target": ".gitconfig"
+  },
+  {
+    "group": "cli",
+    "source": "git/ignore",
+    "target": ".config/git/ignore"
+  },
+  {
+    "group": "cli",
+    "source": "gh/config.yml",
+    "target": ".config/gh/config.yml"
+  },
+  {
+    "group": "cli",
+    "source": "tmux/tmux.conf",
+    "target": ".tmux.conf"
+  },
+  {
+    "group": "desktop",
+    "source": "cursor/settings.json",
+    "target": "Library/Application Support/Cursor/User/settings.json"
+  },
+  {
+    "group": "desktop",
+    "source": "cursor/markdown-preview.css",
+    "target": "Library/Application Support/Cursor/User/markdown-preview.css"
+  },
+  {
+    "group": "desktop",
+    "source": "zed/settings.json",
+    "target": ".config/zed/settings.json"
+  }
+]

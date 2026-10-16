@@ -1,0 +1,44 @@
+// multi-agent-shogun レイアウト
+// Ghostty + Zellij で tmux を使わずにマルチエージェントを運用する
+//
+// Tab 1: shogun  — 司令官（あなた）のメインペイン
+// Tab 2: multiagent — 3x3 グリッド（Karo + Ashigaru 1-7 + Gunshi）
+
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+    tab name="shogun" focus=true {
+        pane name="Shogun"
+    }
+
+    tab name="multiagent" {
+        // Row 1
+        pane split_direction="horizontal" {
+            pane split_direction="vertical" {
+                pane name="Karo"
+                pane name="Ashigaru-1"
+                pane name="Ashigaru-2"
+            }
+            // Row 2
+            pane split_direction="vertical" {
+                pane name="Ashigaru-3"
+                pane name="Ashigaru-4"
+                pane name="Ashigaru-5"
+            }
+            // Row 3
+            pane split_direction="vertical" {
+                pane name="Ashigaru-6"
+                pane name="Ashigaru-7"
+                pane name="Gunshi"
+            }
+        }
+    }
+}

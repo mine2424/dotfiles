@@ -17,80 +17,16 @@
 
 ## インストール済みアプリケーション一覧
 
-### Homebrew パッケージ（CLI/開発ツール）
+2026-10-16の実機棚卸しは [ローカルPC棚卸し](../local-pc-audit.md) を参照。
 
-| パッケージ | 用途 |
-|-----------|------|
-| `neovim` | メインエディタ |
-| `ripgrep` | 高速テキスト検索（Telescope等で使用） |
-| `fd` | 高速ファイル検索 |
-| `lazygit` | TUI Git クライアント |
-| `imagemagick` | 画像変換（Neovim用） |
-| `tectonic` | LaTeX エンジン |
-| `luarocks` | Lua パッケージマネージャ |
-| `git` | バージョン管理 |
-| `zellij` | ターミナルワークスペース（メイン） |
-| `fzf` | ファジーファインダー |
-| `bat` | `cat` 代替（シンタックスハイライト付き） |
-| `eza` | `ls` 代替（アイコン・色付き） |
-| `zsh` | シェル |
-| `sheldon` | Zsh プラグインマネージャ |
-| `starship` | クロスシェルプロンプト |
-| `mise` | ランタイムバージョンマネージャ（node, python等） |
-| `mas` | Mac App Store CLI（Brewfile 自動取得用） |
+- Homebrewの導入対象: `Brewfile`
+- Node/Python/Goの採用バージョン: `mise/config.toml`
+- npmグローバルツール: `npm/packages.txt`（miseのNode環境）
+- Cursor拡張: `cursor/extensions.txt`
+- GUIアプリ名の参考一覧: `docs/local-applications.txt`
+- Claude CodeはこのPCではネイティブ版。旧npm版との重複導入は避け、公式手順で再導入する。
 
-### Homebrew Cask（GUI アプリ）
-
-| アプリ | 用途 |
-|--------|------|
-| `ghostty` | メインターミナル（高速、GPU加速） |
-| `wezterm` | サブターミナル（クロスプラットフォーム） |
-
-### Mac App Store アプリ
-
-> `brew bundle dump` の実行後、Brewfile の `mas` エントリで確認できる。
-> 以下は覚書として手動管理。
-
-| アプリ名 | 用途 |
-|---------|------|
-| Xcode | iOS/macOS 開発（必要に応じて） |
-| Keynote / Pages / Numbers | Apple Office スイート |
-| 1Password | パスワードマネージャ（App Store版） |
-| Slack | コミュニケーション |
-| LINE | コミュニケーション |
-
-> 実際の一覧は `backup.sh --brew` 後の Brewfile 内 `mas` エントリを参照。
-
-### 手動インストール（パッケージマネージャ外）
-
-| アプリ | 入手先 | 備考 |
-|--------|--------|------|
-| [Cursor](https://cursor.sh/) | 公式サイト | Claude Code 併用エディタ |
-| [Claude Code](https://claude.ai/claude-code) | `npm install -g @anthropic-ai/claude-code` | AI コーディング CLI |
-| [Moralerspace フォント](https://github.com/yuru7/moralerspace) | GitHub Releases | プログラミング向け日英混植フォント |
-
-### npm グローバルパッケージ
-
-> `backup.sh --npm` 後の `npm/packages.txt` を参照。
-> 以下は覚書。
-
-| パッケージ | 用途 |
-|-----------|------|
-| `@anthropic-ai/claude-code` | Claude Code CLI |
-| `tree-sitter-cli` | Neovim Treesitter 用 |
-| `@mermaid-js/mermaid-cli` | Mermaid ダイアグラム生成 |
-
-### mise で管理するランタイム
-
-> `backup.sh --mise` 後の `mise/installed-versions.txt` を参照。
-> 以下は覚書。
-
-| ランタイム | 用途 |
-|-----------|------|
-| `node` | JavaScript/TypeScript 開発 |
-| `python` | Python 開発 |
-| `ruby` | Ruby 開発 |
-| `go` | Go 開発 |
+BrewfileはHomebrew管理対象のみ。手動導入アプリ、ライセンス、ログイン、証明書は別途復元する。
 
 ---
 
@@ -220,7 +156,7 @@ ls gcloud/
 
 - [ ] **Cursor** — [cursor.sh](https://cursor.sh/) からダウンロード
 - [ ] **Moralerspace フォント** — [GitHub Releases](https://github.com/yuru7/moralerspace/releases) からダウンロードしてインストール
-- [ ] **Claude Code** — `npm install -g @anthropic-ai/claude-code` で自動インストール済みのはず
+- [ ] **Claude Code** — ネイティブ版を公式手順で再導入し、ログインを確認
 - [ ] **SSH 秘密鍵** — 安全な方法（AirDrop など）で手動転送
 - [ ] **`.env` ファイル** — 各プロジェクトで手動再設定
 - [ ] **API キー・シークレット** — 1Password などから取得して再設定

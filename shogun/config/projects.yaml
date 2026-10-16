@@ -1,0 +1,11 @@
+# プロジェクト登録簿
+# shogun-init で初期化したプロジェクトを登録する
+#
+# 例:
+# projects:
+#   - id: my-app
+#     name: My Application
+#     path: ~/development/my-app
+#     description: メインのWebアプリケーション
+
+projects: []

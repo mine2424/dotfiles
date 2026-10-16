@@ -19,6 +19,7 @@
 ./setup.sh --shell       # Zsh + Starship
 ./setup.sh --terminal    # Ghostty + WezTerm
 ./setup.sh --cli         # Git, Zellij, Yazi 等
+./setup.sh --desktop     # Cursor + Zed
 ./setup.sh --claude      # Claude 設定
 ./setup.sh --ssh         # SSH 設定（~/.ssh/config）
 ./setup.sh --macos       # macOS システム設定
@@ -52,6 +53,17 @@
 ./verify-setup.sh    # すべての検証テストを実行
 ```
 
+### disk-cleanup.sh
+キャッシュや再生成可能なファイルを削除してディスク容量を回復する。詳細は [docs/disk-maintenance.md](../docs/disk-maintenance.md) を参照。
+
+```bash
+./disk-cleanup.sh                   # 容量レポートのみ（デフォルト）
+./disk-cleanup.sh --safe            # 再生成可能なキャッシュを削除
+./disk-cleanup.sh --deep            # + 古いシミュレータ / worktree / 放置 node_modules 等
+./disk-cleanup.sh --deep --dry-run  # ドライラン
+./disk-cleanup.sh --help
+```
+
 ## 移行手順
 
 新しい Mac への移行は [docs/guides/migration.md](../docs/guides/migration.md) を参照。
@@ -63,3 +75,17 @@
 - **環境セットアップ**: setup.sh
 - **検証**: verify-setup.sh
 - **同期**: sync.sh
+- **ディスクメンテナンス**: disk-cleanup.sh
+
+## ファイル単位の設定適用
+
+`config-files.json` に明示した11ファイルだけを `config-files.py` で比較・適用します。
+
+```bash
+python3 scripts/config-files.py audit
+python3 scripts/config-files.py apply --dry-run
+python3 scripts/config-files.py apply --group desktop
+python3 -m unittest discover -s scripts/tests -v
+```
+
+詳細は [ローカルPC棚卸し](../docs/local-pc-audit.md) を参照。Codex/Claudeのホーム全体は同期しません。Codexのconfig.tomlとClaudeのsettingsは手動レビュー対象です。検証コマンドは20秒でタイムアウトし、失敗・警告を最後に集計します。

@@ -472,6 +472,11 @@ export LESS='-R -F -X -i --mouse'
 # Tool Integrations
 # ========================================
 
+# mise runtime switching for interactive shells
+if command -v mise &> /dev/null; then
+    eval "$(mise activate zsh)"
+fi
+
 # Direnv
 if command -v direnv &> /dev/null; then
     eval "$(direnv hook zsh)"
@@ -517,7 +522,12 @@ if [[ -d "$HOME/Downloads/google-cloud-sdk" ]]; then
   [[ -r "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc" ]] && source "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc"
 fi
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/mine2424/.docker/completions $fpath)
+fpath=("$HOME/.docker/completions" $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f "$HOME/.config/.dart-cli-completion/zsh-config.zsh" ]] && source "$HOME/.config/.dart-cli-completion/zsh-config.zsh" || true
+## [/Completion]

@@ -1,0 +1,198 @@
+#!/usr/bin/env bash
+# shogun-sync - multi-agent-shogun の upstream 管理
+set -euo pipefail
+
+readonly SHOGUN_HOME="${SHOGUN_HOME:-$HOME/.local/share/shogun}"
+readonly UPSTREAM_DIR="$SHOGUN_HOME/upstream"
+readonly UPSTREAM_REPO="https://github.com/yohey-w/multi-agent-shogun.git"
+readonly REF_FILE="$SHOGUN_HOME/.upstream-ref"
+
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly RED='\033[0;31m'
+readonly CYAN='\033[0;36m'
+readonly NC='\033[0m'
+
+log_info()  { echo -e "${GREEN}[shogun-sync]${NC} $*"; }
+log_warn()  { echo -e "${YELLOW}[shogun-sync]${NC} $*"; }
+log_error() { echo -e "${RED}[shogun-sync]${NC} $*" >&2; }
+
+show_usage() {
+    cat <<'EOF'
+使用方法: shogun-sync <サブコマンド>
+
+multi-agent-shogun の upstream を管理します。
+
+サブコマンド:
+  pull       upstream の最新を取得
+  status     現在のバージョンと最新を比較表示
+  install    キャッシュから再インストール・マージ
+
+例:
+  shogun-sync pull      # 最新取得
+  shogun-sync status    # バージョン確認
+  shogun-sync install   # 再インストール
+EOF
+}
+
+# upstream を clone または pull
+sync_pull() {
+    if [[ -d "$UPSTREAM_DIR/.git" ]]; then
+        log_info "upstream を更新しています..."
+        git -C "$UPSTREAM_DIR" fetch origin
+        git -C "$UPSTREAM_DIR" pull origin main
+    else
+        log_info "upstream を clone しています..."
+        mkdir -p "$UPSTREAM_DIR"
+        git clone "$UPSTREAM_REPO" "$UPSTREAM_DIR"
+    fi
+
+    # コミットハッシュを記録
+    local ref
+    ref="$(git -C "$UPSTREAM_DIR" rev-parse HEAD)"
+    echo "$ref" > "$REF_FILE"
+    log_info "upstream ref: ${ref:0:12}"
+}
+
+# バージョン状態を表示
+sync_status() {
+    echo -e "${CYAN}=== shogun-sync status ===${NC}"
+
+    if [[ ! -d "$UPSTREAM_DIR/.git" ]]; then
+        log_warn "upstream がまだ clone されていません"
+        log_warn "shogun-sync pull を実行してください"
+        return
+    fi
+
+    local current_ref="(不明)"
+    if [[ -f "$REF_FILE" ]]; then
+        current_ref="$(cat "$REF_FILE")"
+    fi
+
+    local upstream_ref
+    git -C "$UPSTREAM_DIR" fetch origin --quiet 2>/dev/null || true
+    upstream_ref="$(git -C "$UPSTREAM_DIR" rev-parse origin/main 2>/dev/null || echo '(取得失敗)')"
+
+    echo ""
+    echo "  インストール済み: ${current_ref:0:12}"
+    echo "  最新 (origin):    ${upstream_ref:0:12}"
+
+    if [[ "$current_ref" == "$upstream_ref" ]]; then
+        log_info "最新の状態です"
+    else
+        log_warn "更新があります。shogun-sync pull && shogun-sync install を実行してください"
+    fi
+
+    echo ""
+    echo "  upstream: $UPSTREAM_REPO"
+    echo "  キャッシュ: $UPSTREAM_DIR"
+    echo "  インストール先: $SHOGUN_HOME"
+}
+
+# キャッシュから再インストール
+sync_install() {
+    if [[ ! -d "$UPSTREAM_DIR" ]]; then
+        log_error "upstream がありません。先に shogun-sync pull を実行してください"
+        exit 1
+    fi
+
+    log_info "upstream からインストールしています..."
+
+    # lib/ と scripts/ をコピー
+    for dir in lib scripts; do
+        if [[ -d "$UPSTREAM_DIR/$dir" ]]; then
+            rm -rf "${SHOGUN_HOME:?}/$dir"
+            cp -r "$UPSTREAM_DIR/$dir" "$SHOGUN_HOME/$dir"
+            # シェルスクリプトに実行権限
+            find "$SHOGUN_HOME/$dir" -name "*.sh" -exec chmod +x {} \;
+            log_info "$dir/ をコピーしました"
+        fi
+    done
+
+    # instructions をマージ（upstream ベース + dotfiles オーバーライド）
+    if [[ -d "$UPSTREAM_DIR/instructions" ]]; then
+        rm -rf "${SHOGUN_HOME:?}/instructions"
+        cp -r "$UPSTREAM_DIR/instructions" "$SHOGUN_HOME/instructions"
+        log_info "instructions/ をコピーしました（upstream）"
+    fi
+
+    # dotfiles 側のカスタム instructions をオーバーレイ
+    local dotfiles_instructions
+    dotfiles_instructions="$(find_dotfiles_dir)/shogun/instructions"
+    if [[ -d "$dotfiles_instructions" ]] && [[ -n "$(ls -A "$dotfiles_instructions" 2>/dev/null)" ]]; then
+        cp -r "$dotfiles_instructions"/* "$SHOGUN_HOME/instructions/"
+        log_info "カスタム instructions をオーバーレイしました"
+    fi
+
+    # skills をマージ
+    if [[ -d "$UPSTREAM_DIR/skills" ]]; then
+        rm -rf "${SHOGUN_HOME:?}/skills"
+        cp -r "$UPSTREAM_DIR/skills" "$SHOGUN_HOME/skills"
+        log_info "skills/ をコピーしました（upstream）"
+    fi
+
+    local dotfiles_skills
+    dotfiles_skills="$(find_dotfiles_dir)/shogun/skills"
+    if [[ -d "$dotfiles_skills" ]] && [[ -n "$(ls -A "$dotfiles_skills" 2>/dev/null)" ]]; then
+        cp -r "$dotfiles_skills"/* "$SHOGUN_HOME/skills/"
+        log_info "カスタム skills をオーバーレイしました"
+    fi
+
+    # config をマージ（dotfiles 側が優先）
+    if [[ -d "$UPSTREAM_DIR/config" ]]; then
+        mkdir -p "$SHOGUN_HOME/config"
+        cp -r "$UPSTREAM_DIR/config"/* "$SHOGUN_HOME/config/" 2>/dev/null || true
+        log_info "config/ をコピーしました（upstream ベース）"
+    fi
+
+    local dotfiles_config
+    dotfiles_config="$(find_dotfiles_dir)/shogun/config"
+    if [[ -d "$dotfiles_config" ]]; then
+        cp -r "$dotfiles_config"/* "$SHOGUN_HOME/config/"
+        log_info "カスタム config をオーバーレイしました（dotfiles 優先）"
+    fi
+
+    # Python venv
+    if [[ ! -d "$SHOGUN_HOME/.venv" ]]; then
+        log_info "Python venv を作成しています..."
+        python3 -m venv "$SHOGUN_HOME/.venv"
+        "$SHOGUN_HOME/.venv/bin/pip" install --quiet PyYAML
+        log_info "venv を作成しました"
+    fi
+
+    log_info "インストール完了"
+}
+
+# dotfiles ルートを探す
+find_dotfiles_dir() {
+    local dir="$HOME/development/dotfiles"
+    if [[ -d "$dir" ]]; then
+        echo "$dir"
+        return
+    fi
+    # フォールバック: スクリプトの相対位置から推定
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    echo "$(cd "$script_dir/../.." && pwd)"
+}
+
+main() {
+    if [[ $# -eq 0 ]]; then
+        show_usage
+        exit 1
+    fi
+
+    case "$1" in
+        pull)    sync_pull ;;
+        status)  sync_status ;;
+        install) sync_install ;;
+        -h|--help) show_usage ;;
+        *)
+            log_error "不明なサブコマンド: $1"
+            show_usage
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

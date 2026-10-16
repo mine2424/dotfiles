@@ -1,0 +1,10 @@
+[user]
+	name = mine2424
+	email = 66231271+mine2424@users.noreply.github.com
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

@@ -94,12 +94,18 @@ if [[ -d "$HOME/development/flutter" ]]; then
     path_prepend "$HOME/development/flutter/bin"
 fi
 
+# Docker Desktop
+path_append "$HOME/.docker/bin"
+
 # Pub cache
 if [[ -d "$HOME/.pub-cache/bin" ]]; then
     path_append "$HOME/.pub-cache/bin"
 fi
 
 # ========================================
+# mise shims keep non-interactive login shells on the configured runtimes.
+path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"
+
 # Export PATH
 # ========================================
 

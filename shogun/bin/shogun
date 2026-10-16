@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+# shogun - multi-agent-shogun を Zellij で起動するラッパー
+# tmux の代わりに Zellij レイアウトを使用する
+set -euo pipefail
+
+readonly SHOGUN_HOME="${SHOGUN_HOME:-$HOME/.local/share/shogun}"
+readonly SHOGUN_SESSION="shogun"
+readonly SHOGUN_LAYOUT="shogun"
+
+# カラー出力
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly CYAN='\033[0;36m'
+readonly NC='\033[0m'
+
+log_info()  { echo -e "${GREEN}[shogun]${NC} $*"; }
+log_warn()  { echo -e "${YELLOW}[shogun]${NC} $*"; }
+log_error() { echo -e "${RED}[shogun]${NC} $*" >&2; }
+
+show_usage() {
+    cat <<'EOF'
+使用方法: shogun [オプション]
+
+Ghostty + Zellij でマルチエージェントセッションを起動します。
+
+オプション:
+  --kessen       決戦モード（全エージェントに Opus モデルを使用）
+  --clean        キューをクリアしてから起動
+  --silent       起動メッセージを抑制
+  --status       現在のエージェント状態を表示
+  --stop         shogun セッションを終了
+  -h, --help     このヘルプを表示
+
+例:
+  shogun                 # 通常起動
+  shogun --kessen        # 全エージェント Opus モード
+  shogun --clean         # キュー初期化 + 起動
+  shogun --status        # エージェント状態確認
+  shogun --stop          # セッション終了
+EOF
+}
+
+# 前提条件チェック
+check_prerequisites() {
+    local missing=()
+    command -v zellij >/dev/null 2>&1 || missing+=("zellij")
+    command -v claude >/dev/null 2>&1 || missing+=("claude-code")
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "必要なコマンドがありません: ${missing[*]}"
+        log_error "brew install ${missing[*]} でインストールしてください"
+        exit 1
+    fi
+
+    if [[ ! -d "$SHOGUN_HOME" ]]; then
+        log_error "shogun がインストールされていません"
+        log_error "dotfiles/scripts/setup.sh --shogun を実行してください"
+        exit 1
+    fi
+}
+
+# プロジェクトの .shogun/ チェック
+check_project() {
+    if [[ ! -d ".shogun" ]]; then
+        log_warn ".shogun/ ディレクトリが見つかりません"
+        log_warn "shogun-init を実行してプロジェクトを初期化してください"
+        exit 1
+    fi
+}
+
+# キューをクリア
+clean_queue() {
+    log_info "キューをクリアしています..."
+    rm -f .shogun/queue/*.yaml .shogun/queue/inbox/*.yaml 2>/dev/null || true
+    log_info "キューをクリアしました"
+}
+
+# エージェント状態を表示
+show_status() {
+    if ! zellij list-sessions 2>/dev/null | grep -q "$SHOGUN_SESSION"; then
+        log_warn "shogun セッションは起動していません"
+        exit 0
+    fi
+
+    log_info "=== エージェント状態 ==="
+    if [[ -f ".shogun/dashboard.md" ]]; then
+        cat .shogun/dashboard.md
+    else
+        log_warn "dashboard.md が見つかりません"
+    fi
+}
+
+# セッション終了
+stop_session() {
+    if zellij list-sessions 2>/dev/null | grep -q "$SHOGUN_SESSION"; then
+        zellij kill-session "$SHOGUN_SESSION"
+        log_info "shogun セッションを終了しました"
+    else
+        log_warn "shogun セッションは起動していません"
+    fi
+}
+
+# CLI コマンドを構築
+build_agent_command() {
+    local role="$1"
+    local kessen="${2:-false}"
+    local project_dir
+    project_dir="$(pwd)"
+
+    local cli_cmd="claude"
+    local model_flag=""
+
+    if [[ "$kessen" == "true" ]]; then
+        model_flag="--model opus"
+    else
+        case "$role" in
+            Shogun|Gunshi)
+                model_flag="--model opus"
+                ;;
+            *)
+                model_flag="--model sonnet"
+                ;;
+        esac
+    fi
+
+    # upstream の instructions を参照
+    local instruction_file="$SHOGUN_HOME/instructions"
+    local role_lower
+    role_lower="$(echo "$role" | tr '[:upper:]' '[:lower:]' | sed 's/ashigaru-.*/ashigaru/')"
+
+    local instruction_flag=""
+    if [[ -f "$instruction_file/${role_lower}.md" ]]; then
+        instruction_flag="--system-prompt \"$(cat "$instruction_file/${role_lower}.md")\""
+    fi
+
+    echo "$cli_cmd $model_flag"
+}
+
+# Zellij セッション起動
+start_session() {
+    local kessen="$1"
+    local silent="$2"
+
+    # 既存セッションチェック
+    if zellij list-sessions 2>/dev/null | grep -q "$SHOGUN_SESSION"; then
+        log_info "既存の shogun セッションにアタッチします"
+        zellij attach "$SHOGUN_SESSION"
+        return
+    fi
+
+    if [[ "$silent" != "true" ]]; then
+        echo -e "${CYAN}"
+        cat <<'BANNER'
+  ┌─────────────────────────────────────┐
+  │     ⚔️  MULTI-AGENT SHOGUN  ⚔️      │
+  │     Ghostty + Zellij Edition       │
+  │                                     │
+  │  将軍の号令一下、全軍出陣！         │
+  └─────────────────────────────────────┘
+BANNER
+        echo -e "${NC}"
+
+        if [[ "$kessen" == "true" ]]; then
+            log_info "🔥 決戦モード: 全エージェント Opus"
+        fi
+    fi
+
+    log_info "Zellij セッションを起動しています..."
+
+    # Zellij レイアウトでセッション起動
+    zellij --session "$SHOGUN_SESSION" --layout "$SHOGUN_LAYOUT"
+}
+
+# メイン
+main() {
+    local kessen=false
+    local clean=false
+    local silent=false
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --kessen)  kessen=true;  shift ;;
+            --clean)   clean=true;   shift ;;
+            --silent)  silent=true;  shift ;;
+            --status)  check_project; show_status; exit 0 ;;
+            --stop)    stop_session; exit 0 ;;
+            -h|--help) show_usage; exit 0 ;;
+            *)
+                log_error "不明なオプション: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+
+    check_prerequisites
+    check_project
+
+    if [[ "$clean" == "true" ]]; then
+        clean_queue
+    fi
+
+    start_session "$kessen" "$silent"
+}
+
+main "$@"

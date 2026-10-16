@@ -1,1 +1,2 @@
-prefix=/Users/mine/.npm-global
+# Global packages use the active Node installation managed by mise.
+# Do not hard-code a user-specific prefix here.

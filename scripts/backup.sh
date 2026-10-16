@@ -37,6 +37,7 @@ show_usage() {
   --npm              npmグローバルパッケージ一覧をバックアップ
   --macos            macOSシステム設定をバックアップ
   --mise             miseインストール済みバージョンをバックアップ
+  --shogun           shogun設定をバックアップ
 
 オプション:
   --dry-run          実際には実行せず、何が行われるか表示
@@ -94,6 +95,10 @@ parse_arguments() {
                 COMPONENT="mise"
                 shift
                 ;;
+            --shogun)
+                COMPONENT="shogun"
+                shift
+                ;;
             --dry-run)
                 DRY_RUN=true
                 shift
@@ -138,6 +143,7 @@ confirm_backup() {
             echo "  - npmグローバルパッケージ → npm/packages.txt"
             echo "  - macOSシステム設定 → macos/defaults.sh"
             echo "  - miseバージョン情報 → mise/installed-versions.txt"
+            echo "  - shogun設定 → shogun/config/"
             ;;
         brew)
             echo "  - Brewパッケージ一覧 → Brewfile"
@@ -156,6 +162,9 @@ confirm_backup() {
             ;;
         mise)
             echo "  - miseバージョン情報 → mise/installed-versions.txt"
+            ;;
+        shogun)
+            echo "  - shogun設定 → shogun/config/"
             ;;
     esac
 
@@ -343,12 +352,16 @@ backup_npm() {
     safe_mkdir "$dotfiles_root/npm" || return 1
 
     log_info "npmグローバルパッケージ一覧を取得中..."
-    # npm自身を除外し、パッケージ名のみ保存
-    npm list -g --depth=0 --parseable 2>/dev/null \
-        | tail -n +2 \
-        | sed 's|.*/||' \
-        | grep -v '^npm$' \
-        > "$npm_dest"
+    # JSON keeps scoped names intact. A failed listing must not truncate the backup.
+    local listing tmp_packages
+    listing="$(npm list -g --depth=0 --json)" || return 1
+    tmp_packages="$(mktemp "$dotfiles_root/npm/packages.XXXXXX")" || return 1
+    if printf '%s' "$listing" | jq -r '(.dependencies // {}) | keys[] | select(. != "npm" and . != "corepack")' > "$tmp_packages"; then
+        mv "$tmp_packages" "$npm_dest"
+    else
+        log_error "npmパッケージ一覧の解析に失敗しました: $tmp_packages"
+        return 1
+    fi
 
     local count
     count=$(wc -l < "$npm_dest" | tr -d ' ')
@@ -475,6 +488,33 @@ backup_mise() {
 #######################################
 # すべてをバックアップ
 #######################################
+backup_shogun() {
+    log_section "shogun設定のバックアップ"
+
+    local shogun_home="$HOME/.local/share/shogun"
+
+    if [[ ! -d "$shogun_home/config" ]]; then
+        log_warn "shogun設定が見つかりません: $shogun_home/config"
+        return 0
+    fi
+
+    local dotfiles_root
+    dotfiles_root="$(get_dotfiles_root)"
+    local shogun_dest="$dotfiles_root/shogun/config"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY RUN] shogun設定をバックアップ: $shogun_home/config → $shogun_dest"
+        return 0
+    fi
+
+    safe_mkdir "$shogun_dest" || return 1
+
+    log_info "shogun設定をバックアップ中..."
+    cp "$shogun_home/config/settings.yaml" "$shogun_dest/settings.yaml" 2>/dev/null || true
+    cp "$shogun_home/config/projects.yaml" "$shogun_dest/projects.yaml" 2>/dev/null || true
+    log_success "shogun設定をバックアップしました: $shogun_dest"
+}
+
 backup_all() {
     backup_brew
     backup_gcloud
@@ -482,6 +522,7 @@ backup_all() {
     backup_npm
     backup_macos
     backup_mise
+    backup_shogun
 }
 
 #######################################
@@ -519,6 +560,9 @@ show_summary() {
                 ;;
             mise)
                 echo "  git add mise/installed-versions.txt"
+                ;;
+            shogun)
+                echo "  git add shogun/config/"
                 ;;
         esac
         echo "  git commit -m \"backup: update system snapshot\""
@@ -569,6 +613,9 @@ main() {
             ;;
         mise)
             backup_mise
+            ;;
+        shogun)
+            backup_shogun
             ;;
         *)
             log_error "不明なコンポーネント: $COMPONENT"

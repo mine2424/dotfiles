@@ -1,0 +1,49 @@
+# /Applications application names observed on 2026-10-16
+# Inventory only; licensing and installation methods differ.
+.Karabiner-VirtualHIDDevice-Manager.app
+Amazon Kindle.app
+Android Studio.app
+ChatGPT Classic.app
+ChatGPT.app
+Claude.app
+Cursor.app
+Dia.app
+Discord.app
+Docker.app
+Figma.app
+FormMaster.app
+Gemini.app
+Ghostty.app
+GitHub Desktop.app
+Go Kart Racing.app
+Google Chrome.app
+Google Docs.app
+Google Drive.app
+Google Sheets.app
+Google Slides.app
+Karabiner-Elements.app
+Karabiner-EventViewer.app
+LINE.app
+Logic Pro.app
+Microsoft 365 Copilot.app
+Microsoft Defender Shim.app
+Microsoft Edge.app
+Microsoft Excel.app
+Microsoft PowerPoint.app
+Microsoft Word.app
+Notion.app
+Numbers Creator Studio.app
+OneDrive.app
+Orca.app
+RunCatNeo.app
+Safari.app
+Slack.app
+T-DASH Pro.app
+Unity Hub.app
+WezTerm.app
+Xcode.app
+Zed.app
+balenaEtcher.app
+logioptionsplus.app
+osaurus.app
+zoom.us.app

@@ -1,5 +1,7 @@
-model = "gpt-5.3-codex"
-model_reasoning_effort = "high"
+# Portable baseline. Keep account, app, project trust and MCP credentials local.
+# Model/effort reflect the locally selected defaults observed on 2026-10-16.
+model = "gpt-6.1-sol"
+model_reasoning_effort = "medium"
 web_search = "live"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
@@ -8,10 +10,7 @@ sandbox_mode = "danger-full-access"
 network_access = true
 
 # macOS desktop notification for Codex task completion.
-notify = ["bash", "/Users/mine/.codex/notify_macos.sh"]
-
-[features]
-skills = true
+notify = ["sh", "-c", 'exec bash "$HOME/.codex/notify_macos.sh" "$@"', "codex-notify"]
 
 [mcp_servers.context7]
 command = "npx"

@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+# shogun-init - プロジェクトに .shogun/ ディレクトリを初期化する
+set -euo pipefail
+
+readonly SHOGUN_HOME="${SHOGUN_HOME:-$HOME/.local/share/shogun}"
+
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly RED='\033[0;31m'
+readonly NC='\033[0m'
+
+log_info()  { echo -e "${GREEN}[shogun-init]${NC} $*"; }
+log_warn()  { echo -e "${YELLOW}[shogun-init]${NC} $*"; }
+log_error() { echo -e "${RED}[shogun-init]${NC} $*" >&2; }
+
+show_usage() {
+    cat <<'EOF'
+使用方法: shogun-init [オプション]
+
+現在のプロジェクトディレクトリに .shogun/ を初期化します。
+
+オプション:
+  --force    既存の .shogun/ を上書き
+  -h, --help このヘルプを表示
+
+作成されるディレクトリ構成:
+  .shogun/
+    queue/           # エージェント間 YAML 通信
+    queue/inbox/     # エージェント別メールボックス
+    reports/         # 作業レポート
+    context/         # プロジェクトコンテキスト
+    dashboard.md     # エージェント状態ボード
+EOF
+}
+
+create_dashboard_template() {
+    local project_name
+    project_name="$(basename "$(pwd)")"
+
+    cat <<EOF
+# Shogun Dashboard - ${project_name}
+
+## エージェント状態
+
+| エージェント | 状態 | 現在のタスク |
+|-------------|------|-------------|
+| Karo        | 待機中 | - |
+| Ashigaru-1  | 待機中 | - |
+| Ashigaru-2  | 待機中 | - |
+| Ashigaru-3  | 待機中 | - |
+| Ashigaru-4  | 待機中 | - |
+| Ashigaru-5  | 待機中 | - |
+| Ashigaru-6  | 待機中 | - |
+| Ashigaru-7  | 待機中 | - |
+| Gunshi      | 待機中 | - |
+
+## 最近のコマンド
+
+_まだコマンドはありません_
+EOF
+}
+
+add_to_gitignore() {
+    local gitignore=".gitignore"
+
+    if [[ ! -f "$gitignore" ]]; then
+        echo ".shogun/" > "$gitignore"
+        log_info ".gitignore を作成し .shogun/ を追加しました"
+        return
+    fi
+
+    if grep -qF ".shogun/" "$gitignore" 2>/dev/null; then
+        log_info ".gitignore に .shogun/ は既に含まれています"
+        return
+    fi
+
+    echo "" >> "$gitignore"
+    echo "# multi-agent-shogun runtime" >> "$gitignore"
+    echo ".shogun/" >> "$gitignore"
+    log_info ".gitignore に .shogun/ を追加しました"
+}
+
+init_project() {
+    local force="$1"
+
+    if [[ -d ".shogun" ]] && [[ "$force" != "true" ]]; then
+        log_warn ".shogun/ は既に存在します（--force で上書き）"
+        exit 1
+    fi
+
+    log_info "プロジェクトを初期化しています: $(pwd)"
+
+    # ディレクトリ作成
+    mkdir -p .shogun/queue/inbox
+    mkdir -p .shogun/reports
+    mkdir -p .shogun/context
+
+    # ダッシュボードテンプレート
+    create_dashboard_template > .shogun/dashboard.md
+
+    # .gitignore 更新
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        add_to_gitignore
+    fi
+
+    # upstream の instructions, CLAUDE.md テンプレートがあればコピー
+    if [[ -d "$SHOGUN_HOME/instructions" ]]; then
+        log_info "upstream instructions を参照可能: $SHOGUN_HOME/instructions/"
+    fi
+
+    log_info "初期化完了"
+    echo ""
+    log_info "次のステップ:"
+    log_info "  shogun          # エージェントセッションを起動"
+    log_info "  shogun --kessen # 決戦モード（全 Opus）で起動"
+}
+
+main() {
+    local force=false
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --force)   force=true; shift ;;
+            -h|--help) show_usage; exit 0 ;;
+            *)
+                log_error "不明なオプション: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+
+    if [[ ! -d "$SHOGUN_HOME" ]]; then
+        log_error "shogun がインストールされていません"
+        log_error "dotfiles/scripts/setup.sh --shogun を実行してください"
+        exit 1
+    fi
+
+    init_project "$force"
+}
+
+main "$@"
