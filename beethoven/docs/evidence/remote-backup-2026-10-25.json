@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-25",
+  "repository": "mine2424/beethoven-backup",
+  "private": true,
+  "snapshotId": "9ce2e132-8501-4acf-9f21-3b08719b062c",
+  "sha256": "29424115e3f8d9ce530b67276fb9db4f430b9130eacab08e23e5e84a0c40127e",
+  "remoteVerified": true,
+  "repeatedUploadSameBlob": true,
+  "downloadVerified": true,
+  "restoreVerified": true,
+  "originalUnavailable": true,
+  "restoredTokens": 4466,
+  "restoredApprovals": 0,
+  "fixture": "previous P8 real-model cart fix, not current production state",
+  "sourceVerified": true,
+  "credentialsUploaded": false,
+  "privateKeyUploaded": false,
+  "offDeviceKeyCustodyVerified": false,
+  "ciAcceptance": "waived by user on 2026-10-25; not represented as CI success",
+  "keyManagement": "decision pending; direct iCloud Keychain prototype rejected by OSStatus -34018, not adopted",
+  "productionStateBackedUp": false
+}

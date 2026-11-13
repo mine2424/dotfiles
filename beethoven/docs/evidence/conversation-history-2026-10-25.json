@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "persistent prompt reuse and saved conversation browsing/resume",
+  "storage": {
+    "sqliteSchemaVersion": 2,
+    "migration": false,
+    "existingPiArchivesPreserved": true,
+    "defaultScope": "canonical current working directory",
+    "promptHistory": "prompt_submitted events plus deduplicated legacy turns",
+    "responseCaptureLimitCharacters": 256000,
+    "visibleMessages": 100,
+    "visibleMessageLimitCharacters": 64000,
+    "legacyArchiveReadLimitBytes": 16777216
+  },
+  "verification": {
+    "typescript": "passed",
+    "nodeTests": {
+      "passed": 94,
+      "failed": 0,
+      "log": "/tmp/beethoven-history-tests.log"
+    },
+    "existingConnectAndAuthPtyConditions": 16,
+    "dialoguePtyScenarios": [
+      "success",
+      "budget",
+      "runtime",
+      "worker"
+    ],
+    "historyPty": {
+      "status": "passed",
+      "checks": [
+        "restart then Up recalls persisted input",
+        "no request until Enter",
+        "Ctrl+R filters by prompt text rather than opaque ID",
+        "selection restores editable input without sending",
+        "switch original Session and restore public response",
+        "continue original Session then restart with resume",
+        "persisted submissions exactly match explicitly sent prompts"
+      ],
+      "log": "/tmp/beethoven-history-restart.log"
+    },
+    "unitChecks": [
+      "multiline/repeated prompt roundtrip",
+      "failed-before-turn submission retained",
+      "legacy turn deduplication",
+      "literal SQL search and workspace isolation",
+      "readonly CLI absent-state no creation",
+      "legacy archive public text without thinking",
+      "symlink archive rejected without rewriting",
+      "SDK public responses persisted with model attribution",
+      "picker cancel draft preservation and no queued submission"
+    ],
+    "liveProviderRequests": 0,
+    "testTransport": "actual Pi 1.4.0 SDK with scripted faux provider; native PTYs; no real provider calls"
+  },
+  "limitations": [
+    "human everyday-use and actual IME acceptance not performed",
+    "history and archive stored locally in plaintext",
+    "bounded history display; original Pi archive retained",
+    "P4 full backup/restore remains separate"
+  ],
+  "sourceHashes": {
+    "src/history.ts": "34467b0bf8be779f7b8c4618bc19638ab7579b798c27f36d531fbe3d6a8de4b1",
+    "src/session.ts": "0d5af104d07971dfdb2b0feb95db9aacb63dd8807fb833126173da4bea84f4cc",
+    "src/agent.ts": "c5c452b8a6e830d771c3c50b6711e764a800e1b56a09bb6936f8dafa76d9932a",
+    "src/dialogue.ts": "37b219c279c64fc18c8f858d499afc4aee1e7b5d9defbc6c475af3ef80881a74",
+    "src/tui.ts": "ef7a074ac04e3423eaa8a6b5ead2202297dcdc8b6616c6f7d1a9142aa4d3915d",
+    "src/cli.ts": "f0dda49c018dc6f7266b73fe3d64ccab1ae924e22df802636429604de95bb7f9",
+    "tests/history.test.ts": "7e4bad2f396592b0d2644c0e4a11e3fa9b9d1dc4d87a0c429951260d8d5508c2",
+    "tests/tui.test.ts": "0f3a967cc91646e6b2abf6153d0f01dc36bbbba64c1bf8b53e05e61d171ee919",
+    "tests/agent.test.ts": "49219169646269f9aa764842e892398efe60a8363817e0e34f9ef648ffb025df",
+    "tests/dialogue-child.ts": "a1eb11c9d1a3180ff53dfe6871684d188508dedb312f6b1d969631152c4dc11d",
+    "scripts/check-dialogue-pty.py": "856556354bc80b9bff76653e23b6f50d3f2b5b61519a9c0a7f697d72261cc503"
+  }
+}

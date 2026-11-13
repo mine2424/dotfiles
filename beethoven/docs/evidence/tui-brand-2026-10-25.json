@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "logo-inspired TUI visual refinement",
+  "references": {
+    "kind": "user-provided local logo assets",
+    "inspectedRepresentativeAssets": [
+      "01_dark_stacked_tagline_bg.png",
+      "04_dark_wordmark_bg.png",
+      "05_light_horizontal_tagline_bg.png",
+      "09_app_icon_dark_bg.png",
+      "11_monochrome_mark_bg.png",
+      "12_gold_symbol_bg.png",
+      "19_app_icon_mockup_dark_bg.png",
+      "20_mockup_wordmark_white_bg.png"
+    ]
+  },
+  "changes": [
+    "shared semantic navy/ivory/gold tokens",
+    "lowercase brand, sparkle and tagline",
+    "aligned model, account, workspace and session header",
+    "conversation spacing and semantic tool states",
+    "worker dock and responsive usage rows",
+    "branded connection and secret panels with exclusive keyboard focus",
+    "dark/light/mono and NO_COLOR support"
+  ],
+  "validation": {
+    "build": "passed",
+    "typecheck": "passed",
+    "relatedNodeTests": {
+      "passed": 10,
+      "failed": 0,
+      "log": "/tmp/beethoven-brand-final-tests.log"
+    },
+    "pty": {
+      "passedConditions": 16,
+      "themes": [
+        "dark",
+        "light"
+      ],
+      "log": "/tmp/beethoven-brand-final-pty.log"
+    },
+    "viewports": [
+      "120x40",
+      "80x24",
+      "32x12",
+      "20x8"
+    ],
+    "panelTextContrastMinimum": 4.5,
+    "modelRequests": 0,
+    "newLiveAccountAuthentication": false,
+    "fullSuite": "not rerun for visual-only refinement; focused TUI and real-PTY coverage used"
+  },
+  "previews": {
+    "kind": "actual renderer frames with synthetic conversation and worker events; not live execution evidence",
+    "renderer": "scripts/preview-tui.mjs",
+    "images": [
+      "tui-brand-2026-10-25/dark.png",
+      "tui-brand-2026-10-25/light.png",
+      "tui-brand-2026-10-25/dark-connect.png",
+      "tui-brand-2026-10-25/light-private.png"
+    ],
+    "PNG": "ANSI frame visualization with macOS AppKit system fonts"
+  },
+  "limitations": [
+    "Terminal canvas and font settings are preserved; appearance depends on terminal theme.",
+    "Auto light selection uses COLORFGBG; use BEETHOVEN_THEME=light when unknown.",
+    "Actual user IME and terminal-specific font acceptance unverified."
+  ],
+  "sourceSha256": {
+    "src/tui.ts": "1af4e588886e489f88b30a12270d43db2ab9126c942b59fa1b1174024e78ceda",
+    "src/tui-theme.ts": "30f9a33e91e8ad275fdfaf45c639d9e9402af63ce73e028d9181a557eda637bc",
+    "tests/tui.test.ts": "275d20b77d9b82359110d4960a27c6406231982204c456534d8911bf8fb2ff05",
+    "scripts/check-tui-pty.py": "45d7184e51058b02daa44338372c960435949be1a846caaddb7e0a103ceee525",
+    "scripts/preview-tui.mjs": "b4e4963c1504f6b4b3bbddf7757f78e17a184c935fe5e636deb0d39b56067eaf"
+  }
+}

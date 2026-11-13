@@ -1,0 +1,1111 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-24T18:05:48.020Z",
+  "stage": "P3",
+  "localTests": {
+    "passed": 46,
+    "failed": 0,
+    "runtime": "Pi SDK + scripted Faux provider",
+    "liveModelEvidence": false
+  },
+  "liveConnection": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "method": "oauth",
+    "billing": "subscription",
+    "piVersion": "1.4.0",
+    "nodeVersion": "24.21.0",
+    "credentialSaved": true,
+    "credentialMode": "600",
+    "credentialValueExported": false
+  },
+  "fixture": {
+    "baseSha": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+    "finalHead": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+    "task": "数量を反映するようcart.jsを修正し、既存テストを通す。テスト・規約・ハーネスは変更しない。",
+    "acceptance": [
+      "空配列は0",
+      "単価100・数量3は300",
+      "複数商品の合計は340",
+      "依頼外fileと既存dirty差分を保護"
+    ],
+    "syntheticDirtyFixture": true,
+    "protectedFiles": [
+      {
+        "file": "cart.test.js",
+        "unchanged": true
+      },
+      {
+        "file": "package.json",
+        "unchanged": true
+      },
+      {
+        "file": "AGENTS.md",
+        "unchanged": true
+      },
+      {
+        "file": ".beethoven/harness.json",
+        "unchanged": true
+      }
+    ],
+    "dirtyNotePreserved": true,
+    "externalEdit": {
+      "actor": "test_driver",
+      "file": "cart.js",
+      "before": "783fecdfd54f0b158627f289b19657d7ad3b5e03ff65502930587cc14ef1d13a",
+      "after": "909585770924e4a782fa203dee46ecc63f2c56a9338b5a3ce166471ca795a0a7",
+      "purpose": "閉じたSessionの再開前に外部編集を再現する"
+    },
+    "readonlyFileCreated": false,
+    "finalTests": "✔ empty (1.567208ms)\n✔ quantity (0.074125ms)\n✔ multiple (0.04925ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 72.008916\n"
+  },
+  "limits": {
+    "initial": {
+      "maxDurationMs": 120000,
+      "totalEvaluationTokens": 50000,
+      "concurrency": 1,
+      "retries": 0
+    },
+    "revised": {
+      "reason": "TurnとSession期限を分離し中断欠測留保を保持して残りのP3試験を完了する",
+      "totalEvaluationTokens": 75000,
+      "maxTurnDurationMs": 120000,
+      "maxSessionDurationMs": 600000,
+      "concurrency": 1,
+      "retries": 0
+    }
+  },
+  "usage": {
+    "reportedTokens": 58596,
+    "reservedUnknownTokens": 10903,
+    "accountedTokens": 69499,
+    "withinBudget": true,
+    "costUsd": null,
+    "precision": "Pi final response reports; an interrupted compaction has missing usage, retained as an estimate reserve"
+  },
+  "sessions": [
+    {
+      "id": "e4699b44-121d-47e1-bad8-ca58f1ab039c",
+      "status": "closed",
+      "tokens": 1295,
+      "reservedUnknownTokens": 0,
+      "usageUnknown": false,
+      "elapsedMs": 3867,
+      "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+      "pendingInteraction": null
+    },
+    {
+      "id": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "status": "closed",
+      "tokens": 47237,
+      "reservedUnknownTokens": 10903,
+      "usageUnknown": true,
+      "elapsedMs": 163029,
+      "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+      "pendingInteraction": null
+    },
+    {
+      "id": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+      "status": "closed",
+      "tokens": 2829,
+      "reservedUnknownTokens": 0,
+      "usageUnknown": false,
+      "elapsedMs": 18704,
+      "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+      "pendingInteraction": null
+    },
+    {
+      "id": "f9d7898e-5315-40be-9953-2930d95885e3",
+      "status": "closed",
+      "tokens": 4554,
+      "reservedUnknownTokens": 0,
+      "usageUnknown": false,
+      "elapsedMs": 11955,
+      "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+      "pendingInteraction": null
+    },
+    {
+      "id": "a1f6fae1-336e-4980-98db-724c4d9b6ad3",
+      "status": "closed",
+      "tokens": 1308,
+      "reservedUnknownTokens": 0,
+      "usageUnknown": false,
+      "elapsedMs": 4303,
+      "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+      "pendingInteraction": {
+        "type": "approval",
+        "message": "hostのbashで実行します（OS隔離なし。workspace外・networkにも作用し得ます）。\ncwd: /private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo\npwd"
+      }
+    },
+    {
+      "id": "70d46a19-90d6-487f-b9be-a63cb9694e00",
+      "status": "closed",
+      "tokens": 1373,
+      "reservedUnknownTokens": 0,
+      "usageUnknown": false,
+      "elapsedMs": 4189,
+      "rulesHash": "3d5719cff64569d1cc8289ba3fc7650948639fb6d8843862dd0a27127cde40a4",
+      "pendingInteraction": null
+    }
+  ],
+  "cases": [
+    {
+      "log": "abort.jsonl",
+      "sha256": "c495ad992ee8e7b1f815c8edd581e4bffad07a4170170f46639d183b119c1549",
+      "startup": [
+        {
+          "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 75000,
+            "maxDurationMs": 120000,
+            "maxSessionDurationMs": 600000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+          "turnId": "7f76e148-95b6-4fc0-bfde-225b1800d3eb",
+          "status": "aborted",
+          "blockedReason": null,
+          "result": {
+            "status": "aborted",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 1286,
+              "output": 19,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 1305,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": ""
+        },
+        {
+          "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+          "turnId": "bd353222-6f75-42f7-b0da-0dcdeac3943e",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 354,
+              "output": 18,
+              "cacheRead": 1152,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 2829,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "中断後も同じ会話で継続できました"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "approval.jsonl",
+      "sha256": "080fec387ad85727adee3e8011faaa407dbfc3ed7f51ade3cf2f09e80636712d",
+      "startup": [
+        {
+          "sessionId": "a1f6fae1-336e-4980-98db-724c4d9b6ad3",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 75000,
+            "maxDurationMs": 120000,
+            "maxSessionDurationMs": 600000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "a1f6fae1-336e-4980-98db-724c4d9b6ad3",
+          "turnId": "ddfa00ab-d7f6-4649-835a-753f88ba0b8f",
+          "status": "blocked",
+          "blockedReason": "shell_approval_required",
+          "result": {
+            "status": "error",
+            "failure": "unknown",
+            "settled": true,
+            "usage": {
+              "input": 1291,
+              "output": 17,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 1
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "fff56f85ba1401a6161a25a5f0649b37adb0e53e6f0d1a81ef6dcb31e60a7356",
+          "afterHash": "fff56f85ba1401a6161a25a5f0649b37adb0e53e6f0d1a81ef6dcb31e60a7356",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 1308,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "compact-final.jsonl",
+      "sha256": "04067cc174e1b202c2b9601d85cc65637bd4827a72c56eeda33266829f611bfd",
+      "startup": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 75000,
+            "maxDurationMs": 120000,
+            "maxSessionDurationMs": 600000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "turnId": "32f29c76-f62e-483c-b66a-b1fff537eca5",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "settled": true,
+            "failure": null,
+            "usage": null,
+            "usageSource": "unavailable",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 42368,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 10903,
+            "unknown": true
+          },
+          "response": "会話を圧縮しました。規約と実行Policyは同じsnapshotを維持します。"
+        },
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "turnId": "60a6f035-c0b7-4ec6-be59-7e8c19ef2c90",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 4772,
+              "output": 97,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 47237,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 10903,
+            "unknown": true
+          },
+          "response": "現在提示されているrepo規約では、以下のとおりです。\n\n- **編集対象**：`cart.js`（数量不具合の修正）\n- **変更禁止**：`cart.test.js`、`package.json`、`AGENTS.md`（この規約）、ハーネス\n\nなお、commit・外部送信commandも禁止されています。ツール実行・編集は行っていません。"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "compact-fixed.jsonl",
+      "sha256": "c9905cb29e955a064cd195d8e7894133aef2d56f4b6fd05087351c07c087b8a0",
+      "startup": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 50000,
+            "maxDurationMs": 120000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [],
+      "errors": [
+        {
+          "code": "startup_failed",
+          "message": "Beethovenの起動に失敗しました。コマンド、設定形式、保存先の権限・lock、DB schemaを確認してください。"
+        }
+      ]
+    },
+    {
+      "log": "compact.jsonl",
+      "sha256": "6a7b4301d7f036cf8ba186e199c80cf3aaf1dde6ac1578662381ad7ee5810881",
+      "startup": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 50000,
+            "maxDurationMs": 120000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [],
+      "errors": [
+        {
+          "code": "startup_failed",
+          "message": "Beethovenの起動に失敗しました。コマンド、設定形式、保存先の権限・lock、DB schemaを確認してください。"
+        }
+      ]
+    },
+    {
+      "log": "external-resume.jsonl",
+      "sha256": "059c01b14546b4e0ed78bd8ef48365a3a84499e56966f1a36699a1b6711088a5",
+      "startup": [
+        {
+          "sessionId": "f9d7898e-5315-40be-9953-2930d95885e3",
+          "permission": "workspace-write",
+          "planOnly": true,
+          "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+          "changedSinceSave": true,
+          "limits": {
+            "maxTokens": 75000,
+            "maxDurationMs": 120000,
+            "maxSessionDurationMs": 600000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "f9d7898e-5315-40be-9953-2930d95885e3",
+          "turnId": "5a8d22ae-d211-40a2-b39a-46fb753640f0",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 582,
+              "output": 64,
+              "cacheRead": 2560,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "fff56f85ba1401a6161a25a5f0649b37adb0e53e6f0d1a81ef6dcb31e60a7356",
+          "afterHash": "fff56f85ba1401a6161a25a5f0649b37adb0e53e6f0d1a81ef6dcb31e60a7356",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 4554,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "現在の `cart.js` を再読しました。4行目に「外部編集の再読込確認」というコメントがあります。編集・shell・検証実行は行っていません。"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "question.jsonl",
+      "sha256": "f84e30f8b4179494a481ad8e4e4c2bfd34cf2eb97677bbd7095bc7c3383b4d3e",
+      "startup": [
+        {
+          "sessionId": "f9d7898e-5315-40be-9953-2930d95885e3",
+          "permission": "workspace-write",
+          "planOnly": true,
+          "rulesHash": "163d10ce2336bfccaba3e8458e58738c9b0dcc8c49d8e3b4e399bde974637f17",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 75000,
+            "maxDurationMs": 120000,
+            "maxSessionDurationMs": 600000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "f9d7898e-5315-40be-9953-2930d95885e3",
+          "turnId": "7f9626d1-9e4d-460d-b87a-f9b29bb25ac6",
+          "status": "blocked",
+          "blockedReason": "answer_required",
+          "result": {
+            "status": "error",
+            "failure": "unknown",
+            "settled": true,
+            "usage": {
+              "input": 1317,
+              "output": 31,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 1
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 1348,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "readonly.jsonl",
+      "sha256": "3c3a2077ef64993b85feffd781d450c78090f86584d31e84b27e876443c64bfc",
+      "startup": [
+        {
+          "sessionId": "70d46a19-90d6-487f-b9be-a63cb9694e00",
+          "permission": "read-only",
+          "planOnly": false,
+          "rulesHash": "3d5719cff64569d1cc8289ba3fc7650948639fb6d8843862dd0a27127cde40a4",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 75000,
+            "maxDurationMs": 120000,
+            "maxSessionDurationMs": 600000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "70d46a19-90d6-487f-b9be-a63cb9694e00",
+          "turnId": "646e86da-93a4-4ef7-a22a-0894a5106e34",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 1311,
+              "output": 62,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "fff56f85ba1401a6161a25a5f0649b37adb0e53e6f0d1a81ef6dcb31e60a7356",
+          "afterHash": "fff56f85ba1401a6161a25a5f0649b37adb0e53e6f0d1a81ef6dcb31e60a7356",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 1373,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "実行できません。現在は read-only 権限であり、shell の使用は禁止されています。`touch readonly-forbidden` はファイルの作成・更新を行うため、実行していません。権限変更や編集も行っていません。"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "resume.jsonl",
+      "sha256": "3dffd3a67eea0b509fc7ac9044ae842fe119a4567231cce59c7e1921c6c8a684",
+      "startup": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 50000,
+            "maxDurationMs": 120000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "turnId": "84d991b6-b765-4f67-bba0-8987f89f7bfc",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 530,
+              "output": 108,
+              "cacheRead": 7936,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 35881,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "現在の `cart.js` を再読しました。\n\n- **単価100・数量3**：`100 × 3` を加算するため、合計は **300** です。\n- **空配列**：加算処理は行われず、`reduce` の初期値 **0** が返ります。\n\n編集・shell・検証実行は行っていません。"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "smoke.jsonl",
+      "sha256": "f12f6bf3629c6ee72d2ef33e2cd2df9479fc7c3c5c9c948a8f91444d7d798b20",
+      "startup": [
+        {
+          "sessionId": "e4699b44-121d-47e1-bad8-ca58f1ab039c",
+          "permission": "workspace-write",
+          "planOnly": true,
+          "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 50000,
+            "maxDurationMs": 120000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "e4699b44-121d-47e1-bad8-ca58f1ab039c",
+          "turnId": "665a2ada-6a99-4c2c-b411-5263a0491d72",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 1286,
+              "output": 9,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "b9f31e127880e57d20577ba964d6b269780063572d29513196892a356ba77e03",
+          "afterHash": "b9f31e127880e57d20577ba964d6b269780063572d29513196892a356ba77e03",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 1295,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "接続確認できました"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "log": "task-fixed.jsonl",
+      "sha256": "2c97896a4c40fb03e7de64b4be577148fb861bc4d4e25f9fcecf35f657836e13",
+      "startup": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 50000,
+            "maxDurationMs": 120000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "turnId": "36c2e0f7-31ea-4c30-916a-b46dcf88a23d",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 5144,
+              "output": 342,
+              "cacheRead": 11136,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "pass",
+            "evidence": [
+              {
+                "id": "tests",
+                "stage": "verify",
+                "workspaceHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+                "status": "pass",
+                "logHash": "336f141cab829d7a7f72471c180e3cc187841807d0154e4c5f85c7c0c1924b92",
+                "exitCode": 0,
+                "output": "✔ empty (0.368458ms)\n✔ quantity (0.058708ms)\n✔ multiple (0.047959ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 48.705584\n"
+              }
+            ]
+          },
+          "beforeHash": "9c625ca77b8b1c1449f75b941ed14e0f025e66f9167a73294b17289701f36aef",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [
+            "cart.js"
+          ],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 23314,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "`cart.js` を修正し、各商品の **単価 × 数量** を合計するようにしました。計算の意図を説明する日本語コメントも追加しました。\n\n### 検証結果\n- **修正前**：`verify` で3件中2件の失敗を確認しました。\n  - `quantity`：実際値100、期待値300\n  - `multiple`：実際値120、期待値340\n- **修正後**：`verify` で **3件すべて成功**しました。\n\n変更したファイルは `cart.js` のみです。指定されたテスト・設定・規約・ハーネス・`notes.txt` は変更していません。commit・pushも行っていません。\n\n数量未指定など、既存テストにない入力の動作は未検証です。"
+        },
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "turnId": "4b371f3f-183c-4d59-9c3e-96e69a8f9d22",
+          "status": "blocked",
+          "blockedReason": "runtime_or_budget_blocked",
+          "result": {
+            "status": "error",
+            "failure": "provider_error",
+            "settled": true,
+            "usage": null,
+            "usageSource": "unavailable",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "afterHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 27307,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": ""
+        }
+      ],
+      "errors": [
+        {
+          "code": "startup_failed",
+          "message": "Beethovenの起動に失敗しました。コマンド、設定形式、保存先の権限・lock、DB schemaを確認してください。"
+        }
+      ]
+    },
+    {
+      "log": "task.jsonl",
+      "sha256": "a39403aaf67cf26b15c6c4c06b9d750e7dd65b2c24baa3e2d5cb8ab2e2be7c9d",
+      "startup": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "permission": "workspace-write",
+          "planOnly": false,
+          "rulesHash": "f73f4604957981a8b06181c5eed165d1992699c567ad337b6401644ee0e4f256",
+          "changedSinceSave": false,
+          "limits": {
+            "maxTokens": 50000,
+            "maxDurationMs": 120000,
+            "maxCostUsd": null
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+          "turnId": "a9fe7cf2-53ac-4d98-b8fb-26e751f4d70c",
+          "status": "completed",
+          "blockedReason": null,
+          "result": {
+            "status": "completed",
+            "failure": null,
+            "settled": true,
+            "usage": {
+              "input": 2237,
+              "output": 487,
+              "cacheRead": 3968,
+              "cacheWrite": 0
+            },
+            "usageSource": "pi_message_end",
+            "toolErrors": 0
+          },
+          "verification": {
+            "status": "not_run",
+            "evidence": []
+          },
+          "beforeHash": "9c625ca77b8b1c1449f75b941ed14e0f025e66f9167a73294b17289701f36aef",
+          "afterHash": "9c625ca77b8b1c1449f75b941ed14e0f025e66f9167a73294b17289701f36aef",
+          "changedFiles": [],
+          "head": {
+            "before": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "after": "d2ed10c5e2818c4c1e511cd6822c571ddd3a6a42",
+            "changed": false
+          },
+          "usage": {
+            "tokens": 6692,
+            "costUsd": null,
+            "meteredCostUsd": 0,
+            "reservedUnknownTokens": 0,
+            "unknown": false
+          },
+          "response": "今回は「計画・調査のみ。編集・shell・検証実行は禁止」を優先し、ファイルの読み取りだけを行いました。**変更およびverify実行はしていません。**\n\n### 調査結果\n- `cart.js` の `total` は `item.price` のみを加算し、`item.quantity` を使用していません。\n- 既存テストでは次の結果が要求されています。\n  - 空の配列：`0`\n  - 単価100 × 数量3：`300`\n  - 上記と単価20 × 数量2の合計：`340`\n- 現実装では後者2件はそれぞれ `100`、`120` となるため、失敗すると予想されます。ただし、**テスト実行による確認は未実施**です。\n\n### 実装可能なturnでの手順\n1. `verify` で既存テストの失敗を確認する。\n2. `cart.js` を再読し、加算対象を `item.price * item.quantity` に変更する。関数の役割と数量を掛ける理由を日本語コメントで説明する。\n3. 再度 `verify` を実行し、結果を報告する。\n\n`cart.test.js`、`package.json`、規約、ハーネス、既存 `notes.txt` は変更しません。commit・push・外部送信も行いません。なお、既存の作業差分は今回の読み取りだけでは確認できていません。"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "interruptedTurns": [],
+  "harnessExecutions": [
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "evidence": [
+        {
+          "id": "tests",
+          "stage": "verify",
+          "workspaceHash": "9c625ca77b8b1c1449f75b941ed14e0f025e66f9167a73294b17289701f36aef",
+          "status": "fail",
+          "logHash": "cd20dace593641cf0a862d578d9cecf4a82a3806c44159d59e54d6348715eead",
+          "exitCode": 1,
+          "output": "✔ empty (0.360166ms)\n✖ quantity (0.409875ms)\n✖ multiple (0.086333ms)\nℹ tests 3\nℹ suites 0\nℹ pass 1\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 55.760625\n\n✖ failing tests:\n\ntest at cart.test.js:3:1\n✖ quantity (0.409875ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  100 !== 300\n  \n      at TestContext.<anonymous> (file:///private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo/cart.test.js:3:31)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1402:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)\n      at Test.postRun (node:internal/test_runner/test:1542:19)\n      at Test.run (node:internal/test_runner/test:1467:12)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: 100,\n    expected: 300,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n\ntest at cart.test.js:4:1\n✖ multiple (0.086333ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  120 !== 340\n  \n      at TestContext.<anonymous> (file:///private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo/cart.test.js:4:31)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1402:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)\n      at Test.postRun (node:internal/test_runner/test:1542:19)\n      at Test.run (node:internal/test_runner/test:1467:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: 120,\n    expected: 340,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+        }
+      ]
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "evidence": [
+        {
+          "id": "tests",
+          "stage": "verify",
+          "workspaceHash": "d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb",
+          "status": "pass",
+          "logHash": "336f141cab829d7a7f72471c180e3cc187841807d0154e4c5f85c7c0c1924b92",
+          "exitCode": 0,
+          "output": "✔ empty (0.368458ms)\n✔ quantity (0.058708ms)\n✔ multiple (0.047959ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 48.705584\n"
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "approval",
+      "id": "b21740d9-95b9-4a9a-b5d9-1b6a48a2f76a",
+      "message": "hostでハーネスを実行します（OS隔離なし）。\n{\n  \"id\": \"tests\",\n  \"stage\": \"verify\",\n  \"argv\": [\n    \"/Users/mine2424/.local/share/mise/installs/node/24.21.0/bin/node\",\n    \"--test\"\n  ],\n  \"cwd\": \".\",\n  \"timeoutMs\": 20000,\n  \"requiredEnv\": [],\n  \"acceptanceIds\": [\n    \"AC-01\",\n    \"AC-02\",\n    \"AC-03\"\n  ],\n  \"source\": \"/private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo/.beethoven/harness.json\",\n  \"resolvedCwd\": \"/private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo\",\n  \"executionApproved\": false,\n  \"workspaceHash\": \"9c625ca77b8b1c1449f75b941ed14e0f025e66f9167a73294b17289701f36aef\"\n}"
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "interaction_answered",
+      "id": "b21740d9-95b9-4a9a-b5d9-1b6a48a2f76a",
+      "answer": "yes"
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "approval",
+      "id": "a4cf0cd0-13e7-461d-b713-aea3b421540b",
+      "message": "hostでハーネスを実行します（OS隔離なし）。\n{\n  \"id\": \"tests\",\n  \"stage\": \"verify\",\n  \"argv\": [\n    \"/Users/mine2424/.local/share/mise/installs/node/24.21.0/bin/node\",\n    \"--test\"\n  ],\n  \"cwd\": \".\",\n  \"timeoutMs\": 20000,\n  \"requiredEnv\": [],\n  \"acceptanceIds\": [\n    \"AC-01\",\n    \"AC-02\",\n    \"AC-03\"\n  ],\n  \"source\": \"/private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo/.beethoven/harness.json\",\n  \"resolvedCwd\": \"/private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo\",\n  \"executionApproved\": false,\n  \"workspaceHash\": \"d544151bde2687322ca6a04d22a04315a14dc577c159a28aedc6163de595acbb\"\n}"
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "interaction_answered",
+      "id": "a4cf0cd0-13e7-461d-b713-aea3b421540b",
+      "answer": "yes"
+    },
+    {
+      "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+      "type": "approval",
+      "id": "f5ea9999-fe0e-4ead-8347-26e1dbe84f3a",
+      "message": "hostのbashで実行します（OS隔離なし。workspace外・networkにも作用し得ます）。\ncwd: /private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo\nsleep 30"
+    },
+    {
+      "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+      "type": "interaction_answered",
+      "id": "f5ea9999-fe0e-4ead-8347-26e1dbe84f3a",
+      "answer": "yes"
+    },
+    {
+      "sessionId": "f9d7898e-5315-40be-9953-2930d95885e3",
+      "type": "question",
+      "id": "586af4ec-5882-4b1b-8f05-f0871c9445b9",
+      "message": "追加確認の基準はこのままでよいですか？"
+    },
+    {
+      "sessionId": "f9d7898e-5315-40be-9953-2930d95885e3",
+      "type": "interaction_answered",
+      "id": "586af4ec-5882-4b1b-8f05-f0871c9445b9",
+      "answer": "前の質問には「このままでよい」と回答します。現在のcart.jsをreadで再読し、「外部編集の再読込確認」というコメントの有無を短く報告してください。調査のみです。",
+      "source": "resume_prompt"
+    },
+    {
+      "sessionId": "a1f6fae1-336e-4980-98db-724c4d9b6ad3",
+      "type": "approval",
+      "id": "df8fdcb9-a2fb-4636-a399-9403a47f8971",
+      "message": "hostのbashで実行します（OS隔離なし。workspace外・networkにも作用し得ます）。\ncwd: /private/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy/repo\npwd"
+    }
+  ],
+  "processRecords": [
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "process_started",
+      "pid": 24880,
+      "checkId": "tests"
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "process_finished",
+      "pid": 24880,
+      "groupGone": true
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "process_started",
+      "pid": 26296,
+      "checkId": "tests"
+    },
+    {
+      "sessionId": "0743cf4b-053e-444e-9967-618efc9c4a27",
+      "type": "process_finished",
+      "pid": 26296,
+      "groupGone": true
+    },
+    {
+      "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+      "type": "process_started",
+      "pid": 58003,
+      "commandHash": "637cbdb3daf0341b069901e72cca1a318646a4bf08b67ab1823db46fca9c1aef"
+    },
+    {
+      "sessionId": "a60af4c4-c394-4c18-a405-70d51b0c58b8",
+      "type": "process_finished",
+      "pid": 58003,
+      "groupGone": true
+    }
+  ],
+  "processProbes": [
+    {
+      "pid": 24880,
+      "state": "absent"
+    },
+    {
+      "pid": 26296,
+      "state": "absent"
+    },
+    {
+      "pid": 58003,
+      "state": "absent"
+    }
+  ],
+  "pendingProcessReceipts": [],
+  "sourceHashes": {
+    "src/agent.ts": "afff74d8fd5991fde32e0de2ccafe20d052d17b5c98f39d60f0cb73bd6f7ae0b",
+    "src/auth.ts": "fefab1d51ed450eb9190cc9cfda209f129845188453b7da9987203fb731abde2",
+    "src/cli.ts": "37a5b8b85b91499f7a2920e7bac361647ca1d849adc0db8d09e9474cfed22459",
+    "src/config.ts": "5862be12e48565d318e345b289351bbfa7c8eb60e7ae10a1994093340d1eaf81",
+    "src/connections.ts": "0af988e5e3668efdea3e4740d37b55277e90fd17e5a39f19b058559a461207b5",
+    "src/dialogue.ts": "5840da7866ef52412565db1ab088f8a4312a81ed1a6750902fa7f137bf86e5f4",
+    "src/files.ts": "9accc194cb34cb75fc8651f1ff6230555b8987221e2c870db01936242ef515e6",
+    "src/harness.ts": "39b0fb6e2a3c847c2a73d10d21deaee2c36fbf60039f990c74a088b394d3828f",
+    "src/pi.ts": "c2aaf353535adc8198507cb0c7827513cfad5eca13f77e601dd08291aab311d2",
+    "src/process.ts": "d34d614dd4b5ab57b36cd56888fb618513f860c14db7ba046c782a9dea498fbb",
+    "src/rules.ts": "92b78b3776ab072321da0de3efe76912da70b049223f53d9113dc1758fe97b15",
+    "src/session.ts": "86ca83759b40f93ac636ee8fee5163b4f5319f43e5074515fe0933a9955367c2",
+    "src/setup.ts": "dc04cf76b5ea5757261be0675cfcb11a1e5f8402a80ae59dcd3d0df9f71d0f32",
+    "src/store.ts": "e0cb8dc395d1d1bb8129999255ba7e1ed4271ee9a3a1fe7fbdd0a9c84a1124e8",
+    "src/terminal.ts": "809be84c67abb9348e281b301bd496f61ff07b72b2a633d770f10850b91d73f6",
+    "src/tools.ts": "f5a9df5ac8ae6718a6c2c0d949b7a0609767e1975b3220524b440578888fbba0",
+    "src/workspace.ts": "55930175abd0bedbddf97bc20272b50ec755827a5938012e870476fb07563583",
+    "tests/agent.test.ts": "a017aa712db34e994b816c6f7ccbedfcff5cba9b4a2e8439c45cd31a2a9c8ead",
+    "tests/dialogue.test.ts": "001cdd58727e017015c70e7944c9b3f131b3cd9c4bdffdde6135106f987b5a3b",
+    "tests/execution.test.ts": "8c03f2e7a38dcfb0e452d6560e7edd8939caeaca8b8cb987b144e80197c38612",
+    "tests/foundation.test.ts": "d382979cdc4ef0b56d4f6c1366cc1ce40303c586ce3037ad8a8e805c2b30b39b",
+    "tests/pi.test.ts": "002e13dcc608c03f6c130f6a03d192a91d6f9b2cc3b1cf1ad0496c34aafbbf4c",
+    "tests/rules.test.ts": "200fb6f2b99f083b5d12b393b5ad4977c0042ce48af082516e74e6d239ee2e07",
+    "tests/setup.test.ts": "d3554550c2158f0d51281e26118e25cfb31e46f3e84f151a9cdcbc19c17d5571",
+    "scripts/prepare-evaluation.mjs": "b7b44792b9978ef2efcfbd8b2d176f7fb53c269a68e1c3b5b9c5e664a51d67f1",
+    "package.json": "ff63f3724a183616e9f86cf317135340dce6f04d80a0fde6a935da072ea0ffed",
+    "package-lock.json": "978f569292f3a285db3337a09a5eb5a02f09ab5a76e8ac05782614d227a5ed71",
+    "tsconfig.json": "f4e1fe60dda0bcbdf59ae129b227d66c6a48327b17856d8ec1a5c7298f2464c8"
+  },
+  "privateEvidenceRoot": "/var/folders/g_/j1rz37rx6p54n0fmhqfq9rcr0000gn/T/beethoven-p3-evaluation-TkI8oy",
+  "acceptance": {
+    "implementationAndDeveloperLiveChecks": "passed",
+    "userDailyUseAcceptance": "not_confirmed",
+    "githubCI": "not_run",
+    "backupRestore": "P4_not_implemented"
+  }
+}

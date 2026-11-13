@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "per-turn model provenance, shared TUI authentication, real single-worker foundation",
+  "authorization": {
+    "workerScope": "User explicitly chose real Worker startup foundation",
+    "providerTrials": "No new live inference; scripted provider only"
+  },
+  "runtime": {
+    "node": "24.21.0",
+    "pi": "1.4.0"
+  },
+  "tests": {
+    "node": {
+      "total": 76,
+      "passed": 76,
+      "failed": 0,
+      "log": "/tmp/beethoven-workers-final-tests.log"
+    },
+    "pty": {
+      "conditions": 16,
+      "passed": 16,
+      "log": "/tmp/beethoven-workers-pty.log"
+    },
+    "providerModelRequests": 0
+  },
+  "verified": [
+    "per-turn connection/provider/model metadata survives model change",
+    "same alternate screen through initial connect, reconnect, native API-key login and cancellation",
+    "manual OAuth code and API-key mask, no renderer/history plaintext",
+    "actual Node SDK child and Git worktree with inherited dirty snapshot",
+    "child edits, actual harness verification and unchanged parent workspace",
+    "actual model/tool/verify events and child PID displayed",
+    "child abort and process disappearance; retained unknown usage",
+    "read-only/scope inheritance; tool failures distinguished",
+    "parent token reservation, reconciliation, retained model context evidence",
+    "live-process recovery refused; explicit absent-process recovery retains full unknown reservation"
+  ],
+  "limitations": [
+    "new live-provider Worker acceptance not performed",
+    "one explicitly dispatched Worker only; no DAG/parallel dispatch",
+    "no dependency bootstrap, automatic commit or candidate integration",
+    "no automatic recovery when PID record is missing",
+    "P4 backup and full P5/P6 crash/side-effect recovery remain incomplete",
+    "ordinary-user/IME acceptance and GitHub CI not performed"
+  ],
+  "validationNotes": [
+    "Initial full-suite invocation from dotfiles root failed 4 cwd-dependent CLI fixtures; rerun in package directory passed all 76.",
+    "Read-only mutation test exposed candidate labeling for tool failures; labeling corrected and full suite passed."
+  ],
+  "sourceSha256": {
+    "src/tui.ts": "c010b73535bef952792df072e9d2ff6832ea1786901da4b244a37f7e5e71ed03",
+    "src/auth-ui.ts": "23af28bde8ecd8907a51457510934f5855b6a20da7bad3241218277fa49d2dc0",
+    "src/dialogue.ts": "16eaaafc495c6be658260d1ec201e1261b1df23b7d7d604706b95b4b49476600",
+    "src/welcome.ts": "48728dbc90e0b74c484f016a762196d1b2368e5120e864c71926ae278f8ee00a",
+    "src/agent.ts": "1180cb19b45603a506ad1920eeb2fe6b89c9357518e66f69a57e40ebbf564f98",
+    "src/session.ts": "880d7b3b452cff09e88cda40f6570a1a1e13de4d12b0c3305862e396c3e744a0",
+    "src/workspace.ts": "734e3e56c0de711f8982c5e4cd05f894ff0d5443c538de492a13d95a51386feb",
+    "src/worker.ts": "c8bf7d5125c945cfd21906d459257a2c6cc4bdf40b69cef95d605a688f3f4aea",
+    "src/worker-entry.ts": "8cc186d67f01cec93998284fc179fe2a2c60a909aa3c99f20f2bff0cd2920a8c",
+    "src/cli.ts": "458edda4d8978fe1713a6bdaa46eb7edb1f1f29d7a742f56c7c7e619943c1a3b",
+    "tests/tui.test.ts": "88482080efadb0117b293ff3c39e71c193b14b7d9cb82875ce38eb6867e63df7",
+    "tests/agent.test.ts": "aabeb6f0c7ac0769987711d8c10a86200900fd1f039298a78f90bb7bb03d89a8",
+    "tests/worker.test.ts": "cebca6693b81cdff99367e66282c22a551d43a068b61d5ac2f861f402a847852",
+    "tests/worker-child.ts": "bfd24cbca3c8b3c9fa36f5d30ae97014bfbd0b7e373930e30400fedffea917b3",
+    "scripts/check-tui-pty.py": "c8ac9eb4f4b35cdebfb55b1a38a1bc854bea38abb1db667834d236e738b0f438"
+  }
+}

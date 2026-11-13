@@ -7,6 +7,9 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "terminal": {
+    "dock": "right"
+  },
   "cli_default_open_behavior": "existing_window",
   "project_panel": {
     "dock": "left"

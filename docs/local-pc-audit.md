@@ -60,7 +60,7 @@ python3 -m unittest discover -s scripts/tests -v
 - Karabinerは標準のANSIプロファイルのみ、lazygit設定は空だったため追加なし。`~/.local/bin` のアプリ管理リンク／プロジェクトCLIや古い独自スクリプトも一括コピーしない。
 - uvの `shinkoku v0.6.3` は用途固有ツールとして記録のみ。税務データや認証状態を取り込まない。
 
-`.gitignore` の認証・実行状態の除外を追加した。ignoreは既存の追跡ファイルやGit履歴を消さない。従来から追跡されている `.claude/settings.local.json` も残っているため、公開範囲の見直しは別途必要。
+`.gitignore` の認証・実行状態の除外を追加した。ignoreは既存の追跡ファイルやGit履歴を消さない。2026-11-13に `.claude/settings.local.json` の追跡とsetupでのコピーを廃止し、ローカルの許可設定を保持するよう変更した。過去のGit履歴は変更していない。
 
 ## 検証の限界
 

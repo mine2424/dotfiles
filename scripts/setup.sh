@@ -564,11 +564,7 @@ setup_claude() {
         log_success "Claude scripts を適用しました"
     fi
 
-    # 2. settings.local.json をコピー（allow list は dotfiles が完全管理）
-    if [[ -f "$claude_src/settings.local.json" ]]; then
-        cp "$claude_src/settings.local.json" "$claude_dest/settings.local.json"
-        log_success "Claude settings.local.json を適用しました"
-    fi
+    # settings.local.json は端末・プロジェクト固有のためコピーしない。
 
     # 3. settings.json をマージ（permissions + hooks は dotfiles、それ以外は既存を保持）
     if [[ -f "$claude_src/settings.json" ]]; then

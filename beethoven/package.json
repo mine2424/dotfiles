@@ -1,0 +1,37 @@
+{
+  "name": "beethoven-cli-local",
+  "version": "0.2.1",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist/src",
+    "scripts",
+    "README.md",
+    "docs"
+  ],
+  "bin": {
+    "beethoven": "dist/src/cli.js"
+  },
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test --test-concurrency=2 dist/tests/*.test.js",
+    "start": "node dist/src/cli.js",
+    "install:local": "node scripts/install-local.mjs"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "1.4.0",
+    "@earendil-works/pi-coding-agent": "1.4.0",
+    "@earendil-works/pi-tui": "1.4.0"
+  },
+  "overrides": {
+    "undici": "8.12.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

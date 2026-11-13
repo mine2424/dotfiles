@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-25T02:17:39.658Z",
+  "scope": "Local launcher and basic dialogue TUI",
+  "node": "24.21.0",
+  "piTui": "1.4.0",
+  "localTests": {
+    "total": 61,
+    "passed": 61,
+    "failed": 0,
+    "logHash": "d5294924091377f7a3ec899e0b785c6a3e48a8475288cae50f9fa6c01f0daf07"
+  },
+  "pty": {
+    "pty": "passed",
+    "cases": [
+      "first launch",
+      "setup cancel",
+      "explicit allow",
+      "missing login",
+      "send cancel",
+      "terminal restore"
+    ],
+    "modelRequests": 0
+  },
+  "launcher": {
+    "path": "~/.local/bin/beethoven",
+    "mode": "755",
+    "hash": "89609adc9af234f0697d39378ea01fd804660a630e2ae55c0c781ab865308fd3",
+    "currentShellResolution": "passed",
+    "freshLoginShellResolution": "passed",
+    "version": "0.1.0",
+    "cwdAndArguments": "covered by install.test.ts"
+  },
+  "sourceHashes": {
+    "src/tui.ts": "f3be73dc0371eb86da7ac1479b556e552749fc8edc78f856af08e40106a432ad",
+    "src/welcome.ts": "a464b9910a569f62c1aa01bc32debe483bf0997828b74c3cf031c559b982a7ec",
+    "src/dialogue.ts": "8fdd5732b1a1e2d8be553fc02aeaffdccdbe92d6b5c47ebab3346290a4ca2d36",
+    "src/cli.ts": "3652215fc991bdcb2f69ea879566fb4a95ac250db9f3950e5ddabf5b914a9d60",
+    "src/process.ts": "79a8682994d33c894644064afc0ec9937b1441f24f1532f6fb10d406c638b6c8",
+    "tests/tui.test.ts": "d83db91f893ca3dc2afd287dc94e2b05003df55f586bd3cf5788f541636e2e1a",
+    "tests/install.test.ts": "3a812738a0aec60ad360bd5c75f70c3cc256c526e1e8120ae51a3328e4574c53",
+    "tests/execution.test.ts": "48304b3cec8d2128be00b1ecd494aa186806d03a62ea7d7c60963f6c016e8fc8",
+    "scripts/install-local.mjs": "9581734dad6cc055ccaa597afa93442f2a4c750887d6620c6d882f04b90dd511",
+    "scripts/check-tui-pty.py": "56127f59e173d45c5c7dec211a281c0eda49335e1eaa5e8d5aee4cf240bb1c1b",
+    "package.json": "cef3b83d6143c14f785ce7e994f1a39f9e239510c90c2c841b89f56ba01b3020",
+    "package-lock.json": "e4154dc39c6e9fd8237f269dfd239a5eb7199b911abf18e4ff357f593265c4b0"
+  },
+  "observations": {
+    "realPtyWelcome": "passed",
+    "terminalRestoration": "passed",
+    "setupCancellationDoesNotCreateConfiguration": true,
+    "explicitAllowPreservesReadOnly": true,
+    "credentialsNotCopied": true,
+    "modelRequests": 0
+  },
+  "priorFailures": [
+    {
+      "case": "launcher test",
+      "reason": "Test compared /var to /private/var without canonicalization; assertion corrected."
+    },
+    {
+      "case": "PTY harness",
+      "reason": "Harness initially waited for process exit without draining bounded PTY output; fixed to drain concurrently."
+    },
+    {
+      "case": "PTY workspace",
+      "reason": "Configured dialogue requires a Git workspace; fixture corrected and a helpful workspace error added."
+    },
+    {
+      "case": "process group probe",
+      "reason": "Intermittent EPERM remained sticky despite a later ESRCH. Final absence now determines groupGone; denied probe history is retained, and persistent denial stays unconfirmed."
+    }
+  ],
+  "acceptance": {
+    "developer": "passed",
+    "humanTerminalAndIME": "not_confirmed",
+    "githubCI": "not_run",
+    "newPaidModelTrials": "not_run"
+  }
+}

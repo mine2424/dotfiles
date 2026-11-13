@@ -1,0 +1,7 @@
+{
+  "development_roots": ["~/development", "~/orca", "~/.codex/worktrees", "~/.codex/.chatgpt-projects", "~/Documents/Codex"],
+  "keep_paths": [],
+  "keep_runtimes": ["com.apple.CoreSimulator.SimRuntime.iOS-26-5"],
+  "keep_devices": [],
+  "minimum_free_gib": 50
+}

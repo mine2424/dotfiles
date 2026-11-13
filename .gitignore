@@ -45,7 +45,14 @@ coverage/
 # Node.js（ドキュメント生成などで使用する場合）
 node_modules/
 package-lock.json
+!beethoven/package-lock.json
 yarn.lock
+
+# Beethoven build output
+/beethoven/dist/
+
+# Nodeterm workspace layout and terminal state
+/.nodeterm/
 
 # multi-agent-shogun runtime
 .shogun/

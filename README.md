@@ -48,6 +48,8 @@ exec $SHELL
 - `git/`, `gh/`, `tmux/`: Git・GitHub CLI・tmux設定
 - `cursor/`, `zed/`: エディタ設定
 - `macos/`: 実機から確認した表示設定
+- `beethoven/`: PiベースのCoding Agentと開発・運用手順
+- `prompt/`: 他プロジェクトで再利用する開発プロンプト
 - `docs/`: ガイド類
 
 ## 設定の棚卸し

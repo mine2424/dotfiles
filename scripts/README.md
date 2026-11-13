@@ -58,11 +58,18 @@
 
 ```bash
 ./disk-cleanup.sh                   # 容量レポートのみ（デフォルト）
-./disk-cleanup.sh --safe            # 再生成可能なキャッシュを削除
-./disk-cleanup.sh --deep            # + 古いシミュレータ / worktree / 放置 node_modules 等
-./disk-cleanup.sh --deep --dry-run  # ドライラン
+./disk-cleanup.sh --check           # 空き50GiB未満で警告・終了コード2
+./disk-cleanup.sh --report --save-report  # 計測を保存し、次回から増分比較
+./disk-cleanup.sh --safe --dry-run  # 使用中でないキャッシュの整理候補
+./disk-cleanup.sh --deep --only artifacts --dry-run  # build/.build/node_modules等
+./disk-cleanup.sh --deep --only artifacts  # 候補ごとに確認して整理
+./disk-cleanup.sh --deep --artifact ~/development/example/build --dry-run  # 個別指定
 ./disk-cleanup.sh --help
 ```
+
+Python 3.10以上が必要。`scripts/disk-cleanup.json` と `--config` / `--keep` で保持対象を指定する。
+使用中・最近更新・Git管理中の成果物は保持。シミュレータとworktreeの削除はID・パスの明示が必要。
+Docker、miseのインストール実体、録音、調査出力は調査のみで、自動では削除しない。
 
 ## 移行手順
 

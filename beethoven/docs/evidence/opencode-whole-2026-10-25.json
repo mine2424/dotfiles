@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "cross-cutting improvements to current single-Agent and single-Worker architecture",
+  "opencode": {
+    "repository": "https://github.com/anomalyco/opencode",
+    "commit": "8fd2ec1b72bde36ba3835ae974377b32feaa013d",
+    "commitDate": "2026-10-25T05:27:58Z",
+    "references": [
+      {
+        "path": "packages/core/src/session/compaction.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/compaction.ts",
+        "sha256": "53192c74753cd7cb384b3d12491301c5e732bfc963568066cf2119bf517d658f"
+      },
+      {
+        "path": "packages/core/src/session/context.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/context.ts",
+        "sha256": "a24fd0443c4f6b15218b4e6a8e31b443cf68df1b2a2e4d317b746defebed4e8b"
+      },
+      {
+        "path": "packages/core/src/session/runner/step.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/runner/step.ts",
+        "sha256": "b54c49f83a3512c8c598482ee22d4cefe3ba69fe6731bb5f9b8da364571b6ce2"
+      },
+      {
+        "path": "packages/core/src/session/runner/max-steps.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/runner/max-steps.ts",
+        "sha256": "02393226c3446c7df0ef22af4ab231cacb4653d70e295f4c59089e109131b4e8"
+      },
+      {
+        "path": "packages/core/src/job.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/job.ts",
+        "sha256": "d89267d71ae99f0f365df44b0fa43f0b5376b68443d7ca3cbf301c89ee4d4f0d"
+      },
+      {
+        "path": "packages/core/src/session/inbox.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/inbox.ts",
+        "sha256": "7879b2cb76a176b3622bd940cc2dfb71358c8bf06bfbf37efe6688da67916e75"
+      },
+      {
+        "path": "packages/core/src/session/execution/restart.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/execution/restart.ts",
+        "sha256": "4757779a499e5674de735956a5b68e26c01e747fa6b6f3d362320472efb378f5"
+      },
+      {
+        "path": "packages/core/src/session/run-coordinator.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/run-coordinator.ts",
+        "sha256": "2073edef2f14be91fd19246c409d50b399af1bc551e517bb1cd07552440d0269"
+      },
+      {
+        "path": "packages/tui/src/component/prompt/index.tsx",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/tui/src/component/prompt/index.tsx",
+        "sha256": "ed903af4b3504afc3aed73f6fc6afe13a1cc1a1059a4c4ad623a1ea74ebd107c"
+      },
+      {
+        "path": "packages/core/src/session/subagent-job.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/8fd2ec1b72bde36ba3835ae974377b32feaa013d/packages/core/src/session/subagent-job.ts",
+        "sha256": "fcecd0bc044e643ab749e98aeee08cb40c391bb692fbcf73001b2902f4b62fbd"
+      }
+    ],
+    "approach": "Adapt execution ownership, context headroom, finite loops and durable job continuation to existing Pi/SQLite; no OpenCode code/dependency transplant"
+  },
+  "implemented": [
+    "UI-independent SessionController with single-run ownership, safe release and stale-event filtering",
+    "model context admission and output headroom; /context diagnostics and manual /compact guidance",
+    "four repeated identical tool failures on an unchanged workspace halt the turn; verification failure is an actual tool failure",
+    "park questions, close child and release its slot; explicitly resume the same child session/worktree",
+    "validate parent/connection/rules/question identity on continuation; original permissions and scope cannot expand",
+    "durable provider receipts and checkpoints settle only usage deltas on continuation",
+    "known-unsent cancellation releases unused reservation; unresolved sends stay reserved",
+    "ready/start admission, bounded process reaping and callback-failure cleanup preserved",
+    "atomic metadata, periodic updatedAt/liveness diagnostics, latest-first list and bounded private logs",
+    "real TUI commands for worker state/log/question-answer continuation; doctor capability flags corrected"
+  ],
+  "validation": {
+    "node": {
+      "passed": 90,
+      "failed": 0,
+      "log": "/tmp/beethoven-whole-final-tests.log"
+    },
+    "realPty": {
+      "existingConditions": 16,
+      "log": "/tmp/beethoven-whole-final-tui.log",
+      "dialogueScenarios": [
+        "success then second turn",
+        "budget error then continued command access",
+        "runtime failure pause and explicit same-session resume",
+        "worker start, question park, log view, answer and same-worker resume"
+      ],
+      "dialogueLog": "/tmp/beethoven-whole-final-dialogue.log"
+    },
+    "build": "passed",
+    "typecheck": "passed",
+    "realProviderModelRequests": 0,
+    "newAuthentication": false
+  },
+  "criticalEvidence": [
+    "real Node/SDK children and Git worktrees; source workspace and binary bytes retained",
+    "question waiting child is absent before parent is reopened",
+    "child session ID preserved on continuation and saved question/answer present in model context",
+    "parent total equals child cumulative usage after two launches; no double charge",
+    "zero dispatched requests before admission gives zero unknown token reservation",
+    "observer exceptions do not leave the owned child alive",
+    "context rejection occurs with zero provider calls and no usage fabricated",
+    "four identical failures stop before a fifth provider request; a new user turn can retry"
+  ],
+  "limits": [
+    "single explicit Worker; no parallel DAG scheduler or automatic model-based delegation",
+    "no candidate commit/integration, dependency bootstrap or automatic worktree deletion",
+    "no cross-session/provider quota scheduler or full crash side-effect reconciliation",
+    "manual compaction remains; no background paid summarization",
+    "job.json is required for new continuation; older candidates preserved without automatic migration",
+    "live-provider acceptance of this revision, ordinary-user acceptance and GitHub CI not performed",
+    "P4 backup/restore remains incomplete"
+  ],
+  "sourceSha256": {
+    "src/controller.ts": "e8eb8e4e5602258105afd52badbefd1c119b42843124aa2002cb9b764d13ce95",
+    "src/agent.ts": "40907e6b49869fbf0baeb52cee16d651766a397333e0aea4bb9f08bc8a685bb3",
+    "src/tools.ts": "402bba2072a986da8aca93160feb871bb870b9a506e9ff9e96cb551f19ee1b68",
+    "src/worker.ts": "683bdb7c5c13769c3766b6907f85fe25c5fcb07e8bbbf856402ff476c9c61c30",
+    "src/worker-entry.ts": "de38e241a04dbc3d0fe15232c1fd625481e806bfc698a4a0eb6736cf0f24b451",
+    "src/session.ts": "81f9fe0c1a492a0d66eb7dc7c477e256e9a7cb14d476973e02880c7fe8056caa",
+    "src/dialogue.ts": "22ccd576ca32c2c61b9a1b59b5ed521a9f22f4a96a883797336604f0338625ce",
+    "src/tui.ts": "ca712c219f4bc36f66cb6e5c1972ae74d7c3c64ab4ae64a8e2b5d4e7c94a93a7",
+    "src/cli.ts": "3f1ad94db19c55ad6b973e2bf8506ac7ecaf4d457f2786aa86b750918ed774d3",
+    "tests/controller.test.ts": "fa2a4131ffddaaf5adb05d7aac602ceaf9e3df3ba30afc923b109740df0d99ab",
+    "tests/agent.test.ts": "87f9621d194d59e9c08957c9d999276df456980d6f0fca4d600d0a40f408270e",
+    "tests/worker.test.ts": "2006c783b45d6fee6d33247df09fdb46a9c2508c620b0c4b3da5a98d960abeb5",
+    "tests/worker-child.ts": "f822dad8964e6ca6fe0f30631b0aff58e293375f4ff6febe0988734eb0bbb14a",
+    "tests/dialogue-child.ts": "10cab238e6ebdca29bf9bdcb8f2aeb272e96d4ab76801e99dbe761f6de95eb3b",
+    "scripts/check-dialogue-pty.py": "d6dd20235194644ad300a8a3fcb17e5ddf1f01d4886a3705c147a5c14eec300e"
+  }
+}

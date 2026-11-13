@@ -1,0 +1,582 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-25T01:56:06.564Z",
+  "piVersion": "1.4.0",
+  "nodeVersion": "24.21.0",
+  "stage": "P2-developer-acceptance",
+  "fixture": {
+    "gitTree": "7dd01d19dbee779e8aacda11a94a5d721722ba1c",
+    "acceptance": [
+      "空配列は0",
+      "単価100・数量3は300",
+      "複数商品の合計は340",
+      "依頼外fileと既存dirty差分を保護"
+    ],
+    "identicalBaselineContent": true
+  },
+  "localTests": {
+    "command": "node --test --test-reporter=tap dist/tests/*.test.js",
+    "tests": 55,
+    "passed": 55,
+    "failed": 0,
+    "logHash": "fa1298de844ee634fa01fc0604a23d97ffec80c3b6a580301774337a3b357aa5"
+  },
+  "connections": [
+    {
+      "id": "codex-subscription",
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "authMethod": "oauth",
+      "billing": "subscription",
+      "connectionHash": "32a3bf6bb2c61eab328d5e4f377b83932854c76f3d4264b539c8768dd1be17ce",
+      "observedModel": {
+        "id": "gpt-6.1-sol",
+        "contextWindow": 272000,
+        "maxOutputTokens": 128000,
+        "reasoning": true,
+        "input": [
+          "text",
+          "image"
+        ]
+      },
+      "pricing": {
+        "kind": "subscription",
+        "basis": "User selected subscription; pinned provider OAuth isSubscription=true; successful OAuth and live inference. Invoice and remaining allowance unavailable. Pi catalog cost is not subscription billing.",
+        "observedAt": "2026-10-25T01:56:06.564Z",
+        "amountUsd": null
+      },
+      "rpc": {
+        "accounted": 19843,
+        "reported": 14038,
+        "reserved": 5805,
+        "missing": 1,
+        "records": [
+          {
+            "kind": "spawn",
+            "processGroup": 5430
+          },
+          {
+            "kind": "start",
+            "model": {
+              "id": "gpt-6.1-sol",
+              "provider": "openai"
+            },
+            "persistedSession": true
+          },
+          {
+            "kind": "smoke-task",
+            "result": {
+              "status": "completed",
+              "failure": null,
+              "settled": true,
+              "usage": {
+                "input": 3523,
+                "output": 544,
+                "cacheRead": 7552,
+                "cacheWrite": 0
+              },
+              "usageSource": "pi_message_end",
+              "toolErrors": 0
+            },
+            "tools": [
+              "read",
+              "read",
+              "search",
+              "read",
+              "read",
+              "read",
+              "edit",
+              "verify",
+              "shell"
+            ]
+          },
+          {
+            "kind": "stop",
+            "processGroup": 5430,
+            "groupGone": true,
+            "stderrBytes": 0,
+            "usage": {
+              "tokens": 11619,
+              "reserved": 0,
+              "requests": 7,
+              "missingRequests": 0
+            },
+            "accountedTotal": 11619
+          },
+          {
+            "kind": "spawn",
+            "processGroup": 8062
+          },
+          {
+            "kind": "start",
+            "model": {
+              "id": "gpt-6.1-sol",
+              "provider": "openai"
+            },
+            "persistedSession": true
+          },
+          {
+            "kind": "resume",
+            "result": {
+              "status": "completed",
+              "failure": null,
+              "settled": true,
+              "usage": {
+                "input": 158,
+                "output": 85,
+                "cacheRead": 2176,
+                "cacheWrite": 0
+              },
+              "usageSource": "pi_message_end",
+              "toolErrors": 0
+            },
+            "tools": []
+          },
+          {
+            "kind": "abort-in-flight",
+            "result": {
+              "status": "aborted",
+              "failure": null,
+              "settled": false,
+              "usage": null,
+              "usageSource": "unavailable",
+              "toolErrors": 0
+            },
+            "tools": []
+          },
+          {
+            "kind": "stop",
+            "processGroup": 8062,
+            "groupGone": true,
+            "stderrBytes": 0,
+            "usage": {
+              "tokens": 2419,
+              "reserved": 5805,
+              "requests": 2,
+              "missingRequests": 1
+            },
+            "accountedTotal": 19843
+          },
+          {
+            "kind": "independent-checks",
+            "protectedFiles": true,
+            "testsPassed": true,
+            "groups": [
+              7501
+            ],
+            "groupsGone": true,
+            "beforeHash": "c7d551f2d23b85e1b21d651e99bbc63133beb43120eb5984985b51a29a2f8ee5",
+            "afterHash": "c5f51f483d834b293fa8059831322307fad68b9714e40feebbd43d830d1d06e4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "claude-subscription",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "authMethod": "oauth",
+      "billing": "subscription",
+      "connectionHash": "654538746db504bab54bf130230eaea410051476a8ae8e54af6d87dadd8c2d11",
+      "observedModel": {
+        "id": "claude-sonnet-4-5-20250929",
+        "contextWindow": 200000,
+        "maxOutputTokens": 64000,
+        "reasoning": true,
+        "input": [
+          "text",
+          "image"
+        ]
+      },
+      "pricing": {
+        "kind": "subscription",
+        "basis": "User selected subscription; pinned provider OAuth isSubscription=true; successful OAuth and live inference. Invoice and remaining allowance unavailable. Pi catalog cost is not subscription billing.",
+        "observedAt": "2026-10-25T01:56:06.564Z",
+        "amountUsd": null
+      },
+      "rpc": {
+        "accounted": 25086,
+        "reported": 25086,
+        "reserved": 0,
+        "missing": 0,
+        "records": [
+          {
+            "kind": "spawn",
+            "processGroup": 5431
+          },
+          {
+            "kind": "start",
+            "model": {
+              "id": "claude-sonnet-4-5-20250929",
+              "provider": "anthropic"
+            },
+            "persistedSession": true
+          },
+          {
+            "kind": "smoke-task",
+            "result": {
+              "status": "completed",
+              "failure": null,
+              "settled": true,
+              "usage": {
+                "input": 27,
+                "output": 905,
+                "cacheRead": 13825,
+                "cacheWrite": 2081
+              },
+              "usageSource": "pi_message_end",
+              "toolErrors": 0
+            },
+            "tools": [
+              "read",
+              "read",
+              "edit",
+              "verify",
+              "shell"
+            ]
+          },
+          {
+            "kind": "stop",
+            "processGroup": 5431,
+            "groupGone": true,
+            "stderrBytes": 0,
+            "usage": {
+              "tokens": 16838,
+              "reserved": 0,
+              "requests": 5,
+              "missingRequests": 0
+            },
+            "accountedTotal": 16838
+          },
+          {
+            "kind": "spawn",
+            "processGroup": 6853
+          },
+          {
+            "kind": "start",
+            "model": {
+              "id": "claude-sonnet-4-5-20250929",
+              "provider": "anthropic"
+            },
+            "persistedSession": true
+          },
+          {
+            "kind": "resume",
+            "result": {
+              "status": "completed",
+              "failure": null,
+              "settled": true,
+              "usage": {
+                "input": 3,
+                "output": 38,
+                "cacheRead": 3704,
+                "cacheWrite": 359
+              },
+              "usageSource": "pi_message_end",
+              "toolErrors": 0
+            },
+            "tools": []
+          },
+          {
+            "kind": "abort-in-flight",
+            "result": {
+              "status": "aborted",
+              "failure": null,
+              "settled": false,
+              "usage": null,
+              "usageSource": "unavailable",
+              "toolErrors": 0
+            },
+            "tools": []
+          },
+          {
+            "kind": "stop",
+            "processGroup": 6853,
+            "groupGone": true,
+            "stderrBytes": 0,
+            "usage": {
+              "tokens": 8248,
+              "reserved": 0,
+              "requests": 2,
+              "missingRequests": 0
+            },
+            "accountedTotal": 25086
+          },
+          {
+            "kind": "independent-checks",
+            "protectedFiles": true,
+            "testsPassed": true,
+            "groups": [
+              6434
+            ],
+            "groupsGone": true,
+            "beforeHash": "25f7db1f9c866ad41b3a27f167ea1d21f459a906467b111af07c419cc9e444fb",
+            "afterHash": "f7b09e2ce04c0f31020a34425cd4b2ae136aa4589b101038d950a2daf91107a9"
+          }
+        ]
+      }
+    }
+  ],
+  "claudeSdk": {
+    "reported": 28671,
+    "reserved": 0,
+    "records": [
+      {
+        "kind": "smoke-task",
+        "status": "completed",
+        "blockedReason": null,
+        "provider": {
+          "status": "completed",
+          "failure": null,
+          "settled": true,
+          "usage": {
+            "input": 32,
+            "output": 1100,
+            "cacheRead": 17766,
+            "cacheWrite": 4539
+          },
+          "usageSource": "pi_message_end",
+          "toolErrors": 0
+        },
+        "verification": "pass",
+        "tools": [
+          "search",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "edit",
+          "verify"
+        ],
+        "usage": {
+          "tokens": 23437,
+          "elapsedMs": 23321,
+          "costUsd": null,
+          "meteredCostUsd": 0,
+          "reservedUnknownTokens": 0,
+          "unknown": false
+        },
+        "changedFiles": [
+          "cart.js"
+        ]
+      },
+      {
+        "kind": "resume",
+        "status": "blocked",
+        "blockedReason": "runtime_or_budget_blocked",
+        "provider": {
+          "status": "error",
+          "failure": "provider_error",
+          "settled": true,
+          "usage": null,
+          "usageSource": "unavailable",
+          "toolErrors": 0
+        },
+        "verification": "not_run",
+        "tools": [],
+        "usage": {
+          "tokens": 23437,
+          "elapsedMs": 23417,
+          "costUsd": null,
+          "meteredCostUsd": 0,
+          "reservedUnknownTokens": 0,
+          "unknown": false
+        },
+        "changedFiles": []
+      },
+      {
+        "kind": "cancel-before-send",
+        "status": "aborted",
+        "blockedReason": null,
+        "provider": {
+          "status": "aborted",
+          "failure": null,
+          "settled": true,
+          "usage": null,
+          "usageSource": "unavailable",
+          "toolErrors": 0
+        },
+        "verification": "not_run",
+        "tools": [],
+        "usage": {
+          "tokens": 23437,
+          "elapsedMs": 23489,
+          "costUsd": null,
+          "meteredCostUsd": 0,
+          "reservedUnknownTokens": 0,
+          "unknown": false
+        },
+        "changedFiles": []
+      },
+      {
+        "kind": "resume-with-approved-budget",
+        "status": "blocked",
+        "blockedReason": "harness_blocked",
+        "provider": {
+          "status": "completed",
+          "failure": null,
+          "settled": true,
+          "usage": {
+            "input": 3,
+            "output": 45,
+            "cacheRead": 4539,
+            "cacheWrite": 647
+          },
+          "usageSource": "pi_message_end",
+          "toolErrors": 0
+        },
+        "verification": "fail",
+        "usage": {
+          "tokens": 28671,
+          "elapsedMs": 25849,
+          "costUsd": null,
+          "meteredCostUsd": 0,
+          "reservedUnknownTokens": 0,
+          "unknown": false
+        },
+        "changedFiles": []
+      }
+    ]
+  },
+  "limits": {
+    "claudeTotal": 60000,
+    "claudeAccounted": 53757,
+    "codexRpcTotal": 40000,
+    "turnMs": 120000,
+    "concurrencyPerConnection": 1,
+    "retries": 0
+  },
+  "preparatoryFailures": [
+    {
+      "kind": "RPC-startup",
+      "attemptsPerConnection": 2,
+      "reason": "Evaluation cwd string check rejected macOS /var versus /private/var; canonical path check fixed before model dispatch.",
+      "tokensSent": 0,
+      "allGroupsGone": true
+    },
+    {
+      "kind": "Claude-SDK-resume",
+      "reason": "30k budget lacked input reservation; blocked before dispatch. User then approved 60k."
+    },
+    {
+      "kind": "Claude-SDK-resume-verification",
+      "reason": "Model resumed and settled; runner declined a harness approval, so report stayed blocked. Independent tests subsequently passed; original blocked record retained."
+    },
+    {
+      "kind": "Local-process-test",
+      "reason": "One full-suite run failed process-group absence confirmation. The focused process suite then passed outside execution restrictions; final full-suite TAP is linked separately."
+    }
+  ],
+  "faultCoverage": {
+    "structuredStatus": [
+      "401",
+      "403",
+      "429",
+      "408",
+      "504",
+      "ETIMEDOUT"
+    ],
+    "messageInference": true,
+    "live429Induced": false,
+    "missingUsage": "Codex live RPC abort reservation; adapter null retained even when a late provider ledger arrives.",
+    "fallback": false
+  },
+  "priorCodexSdk": {
+    "evidenceHash": "b55afceff7244b60c667cd37d47e594c8fff026acf3e2bb6b9abdc9a25c3c737",
+    "acceptance": "passed"
+  },
+  "rawEvidenceHashes": [
+    "c4ca6fb0df61687313ca84b5f0b73099dcb5ac54c960b147ca59e3012f79b6ac",
+    "fccc8dada004082b8dc2d703c485c5487ee157bc616c97c68ca507c23c11da2e",
+    "d7ac9c6292325e95fc611d9eaa62ba65c4949acc6d623fa1f0f0a892293a1b17"
+  ],
+  "sourceHashes": {
+    "src/agent.ts": "afff74d8fd5991fde32e0de2ccafe20d052d17b5c98f39d60f0cb73bd6f7ae0b",
+    "src/auth.ts": "0d3b9446e8094988964591f3954267900e779069f817ef2fd65c0dbbdb18d14d",
+    "src/cli.ts": "dcb12a6dabe99c9ff5aabffec6a50b50a884c9216ae2017db3c6899310933871",
+    "src/config.ts": "5862be12e48565d318e345b289351bbfa7c8eb60e7ae10a1994093340d1eaf81",
+    "src/connections.ts": "0af988e5e3668efdea3e4740d37b55277e90fd17e5a39f19b058559a461207b5",
+    "src/dialogue.ts": "5840da7866ef52412565db1ab088f8a4312a81ed1a6750902fa7f137bf86e5f4",
+    "src/files.ts": "9accc194cb34cb75fc8651f1ff6230555b8987221e2c870db01936242ef515e6",
+    "src/harness.ts": "39b0fb6e2a3c847c2a73d10d21deaee2c36fbf60039f990c74a088b394d3828f",
+    "src/pi.ts": "5c556137f182cce61732814f38d41a26d7aa28a73c9991740612b827572a9d9f",
+    "src/process.ts": "d34d614dd4b5ab57b36cd56888fb618513f860c14db7ba046c782a9dea498fbb",
+    "src/routing.ts": "955806bc900dd2ea7407735e3617aa0d62c96fc45d07ccf10ec5d9a4e8ed5829",
+    "src/rpc-evaluation-extension.ts": "98d5cd81fcdcc8aae482fb16d1e6b2c8739adf54f3ace7ef87b13ab02d44f04e",
+    "src/rpc.ts": "fb05ff191db5e268ef93b29da29ee5984d6f0f43defcccab04fd7f2369e403e3",
+    "src/rules.ts": "92b78b3776ab072321da0de3efe76912da70b049223f53d9113dc1758fe97b15",
+    "src/session.ts": "86ca83759b40f93ac636ee8fee5163b4f5319f43e5074515fe0933a9955367c2",
+    "src/setup.ts": "dc04cf76b5ea5757261be0675cfcb11a1e5f8402a80ae59dcd3d0df9f71d0f32",
+    "src/store.ts": "e0cb8dc395d1d1bb8129999255ba7e1ed4271ee9a3a1fe7fbdd0a9c84a1124e8",
+    "src/terminal.ts": "809be84c67abb9348e281b301bd496f61ff07b72b2a633d770f10850b91d73f6",
+    "src/tools.ts": "f5a9df5ac8ae6718a6c2c0d949b7a0609767e1975b3220524b440578888fbba0",
+    "src/workspace.ts": "55930175abd0bedbddf97bc20272b50ec755827a5938012e870476fb07563583",
+    "tests/agent.test.ts": "a017aa712db34e994b816c6f7ccbedfcff5cba9b4a2e8439c45cd31a2a9c8ead",
+    "tests/dialogue.test.ts": "001cdd58727e017015c70e7944c9b3f131b3cd9c4bdffdde6135106f987b5a3b",
+    "tests/execution.test.ts": "8c03f2e7a38dcfb0e452d6560e7edd8939caeaca8b8cb987b144e80197c38612",
+    "tests/foundation.test.ts": "d382979cdc4ef0b56d4f6c1366cc1ce40303c586ce3037ad8a8e805c2b30b39b",
+    "tests/pi.test.ts": "002e13dcc608c03f6c130f6a03d192a91d6f9b2cc3b1cf1ad0496c34aafbbf4c",
+    "tests/routing.test.ts": "2676e58530e1604357aa64e050882db0ca0ce0f0adac9f877b6b9c67342065c3",
+    "tests/rpc-credentials.test.ts": "621c53d44997f99b42bfc55615d8ab7e336107dc77a779d2b2b097d3cd39f193",
+    "tests/rpc.test.ts": "f24ca25e1f051ec3c635ebb5974e7ac348a997272e4a699a2bcca22ce6ded355",
+    "tests/rules.test.ts": "200fb6f2b99f083b5d12b393b5ad4977c0042ce48af082516e74e6d239ee2e07",
+    "tests/setup.test.ts": "d3554550c2158f0d51281e26118e25cfb31e46f3e84f151a9cdcbc19c17d5571",
+    "scripts/evaluate-rpc.mjs": "72018e6d02a1828212fabae51a1305e15df2b6454e6159b1028e5e2fe8c1b130",
+    "scripts/evaluate-sdk.mjs": "4b06e49ac86a9a5f75d945c5bd0347e52c8030884124cf4eda42eb2c8c116f06",
+    "scripts/export-p2-evidence.mjs": "03282ceeadfb31edd98f99de21209360153c1f1f032960226968a0ba2d7f2791",
+    "scripts/prepare-evaluation.mjs": "b7b44792b9978ef2efcfbd8b2d176f7fb53c269a68e1c3b5b9c5e664a51d67f1",
+    "package.json": "ff63f3724a183616e9f86cf317135340dce6f04d80a0fde6a935da072ea0ffed",
+    "package-lock.json": "978f569292f3a285db3337a09a5eb5a02f09ab5a76e8ac05782614d227a5ed71",
+    "connections.example.json": "2c0c1cd6ab6e207e98b02d07b97f54c88d6543580b0c4b46da3e257e0b2fd1ee",
+    "routing.example.json": "5be45b1835e3c02fa4e4fae3d4838494bc08d8fe8ce260a3ee9151f98e6d9bd7"
+  },
+  "liveSourceHashes": {
+    "src/agent.ts": "afff74d8fd5991fde32e0de2ccafe20d052d17b5c98f39d60f0cb73bd6f7ae0b",
+    "src/auth.ts": "57300c96b2d101f061bb376268aed283837bdfb2f0e797e4489555b17f45211a",
+    "src/cli.ts": "dcb12a6dabe99c9ff5aabffec6a50b50a884c9216ae2017db3c6899310933871",
+    "src/config.ts": "5862be12e48565d318e345b289351bbfa7c8eb60e7ae10a1994093340d1eaf81",
+    "src/connections.ts": "0af988e5e3668efdea3e4740d37b55277e90fd17e5a39f19b058559a461207b5",
+    "src/dialogue.ts": "5840da7866ef52412565db1ab088f8a4312a81ed1a6750902fa7f137bf86e5f4",
+    "src/files.ts": "9accc194cb34cb75fc8651f1ff6230555b8987221e2c870db01936242ef515e6",
+    "src/harness.ts": "39b0fb6e2a3c847c2a73d10d21deaee2c36fbf60039f990c74a088b394d3828f",
+    "src/pi.ts": "cd778c6894933cf506ba2ab7364a33861cea19519e1941b5c22fc41c8e00ba41",
+    "src/process.ts": "d34d614dd4b5ab57b36cd56888fb618513f860c14db7ba046c782a9dea498fbb",
+    "src/routing.ts": "7b2ea8dd20060cd5b02fd0cf8a9c98ed9c5d41b04e77ea12e989b06a2fadefbf",
+    "src/rpc-evaluation-extension.ts": "4647c59a93b4ec27c8f957b498c0313ee67f0a935d9aeee44969417edd468313",
+    "src/rpc.ts": "2e6c9045aebd7e445a66a12e3d7137f7ef15cb3e150063ad646735b3ee54d99e",
+    "src/rules.ts": "92b78b3776ab072321da0de3efe76912da70b049223f53d9113dc1758fe97b15",
+    "src/session.ts": "86ca83759b40f93ac636ee8fee5163b4f5319f43e5074515fe0933a9955367c2",
+    "src/setup.ts": "dc04cf76b5ea5757261be0675cfcb11a1e5f8402a80ae59dcd3d0df9f71d0f32",
+    "src/store.ts": "e0cb8dc395d1d1bb8129999255ba7e1ed4271ee9a3a1fe7fbdd0a9c84a1124e8",
+    "src/terminal.ts": "809be84c67abb9348e281b301bd496f61ff07b72b2a633d770f10850b91d73f6",
+    "src/tools.ts": "f5a9df5ac8ae6718a6c2c0d949b7a0609767e1975b3220524b440578888fbba0",
+    "src/workspace.ts": "55930175abd0bedbddf97bc20272b50ec755827a5938012e870476fb07563583",
+    "tests/agent.test.ts": "a017aa712db34e994b816c6f7ccbedfcff5cba9b4a2e8439c45cd31a2a9c8ead",
+    "tests/dialogue.test.ts": "001cdd58727e017015c70e7944c9b3f131b3cd9c4bdffdde6135106f987b5a3b",
+    "tests/execution.test.ts": "8c03f2e7a38dcfb0e452d6560e7edd8939caeaca8b8cb987b144e80197c38612",
+    "tests/foundation.test.ts": "d382979cdc4ef0b56d4f6c1366cc1ce40303c586ce3037ad8a8e805c2b30b39b",
+    "tests/pi.test.ts": "002e13dcc608c03f6c130f6a03d192a91d6f9b2cc3b1cf1ad0496c34aafbbf4c",
+    "tests/routing.test.ts": "136ca326fec328497ddfec492939a299c1463a6610299edcedc25f3f416c9525",
+    "tests/rpc-credentials.test.ts": "621c53d44997f99b42bfc55615d8ab7e336107dc77a779d2b2b097d3cd39f193",
+    "tests/rpc.test.ts": "ef24b1461768462399196324ebe22a3bbe1d152d6da61091cfb99d11be3e044a",
+    "tests/rules.test.ts": "200fb6f2b99f083b5d12b393b5ad4977c0042ce48af082516e74e6d239ee2e07",
+    "tests/setup.test.ts": "d3554550c2158f0d51281e26118e25cfb31e46f3e84f151a9cdcbc19c17d5571",
+    "scripts/evaluate-rpc.mjs": "72018e6d02a1828212fabae51a1305e15df2b6454e6159b1028e5e2fe8c1b130",
+    "scripts/evaluate-sdk.mjs": "4b06e49ac86a9a5f75d945c5bd0347e52c8030884124cf4eda42eb2c8c116f06",
+    "scripts/export-p2-evidence.mjs": "abda0537966c135a3bccd872911a2861fe8a5a74c990e6d323aa31df88843c42",
+    "scripts/prepare-evaluation.mjs": "b7b44792b9978ef2efcfbd8b2d176f7fb53c269a68e1c3b5b9c5e664a51d67f1",
+    "package.json": "ff63f3724a183616e9f86cf317135340dce6f04d80a0fde6a935da072ea0ffed",
+    "package-lock.json": "978f569292f3a285db3337a09a5eb5a02f09ab5a76e8ac05782614d227a5ed71",
+    "connections.example.json": "2c0c1cd6ab6e207e98b02d07b97f54c88d6543580b0c4b46da3e257e0b2fd1ee",
+    "routing.example.json": "5be45b1835e3c02fa4e4fae3d4838494bc08d8fe8ce260a3ee9151f98e6d9bd7"
+  },
+  "acceptance": {
+    "developer": "passed",
+    "userDailyUse": "not_confirmed",
+    "githubCI": "not_run",
+    "providerInvoiceReconciliation": "not_available",
+    "rankingOrSuccessRate": "not_measured",
+    "backupRestore": "P4_not_implemented"
+  }
+}

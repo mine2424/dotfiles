@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "allowFallback": false,
+  "roles": {
+    "dialogue": "codex-sub",
+    "planner": "codex-sub",
+    "explorer": "codex-sub",
+    "implementer": "codex-sub",
+    "reviewer": "claude-sub"
+  },
+  "tasks": [
+    { "type": "comparison", "role": "implementer", "connectionId": "claude-sub" }
+  ]
+}

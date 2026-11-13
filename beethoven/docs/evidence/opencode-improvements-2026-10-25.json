@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "OpenCode design study, persistent dialogue UI and audited execution-management fixes",
+  "opencode": {
+    "repository": "https://github.com/anomalyco/opencode",
+    "commit": "0b7f4c416104387deaa6c1184718d9eb7da35d93",
+    "commitDate": "2026-10-25T04:34:27Z",
+    "references": [
+      {
+        "path": "packages/tui/src/app.tsx",
+        "url": "https://github.com/anomalyco/opencode/blob/0b7f4c416104387deaa6c1184718d9eb7da35d93/packages/tui/src/app.tsx",
+        "sha256": "b97ebed0dea62f1eda897ddde4268b0d30caf271bff74f04c5dc11fe4345faf3"
+      },
+      {
+        "path": "packages/tui/src/component/prompt/index.tsx",
+        "url": "https://github.com/anomalyco/opencode/blob/0b7f4c416104387deaa6c1184718d9eb7da35d93/packages/tui/src/component/prompt/index.tsx",
+        "sha256": "ed903af4b3504afc3aed73f6fc6afe13a1cc1a1059a4c4ad623a1ea74ebd107c"
+      },
+      {
+        "path": "packages/core/src/session/run-coordinator.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/0b7f4c416104387deaa6c1184718d9eb7da35d93/packages/core/src/session/run-coordinator.ts",
+        "sha256": "2073edef2f14be91fd19246c409d50b399af1bc551e517bb1cd07552440d0269"
+      },
+      {
+        "path": "packages/core/src/session/subagent-job.ts",
+        "url": "https://github.com/anomalyco/opencode/blob/0b7f4c416104387deaa6c1184718d9eb7da35d93/packages/core/src/session/subagent-job.ts",
+        "sha256": "fcecd0bc044e643ab749e98aeee08cb40c391bb692fbcf73001b2902f4b62fbd"
+      }
+    ],
+    "adoptedPrinciples": [
+      "UI lifetime separate from turn lifetime",
+      "action errors remain within UI",
+      "single execution owner and cleanup distinct from interruption request",
+      "child work has explicit owned lifecycle"
+    ],
+    "migration": "Pi 1.4.0 SDK and existing SQLite retained; no OpenCode code/dependency transplant"
+  },
+  "fixed": [
+    "turn or command exceptions no longer unwind the interactive loop",
+    "unknown runtime failure pauses execution until explicit same-session /resume",
+    "no automatic retransmission, budget reset or provider fallback",
+    "safe dialogue_exit metadata for future exit diagnosis",
+    "MGMT-01: ready/start admission and latched cancellation, including during initialization",
+    "MGMT-02: await owned process-group disappearance after leader exit",
+    "MGMT-03: unbounded active-reservation lookup separate from display pagination",
+    "MGMT-04: search yields and validates rules at batches and before publishing results"
+  ],
+  "validation": {
+    "fullNodeSuite": {
+      "passed": 83,
+      "failed": 0,
+      "log": "/tmp/beethoven-opencode-final-tests.log"
+    },
+    "workerFaultRegressions": {
+      "passed": 8,
+      "failed": 0,
+      "log": "/tmp/beethoven-worker-handshake-tests.log"
+    },
+    "realPty": {
+      "existingConditions": 16,
+      "log": "/tmp/beethoven-opencode-final-pty.log",
+      "dialogueScenarios": [
+        "successful response followed by a second turn",
+        "budget error followed by continued UI and explicit interrupt exit",
+        "runtime exception followed by command access, paused admission and explicit same-session resume"
+      ],
+      "dialogueLog": "/tmp/beethoven-dialogue-final.log",
+      "assertions": [
+        "alternate screen and process remain alive between turns",
+        "same Session and accumulated usage retained",
+        "paused inputs do not trigger provider dispatch",
+        "raw transport exception marker is not rendered",
+        "explicit exit reason persisted"
+      ]
+    },
+    "typecheck": "passed",
+    "realProviderModelRequests": 0,
+    "newLiveAuthentication": false
+  },
+  "performance": {
+    "method": "same generated small-file isolated Git repos; current local machine, one run per size; not a general SLA",
+    "before": [
+      {
+        "textFiles": 12,
+        "wallMs": 367,
+        "rulesChecks": 13,
+        "eventLoopFirstTimerMs": 368,
+        "isError": false
+      },
+      {
+        "textFiles": 102,
+        "wallMs": 1722,
+        "rulesChecks": 103,
+        "eventLoopFirstTimerMs": 1722,
+        "isError": false
+      },
+      {
+        "textFiles": 252,
+        "wallMs": 3419,
+        "rulesChecks": 253,
+        "eventLoopFirstTimerMs": 3419,
+        "isError": false
+      }
+    ],
+    "after": [
+      {
+        "textFiles": 12,
+        "wallMs": 71,
+        "rulesChecks": 2,
+        "eventLoopFirstTimerMs": 71,
+        "isError": false
+      },
+      {
+        "textFiles": 102,
+        "wallMs": 128,
+        "rulesChecks": 5,
+        "eventLoopFirstTimerMs": 76,
+        "isError": false
+      },
+      {
+        "textFiles": 252,
+        "wallMs": 221,
+        "rulesChecks": 9,
+        "eventLoopFirstTimerMs": 85,
+        "isError": false
+      }
+    ]
+  },
+  "limits": [
+    "previous observed turn was completed; exact historical UI exit cause cannot be uniquely recovered from old events",
+    "new live-provider reproduction/acceptance not performed",
+    "single explicitly dispatched Worker only; no DAG or parallel scheduler",
+    "conservative unknown-usage reservations retained",
+    "persistent parked-worker resume, cross-session quota scheduling and candidate lifecycle policy remain future work"
+  ],
+  "sourceSha256": {
+    "src/dialogue.ts": "c7aeaf62a805bdb6a188b97f662e2e013f1579b18c9363b213be2aba93f4994f",
+    "src/tui.ts": "7ae9ff4d8d95924426e95194a4f5a33d01f88ece3b6b622ddb5d16c10c18db02",
+    "src/worker.ts": "317296b8bbba67a8def58b97e271a3760b01d9846a0a577ad017c99191f0f65b",
+    "src/worker-entry.ts": "5cf3d407df6f066e548de26c1c24f8f8daeef1439cfa84a7f927d4fdadfb4df9",
+    "src/session.ts": "0b093b1428ae8e8bd49a512900bd8f2abf3a51e83882d0872d343056d5ba21a4",
+    "src/agent.ts": "89f2214c534f213ed382cc6b9e0ac590e54e1b9bad0ddb27b743af85ac2fe2bb",
+    "src/tools.ts": "5638f81a74ea586588590a401ff7519b486723dc9ac6f5a4a8438051011d5bb2",
+    "src/process.ts": "6b431657da740ca5b91cfe7db7274a9db4f7c0b8fadc427e3521cbeae2cb29de",
+    "tests/dialogue-child.ts": "96ea0a0ce3fac1c87787220542773cba3e6b51b3ebe4dba72df03ab0abc4354f",
+    "tests/worker.test.ts": "93b062fcef1b515a40eb26e9c6496b38c41aedb3eadb856a4b231f0c6a62a3f5",
+    "tests/agent.test.ts": "fb4af0ca627151e7b549dcbcf1a6c352cf72483111d04517d52e4e4413b3ed18",
+    "scripts/check-dialogue-pty.py": "c6428872bc9890340bca16f520221ef9a670527fce0306ef45497eeca96380fd"
+  }
+}

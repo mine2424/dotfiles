@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "defaultConnectionId": "codex-sub",
+  "allowFallback": false,
+  "connections": [
+    {
+      "id": "codex-sub", "provider": "openai", "model": "gpt-6.1-sol",
+      "auth": { "method": "oauth", "credentialRef": "pi:codex-sub" },
+      "billing": { "kind": "subscription" }, "quotaGroup": "openai-subscription",
+      "limits": { "maxTokens": 20000, "maxDurationMs": 600000, "maxAttempts": 2, "maxConcurrency": 1, "maxCostUsd": null },
+      "status": "configured"
+    },
+    {
+      "id": "claude-sub", "provider": "anthropic", "model": "claude-sonnet-5-5",
+      "auth": { "method": "oauth", "credentialRef": "pi:claude-sub" },
+      "billing": { "kind": "subscription" }, "quotaGroup": "anthropic-subscription",
+      "limits": { "maxTokens": 20000, "maxDurationMs": 600000, "maxAttempts": 2, "maxConcurrency": 1, "maxCostUsd": null },
+      "status": "configured"
+    },
+    {
+      "id": "kimi-sub", "provider": "kimi-coding", "model": "k3",
+      "auth": { "method": "oauth", "credentialRef": "pi:kimi-sub" },
+      "billing": { "kind": "subscription" }, "quotaGroup": "kimi-coding-subscription",
+      "limits": { "maxTokens": 20000, "maxDurationMs": 600000, "maxAttempts": 2, "maxConcurrency": 1, "maxCostUsd": null },
+      "status": "configured"
+    }
+  ]
+}

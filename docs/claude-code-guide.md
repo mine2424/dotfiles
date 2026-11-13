@@ -7,7 +7,6 @@ dotfiles で管理する Claude Code の共通設定。`setup.sh --claude` で `
 ```
 .claude/
 ├── settings.json          # セキュリティ deny list + hooks
-├── settings.local.json    # allow list (許可コマンド)
 ├── scripts/
 │   └── deny-check.sh      # PreToolUse hook (コマンド検証)
 ├── agents/                # 汎用サブエージェント
@@ -127,7 +126,7 @@ Claude Code が Agent ツールで呼び出す専門サブエージェント。�
 | 対象 | 方式 | 理由 |
 |------|------|------|
 | `scripts/` | コピー | フック実行スクリプト |
-| `settings.local.json` | コピー | allow list は dotfiles が完全管理 |
+| `settings.local.json` | 対象外 | 端末・プロジェクト固有の許可をローカルに保持 |
 | `settings.json` | **jq マージ** | permissions/hooks は dotfiles から、enabledPlugins 等のランタイム設定は保持 |
 | `agents/`, `commands/`, `rules/` | コピー (置換) | dotfiles が完全管理 |
 

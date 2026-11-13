@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "performance and Agent/Worker/orchestration management audit",
+  "implementationChanges": "none; audit evidence only",
+  "runtime": {
+    "node": "24.21.0",
+    "Pi": "1.4.0"
+  },
+  "validation": {
+    "existingRelatedTests": {
+      "passed": 21,
+      "failed": 0,
+      "log": "/tmp/beethoven-management-existing-tests.log"
+    },
+    "faultInjectionAndBenchmarks": "isolated disposable repos and actual local Node/SDK child processes; scripted provider only",
+    "realProviderModelRequests": 0,
+    "newAuthentication": false,
+    "temporaryFixtureProcessesRemaining": false,
+    "budgetGuard": {
+      "cap": 2000,
+      "status": "blocked",
+      "inputEstimateTokens": null,
+      "blockedReason": "runtime_or_budget_blocked",
+      "rulesChars": 90000,
+      "requestWasDispatched": false
+    },
+    "timingQualification": "Single-machine local measurements, not a throughput SLA or provider latency benchmark."
+  },
+  "findings": [
+    {
+      "id": "MGMT-01",
+      "priority": "P1",
+      "title": "Worker initialization loses cancellation",
+      "source": "src/worker-entry.ts:13",
+      "reproduction": "Inject abort into the registered message handler during runtime.getModel, before openAgent resolves. Real isolated SDK child still calls the scripted provider, edits the candidate, and returns candidate.",
+      "evidence": {
+        "injection": "abort handler called synchronously inside runtime.getModel while openAgent is initializing",
+        "stage": "candidate",
+        "providerModelStageReached": true,
+        "candidateChanged": true
+      },
+      "recommendation": "Latch cancellation from child startup, pass a shared AbortSignal into run, and re-check after every initialization await and before dispatch."
+    },
+    {
+      "id": "MGMT-02",
+      "priority": "P1",
+      "title": "Leader exit cancels descendant SIGKILL escalation",
+      "source": "src/worker.ts:99",
+      "reproduction": "A private child fixture spawns a same-group descendant that ignores SIGTERM. Force abort causes the leader to exit; supervisor clears the scheduled kill before descendant disappearance.",
+      "evidence": {
+        "error": "Workerまたはtool processの停止が未確認です。lockと予算予約を保持しました。",
+        "ownedProcessGroupRemainsAfterLeaderExit": true
+      },
+      "recommendation": "Retain bounded TERM/KILL cleanup until the owned process group is confirmed absent, independently of leader exit; include recorded tool groups."
+    },
+    {
+      "id": "MGMT-03",
+      "priority": "P1",
+      "title": "Latest-100 display query is used as the global unsettled-worker guard",
+      "source": "src/session.ts:34",
+      "relatedSources": [
+        "src/agent.ts:73",
+        "src/worker.ts:146"
+      ],
+      "reproduction": "Seed an unsettled worker in an old parent plus 100 newer sessions. Agent opening is allowed; recovery cannot find the actual reservation.",
+      "evidence": {
+        "sessionCount": 101,
+        "listReturned": 100,
+        "unsettledParentListed": false,
+        "agentOpenedDespiteUnsettledWorker": true,
+        "recoveryError": "未精算のWorker予約が見つかりません。"
+      },
+      "recommendation": "Use an unbounded/dedicated active-worker query and a Worker-ID lookup for safety and recovery. Keep display pagination separate."
+    },
+    {
+      "id": "MGMT-04",
+      "priority": "P2",
+      "title": "Search repeats synchronous rule and Git discovery per file",
+      "source": "src/tools.ts:79",
+      "relatedSources": [
+        "src/agent.ts:142",
+        "src/rules.ts:87"
+      ],
+      "evidence": [
+        {
+          "textFiles": 12,
+          "wallMs": 367,
+          "rulesChecks": 13,
+          "eventLoopFirstTimerMs": 368,
+          "isError": false
+        },
+        {
+          "textFiles": 102,
+          "wallMs": 1722,
+          "rulesChecks": 103,
+          "eventLoopFirstTimerMs": 1722,
+          "isError": false
+        },
+        {
+          "textFiles": 252,
+          "wallMs": 3419,
+          "rulesChecks": 253,
+          "eventLoopFirstTimerMs": 3419,
+          "isError": false
+        }
+      ],
+      "recommendation": "Cache repository identity and perform rules validation at bounded batch boundaries, preserving path checks. Yield/check AbortSignal during traversal and use bounded asynchronous reads."
+    }
+  ],
+  "confirmedControls": [
+    "single state-root controller lock",
+    "same rules, permission and edit scope in child",
+    "dirty source workspace retained while child edits isolated worktree",
+    "session budget reservation and usage settlement",
+    "missing usage retained as unknown",
+    "no automatic provider fallback or retry",
+    "agent_settled required for completion",
+    "unconfirmed stop retains lock and reservation instead of declaring cleanup complete"
+  ],
+  "managementLimits": [
+    "single explicitly dispatched Worker; no DAG or parallel scheduler",
+    "routing configuration is not connected to automatic Worker assignment",
+    "no persistent suspend/resume and slot return during human questions",
+    "no owner lease/heartbeat recovery; PID and last activity are diagnostic evidence",
+    "no archive/retention policy for candidate worktrees; candidates are intentionally preserved"
+  ],
+  "nextPriority": [
+    "MGMT-01, MGMT-02, MGMT-03 with regression coverage",
+    "MGMT-04 performance and input-latency regression coverage",
+    "then Worker scheduling, waiting-state persistence and storage lifecycle"
+  ],
+  "sourceSha256": {
+    "src/worker-entry.ts": "8cc186d67f01cec93998284fc179fe2a2c60a909aa3c99f20f2bff0cd2920a8c",
+    "src/worker.ts": "c8bf7d5125c945cfd21906d459257a2c6cc4bdf40b69cef95d605a688f3f4aea",
+    "src/agent.ts": "1180cb19b45603a506ad1920eeb2fe6b89c9357518e66f69a57e40ebbf564f98",
+    "src/session.ts": "880d7b3b452cff09e88cda40f6570a1a1e13de4d12b0c3305862e396c3e744a0",
+    "src/tools.ts": "f5a9df5ac8ae6718a6c2c0d949b7a0609767e1975b3220524b440578888fbba0",
+    "src/rules.ts": "92b78b3776ab072321da0de3efe76912da70b049223f53d9113dc1758fe97b15",
+    "src/process.ts": "79a8682994d33c894644064afc0ec9937b1441f24f1532f6fb10d406c638b6c8",
+    "src/dialogue.ts": "16eaaafc495c6be658260d1ec201e1261b1df23b7d7d604706b95b4b49476600"
+  },
+  "localProbeArtifacts": [
+    "/tmp/beethoven-management-audit/audit.mjs",
+    "/tmp/beethoven-management-audit/history.mjs",
+    "/tmp/beethoven-management-audit/run.log",
+    "/tmp/beethoven-management-audit/results.json"
+  ]
+}

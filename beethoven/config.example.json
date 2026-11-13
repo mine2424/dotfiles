@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "permission": "read-only",
+  "maxTokens": 20000,
+  "maxDurationMs": 600000,
+  "maxCostUsd": 1,
+  "allowedConnections": []
+}

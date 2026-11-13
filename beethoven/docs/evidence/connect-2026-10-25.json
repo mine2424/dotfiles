@@ -1,0 +1,561 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-25T03:34:35.888Z",
+  "pi": "1.4.0",
+  "node": "24.21.0",
+  "scope": "Unified connection setup and all pinned native provider definitions",
+  "localTests": {
+    "total": 70,
+    "passed": 70,
+    "failed": 0,
+    "logHash": "770c49d3b416ffb99880a929cfc7e4878592686ce835ad66c389e7f8daa32b9d"
+  },
+  "pty": [
+    {
+      "pty": "passed",
+      "cases": [
+        "first launch",
+        "setup cancel",
+        "explicit allow",
+        "missing login",
+        "send cancel",
+        "terminal restore"
+      ],
+      "modelRequests": 0
+    },
+    {
+      "connect": "passed",
+      "cases": [
+        "search provider",
+        "search model",
+        "single confirmation",
+        "reuse own auth",
+        "no extra allow/start",
+        "session entry",
+        "queued input after connection change"
+      ],
+      "modelRequests": 0
+    }
+  ],
+  "providers": [
+    {
+      "id": "amazon-bedrock",
+      "name": "Amazon Bedrock",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 193,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "ant-ling",
+      "name": "Ant Ling",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 3,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "anthropic",
+      "name": "Claude",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 17,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "azure",
+      "name": "Azure",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 43,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "baseten",
+      "name": "Baseten",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 14,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "cerebras",
+      "name": "Cerebras",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 2,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "cloudflare-ai-gateway",
+      "name": "Cloudflare AI Gateway",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 58,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "cloudflare-workers-ai",
+      "name": "Cloudflare Workers AI",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 19,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 2,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "fireworks",
+      "name": "Fireworks",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 24,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 26,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "google",
+      "name": "Google",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 24,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "google-vertex",
+      "name": "Google Vertex AI",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 14,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 7,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "huggingface",
+      "name": "Hugging Face",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 80,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "kimi-coding",
+      "name": "Kimi Code",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "meta",
+      "name": "Meta",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 6,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "minimax",
+      "name": "MiniMax",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "minimax-cn",
+      "name": "MiniMax CN",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 37,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "moonshotai",
+      "name": "Moonshot AI",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "moonshotai-cn",
+      "name": "Moonshot AI CN",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "nvidia",
+      "name": "NVIDIA",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 21,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "openai",
+      "name": "Codex / OpenAI",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 42,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "openai-codex",
+      "name": "OpenAI Codex (legacy)",
+      "authMethods": [
+        "oauth"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 7,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode Zen",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 83,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "opencode-go",
+      "name": "OpenCode Go",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 29,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 401,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "qwen-token-plan",
+      "name": "Qwen Token Plan",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 21,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "qwen-token-plan-cn",
+      "name": "Qwen Token Plan CN",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 21,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "qwen-token-plan-individual",
+      "name": "Qwen Token Plan Individual",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 9,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "radius",
+      "name": "Radius",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 32,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "together",
+      "name": "Together",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 15,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "typesafe",
+      "name": "TypeSafe",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 0,
+      "codingCandidate": false,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "vercel-ai-gateway",
+      "name": "Vercel AI Gateway",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 305,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "xai",
+      "name": "xAI",
+      "authMethods": [
+        "oauth",
+        "api_key"
+      ],
+      "subscriptionOAuth": true,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 3,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "xiaomi-token-plan-ams",
+      "name": "Xiaomi Token Plan AMS",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 2,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "xiaomi-token-plan-cn",
+      "name": "Xiaomi Token Plan CN",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 2,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "xiaomi-token-plan-sgp",
+      "name": "Xiaomi Token Plan SGP",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 2,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "zai",
+      "name": "Z.AI",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 7,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    },
+    {
+      "id": "zai-coding-cn",
+      "name": "Z.AI Coding CN",
+      "authMethods": [
+        "api_key"
+      ],
+      "subscriptionOAuth": false,
+      "chatModels": 4,
+      "codingCandidate": true,
+      "liveValidation": "not_run_in_this_change"
+    }
+  ],
+  "sourceHashes": {
+    "src/connect.ts": "f884605bfda3b1d750605a954ff95a45903c180ca1ab6ab4fced30e05f17e287",
+    "src/providers.ts": "185f226f699525af694a26b8f898522d96879c223ad92c479707a7effbf0b07b",
+    "src/connections.ts": "3fe6bff0a03cbf07f894c494eb8aa2b3d322670a129898419d023008e9fe150c",
+    "src/auth.ts": "568848504df11c157253b79f6ccb7a83ed9d777f8f0af70579fc8ed87e2e4c99",
+    "src/agent.ts": "81cbca75a3637f092afd53a7dd0a825a8b00be31f32ee79d5edb12e2b906fb2a",
+    "src/welcome.ts": "62fd828371a801073790553732d7f9c60981fb742af221af8aa354df1ca16558",
+    "src/tui.ts": "65f5a835de6ab614f3a7cfa6d039e2bf8807d14f3aab87b8799af905af6ec70f",
+    "src/dialogue.ts": "211bd51da1fdc181a9c8785ca3e981d2de7bc50b158f0ebd4e01b697d853c373",
+    "src/terminal.ts": "56b023b4e6f49bdef1b225aaffa924990ffe195d3c4364ef647a11faa9b8b943",
+    "src/cli.ts": "d02192870488c72cf3118759ba6aa18172f1a5ab94f12917a55171f30e75f2bc",
+    "tests/connect.test.ts": "7f8ec32941027be564f9df0a8d95df73594c2375a9ad44203a8f5b9f83ed156a",
+    "tests/setup.test.ts": "53a87dc8a59a4b7c078152a038b5f74b7296794dc01d1db324ab988e17c477af",
+    "tests/agent.test.ts": "c893ee752bfb0d880f85c6ed4517fd64261881874ce8ef1ad37a150ff9c93330",
+    "tests/tui.test.ts": "623a0e4f4765b0968d8765fc0365f9bb45f47c6a8c99ca6f0a44c9d8affc0110",
+    "scripts/check-tui-pty.py": "6917bc0f543669f12e58e731a0cb1b18755ffbb6690c2740e0a167c5cd45b0d0",
+    "package.json": "cef3b83d6143c14f785ce7e994f1a39f9e239510c90c2c841b89f56ba01b3020",
+    "package-lock.json": "e4154dc39c6e9fd8237f269dfd239a5eb7199b911abf18e4ff357f593265c4b0",
+    "docs/connect-design.md": "d236d50f46f615cb6cb8f1b9290f0eb0c97b52421941fc60f1fb7cd3fc905967"
+  },
+  "limitations": {
+    "typesafe": "classifier-only; not a dialogue provider",
+    "catalog": "pinned local model candidates, not account entitlement",
+    "openrouterRouters": "excluded from fixed-price quick setup",
+    "cloudPrerequisites": "external accounts, endpoint/deployment/profile/ADC setup remain required",
+    "rpc": "existing evaluation runner is subscription-scoped; full-provider metered RPC not evaluated",
+    "providerAccountAndModelTrials": "not_run",
+    "paidModelRequests": 0,
+    "humanAcceptance": "not_confirmed",
+    "githubCI": "not_run"
+  },
+  "references": [
+    {
+      "title": "OpenCode Providers",
+      "url": "https://opencode.ai/docs/providers/"
+    },
+    {
+      "title": "Claude Code first day",
+      "url": "https://support.claude.com/en/articles/14552382-your-first-day-in-claude-code"
+    },
+    {
+      "title": "OpenRouter OAuth PKCE",
+      "url": "https://openrouter.ai/docs/guides/overview/auth/oauth"
+    },
+    {
+      "title": "OpenRouter routing",
+      "url": "https://openrouter.ai/docs/guides/routing/provider-selection"
+    }
+  ]
+}
