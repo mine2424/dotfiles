@@ -21,12 +21,23 @@
 ./setup.sh --cli         # Git, Zellij, Yazi 等
 ./setup.sh --desktop     # Cursor + Zed
 ./setup.sh --claude      # Claude 設定
+./setup.sh --pi --install # Pi + Ponytail 固定版の導入
 ./setup.sh --ssh         # SSH 設定（~/.ssh/config）
 ./setup.sh --macos       # macOS システム設定
 
 ./setup.sh --all --dry-run  # ドライラン（実際には実行しない）
 ./setup.sh --help
 ```
+
+### Pi開発環境の診断
+
+```bash
+python3 scripts/check-pi.py --smoke
+```
+
+リポジトリルートから実行。Node・Piの版、Ponytailの登録とSHA、4つの開発Promptを確認する。
+`--smoke` は一時設定で実際のPi RPCの読込を検証する。モデルへの質問は送らない。
+結果はJSONで出力し、失敗時は終了コード1。詳細は [Piガイド](../pi/README.md) を参照。
 
 ### backup.sh
 現在の Mac 環境を dotfiles にスナップショットする。新しい Mac への移行前に実行する。
