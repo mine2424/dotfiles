@@ -63,7 +63,7 @@ class PiSetupTests(unittest.TestCase):
             result = self.run_setup()
             self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((prompts / 'review.md').read_text(), 'personal review')
-        self.assertEqual((prompts / 'plan.md').resolve(), other)
+        self.assertEqual((prompts / 'plan.md').resolve(), other.resolve())
         self.assertEqual((prompts / 'work.md').resolve(), SCRIPTS.parent / 'pi/prompts/work.md')
         self.assertTrue((prompts / 'handoff.md').is_symlink())
 

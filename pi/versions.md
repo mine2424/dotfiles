@@ -14,6 +14,7 @@
 - 3つの独自Skillはskill-creatorのquick_validate.pyで検証成功。
 - PRセルフレビューでローカルの旧Nodeが優先される問題を再現し、ランチャーのPATHを固定版Pi→miseのNode→ローカルbinの順へ修正。競合するNode/Piの回帰テストを追加。
 - Linux/macOS向けのPiセットアップCIを追加。実モデル・子のモデル実行はCIに含めない。
+- macOS CIで検出したBashの日本語に隣接する変数参照と、/var→/private/varの別名パス比較を修正。
 - スモークは課金APIを使わず、子のモデル実行は行わない。ローカルでの再現手順はREADMEに記載。
 - 実モデルのPlaybook判断・子の実装実行と複数モデルの比較、macOS・WSL実機は未確認。
 - Outer Loopの自動スケジュールと改善PRの自動公開は未実装。

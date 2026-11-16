@@ -31,7 +31,7 @@ if [[ "$dry_run" == true ]]; then
     log_info "[DRY RUN] 開発Prompt: $agent_dir/prompts/{plan,work,review,handoff}.md（既存は保持）"
     if [[ "$install" == true ]]; then
         log_info "[DRY RUN] mise がなければ https://mise.run から ~/.local/bin/mise に導入"
-        log_info "[DRY RUN] mise install node@$PI_NODE_VERSION（既存Nodeの有無・版に関係なくmiseで管理）"
+        log_info "[DRY RUN] mise install node@${PI_NODE_VERSION}（既存Nodeの有無・版に関係なくmiseで管理）"
         log_info "[DRY RUN] npm install --global --prefix $prefix @earendil-works/pi-coding-agent@$PI_VERSION"
         log_info "[DRY RUN] pi install $PONYTAIL_SOURCE"
         log_info "[DRY RUN] pi install $SUBAGENTS_SOURCE"
