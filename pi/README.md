@@ -100,7 +100,7 @@ Ponytailのフィルター移行は対象の登録だけを変更し、他のモ
 認証・履歴・キャッシュ・モデル割当はGit管理しない。`PI_CODING_AGENT_DIR` にも対応する。
 
 Piは `~/.local/share/dotfiles/pi/`、起動は `~/.local/bin/pi`。
-ランチャーはmiseのNodeと子が起動するPiのPATHを選ぶ。既存ランチャーはローカルの
+ランチャーは固定版Piのbin、miseのNode、ローカルbinの順でPATHを選び、旧Nodeや別のグローバルPiの混入を防ぐ。既存ランチャーはローカルの
 `~/.local/state/dotfiles/backups/` へ退避する。他のプロジェクトのNode既定版は変えない。
 版や設定が壊れた場合は診断してから再実行する。ローカル退避ファイルを公開しない。
 Repo固有情報は [AGENTS雛形](project-AGENTS.example.md) を既存ルールへマージする。

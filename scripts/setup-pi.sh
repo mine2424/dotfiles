@@ -111,7 +111,7 @@ if [[ "$install" == true ]]; then
     mkdir -p "$prefix" "$HOME/.local/bin"
     {
         echo '#!/usr/bin/env bash'
-        printf 'export PATH=%q:%q:"$PATH"\n' "$HOME/.local/bin" "$node_bin"
+        printf 'export PATH=%q:%q:%q:"$PATH"\n' "$prefix/bin" "$node_bin" "$HOME/.local/bin"
         printf 'exec %q "$@"\n' "$prefix/bin/pi"
     } > "$prefix/launch-pi"
     chmod +x "$prefix/launch-pi"

@@ -6,12 +6,14 @@
 - Ponytail SHAは継続。旧Extensionは無効化し、専門Skillsだけを利用する。
 - New / Change / Fixの3つのSkillと共通PrinciplesをこのPCへ導入済み。
 - 第三者コードの確認範囲はresearch.mdを参照。
-- `python3 -m unittest discover -s scripts/tests -p test_setup_pi.py -v`: 11件成功。
+- `python3 -m unittest discover -s scripts/tests -p test_setup_pi.py -v`: 12件成功。
   既存設定・個人Skill・Principlesの保持、冪等性、Ponytailフィルター移行とバックアップ、失敗伝播を確認。
 - `python3 scripts/check-pi.py --smoke`: 19項目成功。
   実際のPi RPCによるコマンド/Skill読込に加え、Pi SDKとスクリプト化したモデルで
   pstack指示合成、共通原則への参照、subagentツール実行による同梱agent発見、Poteto Mode解除、Extensionイベントにエラーがないことを確認。
 - 3つの独自Skillはskill-creatorのquick_validate.pyで検証成功。
+- PRセルフレビューでローカルの旧Nodeが優先される問題を再現し、ランチャーのPATHを固定版Pi→miseのNode→ローカルbinの順へ修正。競合するNode/Piの回帰テストを追加。
+- Linux/macOS向けのPiセットアップCIを追加。実モデル・子のモデル実行はCIに含めない。
 - スモークは課金APIを使わず、子のモデル実行は行わない。ローカルでの再現手順はREADMEに記載。
 - 実モデルのPlaybook判断・子の実装実行と複数モデルの比較、macOS・WSL実機は未確認。
 - Outer Loopの自動スケジュールと改善PRの自動公開は未実装。
