@@ -1,5 +1,45 @@
 # 公開事例を踏まえたPi + Ponytail構成
 
+## v2: pstackを主軸にする（2026-11-16）
+
+[Ubieの記事（2026-11-12）](https://zenn.dev/ubie_dev/articles/45501469c9c044)は、
+固定のPlan→Build→Verifyから、Playbookを手掛かりにエージェントが進め方を判断する方式への移行と、
+セッションの失敗・人間の修正から改善PRを作るOuter Loopを説明する。
+今回は前者を採用し、後者の定期実行は次段階にする。Remocoのクラウド・アクセス制御基盤を再現したものではない。
+
+| 一次資料 | 確認・採用した内容 |
+| --- | --- |
+| [Cursor公式pstack](https://github.com/cursor/plugins/tree/main/pstack) | poteto-modeと専門Skill・Playbook・Principleの分離という構成 |
+| [Pi移植版 @zenspc/pi-pstack](https://github.com/zenspc/pi-extensions/tree/master/packages/pi-pstack) | npm 0.9.0の配布物を取得。package.json、Extension本体とconfig、poteto-mode、Pi委譲手順、同梱agent定義を確認 |
+| [nicobailon/pi-subagents](https://github.com/nicobailon/pi-subagents) | npm名が `pi-subagents` の配布元。0.88.1のmanifest、ランタイム登録・起動フック、権限・agent発見・モデル/設定のドキュメントを確認 |
+| [Ponytail 固定版](https://github.com/DietrichGebert/ponytail/tree/e3ba2aa6f1e6f0bc4d69eb09c9f0d0a93af56156) | pi-extensionのbefore_agent_startがsystemPrompt全体を返すことを確認。v2では旧Extensionを無効化し、Skillsだけを併用 |
+| [Recruit「レビューは AI が書いて、人が選ぶ」](https://techblog.recruit.co.jp/article-8036/) | 公開記事の検索抜粋で確認できた候補選択の考え方を `/review` に反映。記事全文は取得できておらず、公式Skillの完全移植とは扱わない |
+
+### 構成上の判断
+
+- オーケストレーターはpstack、最小実装の助言はPonytail。New / Change / Fixは3つの短いローカルSkillで補完する。
+- 共有制約はPRINCIPLES.mdに置き、AGENTSと各Skillから参照する。pstackの一般的な自律実行文言が公開や本番操作の許可を増やさないよう明示する。
+- モデル割当はローカルのmodels.json。未指定は親モデル継承。複数Providerの課金は自動で増やさない。
+- Ponytailの旧フックはPi 1.5.2のforceSystemPromptを使う経路に入り、後続Extensionの構造化指示と競合しうる。読込順へ依存させずフィルターで無効化する。
+- 同梱comment-sickoはread-onlyを指示するがbashも持つ。ツール制限をOSサンドボックスとは扱わず、子の範囲・権限・成果を親が確認する。
+- pstackのwatch-prにはBun、statechartのライブ検証には追加ツールが必要。初期導入だけですべての任意機能が利用可能とは扱わず、必要になった時に要件を確認する。
+- 旧 `/work` は互換入口として残し、固定の工程は取り除いた。`/plan` と `/review` の編集しない制約は、その明示的な依頼にだけ適用する。
+
+### ソース確認の範囲と検証
+
+固定版の直接パッケージにインストール時のlifecycle scriptは宣言されていないことを確認した。
+ただし、pi-subagentsは依存パッケージと実行コードを含む。全依存・全分岐のセキュリティ監査を実施したものではない。
+npmの名前と作者・repositoryを照合して同名の別実装を取り違えないようにした。
+
+`check-pi.py --smoke` は一時設定で実際のPi RPCとSDKを起動する。
+スクリプト化したモデルを使い、指示合成、subagentツールでのagent一覧取得、Poteto Mode解除を検証する。
+これはPlaybookを判断するLLMの品質や、実モデルでの委譲成功を証明しない。
+結果はversions.mdに記録する。
+
+## v1の調査・判断（履歴）
+
+以下の「subagent等を後で追加」という判断はv2では上の構成へ更新した。
+
 確認日: 2026-11-16。公開者自身のREADME・実装と、導入版に同梱された公式ドキュメントを確認した。
 各人が公開している構成の参考例であり、利用者全体の傾向や生産性向上を証明する調査ではない。
 

@@ -115,7 +115,9 @@ chmod +x "$prefix/bin/pi"
         self.assertEqual(len(backups), 1)
         self.assertEqual(backups[0].read_text(), 'previous launcher')
         self.assertIn('@earendil-works/pi-coding-agent@1.5.2', (self.home / 'npm-calls').read_text())
-        self.assertIn('@e3ba2aa6', (self.agent / 'registered').read_text())
+        self.assertIn('@e3ba2aa6', (self.home / 'pi-calls').read_text())
+        self.assertIn('install npm:@zenspc/pi-pstack@0.9.0', (self.home / 'pi-calls').read_text())
+        self.assertIn('install npm:pi-subagents@0.88.1', (self.home / 'pi-calls').read_text())
         self.assertEqual(json.loads((self.agent / 'settings.json').read_text()),
                          {'defaultProjectTrust': 'ask'})
         # The generated launcher must work with paths containing spaces.
@@ -202,9 +204,52 @@ cat "$HOME/installer.sh"
         report = json.loads(result.stdout)
         self.assertFalse(report['ok'])
         self.assertFalse(report['model_response_tested'])
-        self.assertEqual(len(report['checks']), 10)
+        self.assertEqual(len(report['checks']), 19)
         self.assertNotIn('private-value', result.stdout + result.stderr)
         self.assertNotIn('credential-must-not-appear', result.stdout + result.stderr)
+
+    def test_local_skills_and_principles_preserve_user_resources(self):
+        skills = self.agent / 'skills'
+        skills.mkdir(parents=True)
+        (self.agent / 'PRINCIPLES.md').write_text('personal principles')
+        custom = skills / 'new-development'
+        custom.mkdir()
+        (custom / 'SKILL.md').write_text('personal skill')
+        for _ in range(2):
+            result = self.run_setup()
+            self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.agent / 'PRINCIPLES.md').read_text(), 'personal principles')
+        self.assertEqual((custom / 'SKILL.md').read_text(), 'personal skill')
+        self.assertTrue((skills / 'existing-change').is_symlink())
+        self.assertTrue((skills / 'incident-fix').is_symlink())
+
+    def test_ponytail_configuration_preserves_other_settings_and_is_idempotent(self):
+        settings = self.home / 'settings.json'
+        source = 'git:github.com/DietrichGebert/ponytail@fixed'
+        before = {'defaultModel': 'personal-model', 'packages': [
+            'npm:unrelated@1', {'source': source, 'skills': ['+skills/ponytail/SKILL.md']}],
+            'subagents': {'defaultModel': 'personal-provider/model'}}
+        settings.write_text(json.dumps(before))
+        alias = self.home / 'linked-settings.json'
+        alias.symlink_to(settings)
+        command = ['node', str(SCRIPTS / 'configure-pi.mjs'), str(alias), source]
+        for _ in range(2):
+            result = subprocess.run(command, text=True, capture_output=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        after = json.loads(settings.read_text())
+        self.assertEqual(after['defaultModel'], before['defaultModel'])
+        self.assertEqual(after['subagents'], before['subagents'])
+        self.assertEqual(after['packages'][0], before['packages'][0])
+        self.assertEqual(after['packages'][1], {**before['packages'][1], 'extensions': []})
+        self.assertTrue(alias.is_symlink())
+        backups = list(self.home.glob('settings.json.before-pstack.*'))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(json.loads(backups[0].read_text()), before)
+        settings.write_text('invalid private setting')
+        result = subprocess.run(command, text=True, capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(settings.read_text(), 'invalid private setting')
+        self.assertNotIn('invalid private setting', result.stdout + result.stderr)
 
 
 if __name__ == '__main__':

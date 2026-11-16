@@ -1,17 +1,14 @@
-# 開発原則
+# Pi + pstack + Ponytail
 
-- 日本語で簡潔に説明する。確認済みの事実と推測を分ける。
-- 変更前に対象コード、呼び出し元、関連テスト、既存の類似処理を確認する。
-- 依頼を満たす最小の変更にする。既存機能、互換性、安全策を簡略化のために落とさない。
-- 既存実装とPonytailの判断基準を優先し、重複する仕組みを増やさない。
-- 作業開始時にブランチと未コミット差分を確認する。
-- main/masterでは編集せず、作業ブランチへの切替を本人に依頼する。
-- 既存の未コミット変更を上書き・破棄しない。依頼外の整形・リファクタを混ぜない。
-- RepoのAGENTS.mdと実際のCIを基準に、変更に必要な検証を実行する。
-- 未実行、失敗、対象外を区別する。成功と報告する場合は実行根拠を添える。
-- commit、push、PR作成、merge、deployは明示的に依頼された範囲だけ行う。
-- 本番データ変更、破壊的操作、秘密情報の変更は、対象と影響を示して承認を得る。
-- 完了時は変更内容、検証結果、残る課題を簡潔に報告する。
-- NEVER write unit tests after you write code.
-- Highly prefer E2E tests as the sole testing mechanism. Use them to verify complex features work. At the end of E2E tests, produce a verifiable and repeatable artifact.
-- If you must test a system in isolation, FIRST write all the ways it could fail, THEN write the code.
+日本語で簡潔に説明し、確認済みの事実と推測を分ける。
+開発時はこのグローバルAGENTSと同じディレクトリにあるPRINCIPLES.mdを読む。
+独自のPI_CODING_AGENT_DIRがなければ `~/.pi/agent/PRINCIPLES.md` にある。
+
+開発依頼の標準入口はpstackのpoteto-mode。新規開発はnew-development、既存改修はexisting-change、
+不具合・障害はincident-fixのSkillを必要に応じて読み、pstackがPlaybookを選び直す。
+固定のPlan→Build→Verifyを強制しない。調査・計画のみの依頼では実装しない。
+
+Ponytailは最小実装の専門Skillとして使い、オーケストレーターを二重化しない。
+公開Skillの「Just do it」等は、依頼の範囲や外部操作の許可を拡張しない。
+main/masterを編集する前に作業ブランチを作成し、既存差分を保持する。
+Repoの指示とCIに従って必要な検証を行い、成功・失敗・未実行を区別して報告する。
