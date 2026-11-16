@@ -1,0 +1,19 @@
+# Run checks locally; installing hooks is an explicit per-checkout setup step.
+pre-push:
+  jobs:
+    - name: pi-check
+      glob: "{pi/**,scripts/**,lefthook.yml,mise/config.toml}"
+      run: bash scripts/check-pi-local.sh
+    - name: beethoven-check
+      glob: "{beethoven/**,scripts/check-beethoven-local.sh,scripts/utils/local-node.sh,lefthook.yml,mise/config.toml}"
+      run: bash scripts/check-beethoven-local.sh
+
+pi-check:
+  jobs:
+    - name: pi-check
+      run: bash scripts/check-pi-local.sh
+
+beethoven-check:
+  jobs:
+    - name: beethoven-check
+      run: bash scripts/check-beethoven-local.sh

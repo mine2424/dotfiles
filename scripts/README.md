@@ -31,6 +31,10 @@
 
 ### Pi開発環境の診断
 
+Pi・BeethovenのGitHub Actions CIは削除し、ローカルのLefthookへ移行。各チェックアウトで `bash scripts/setup-hooks.sh` を実行する。
+関連変更のpush前にPiは `bash scripts/check-pi-local.sh`、Beethovenは `bash scripts/check-beethoven-local.sh` が動く。手動実行も可能で、ダウンロードや課金API呼出しは行わない。
+Lefthookの版は `mise/config.toml` に固定し、既存の独自フックやcore.hooksPathは上書きしない。
+
 ```bash
 python3 scripts/check-pi.py --smoke
 ```

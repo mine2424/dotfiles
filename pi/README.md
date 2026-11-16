@@ -112,6 +112,19 @@ python3 -m unittest discover -s scripts/tests -p test_setup_pi.py -v
 python3 scripts/check-pi.py --smoke > /tmp/pi-pstack-check.json
 ```
 
+GitHub ActionsでのPi用CIは実行せず、push前のローカル検証にする。
+各PCのdotfilesチェックアウトで一度フックを設定する。
+
+```bash
+bash scripts/setup-hooks.sh        # miseでLefthookを導入しpre-pushを設定
+bash scripts/check-pi-local.sh     # 手動でも同じ検証を実行できる
+```
+
+Lefthookは `mise/config.toml` に固定する。フックは関連ファイルの変更時だけ、構文検査と
+セットアップ回帰テストを実行する。パッケージ導入・モデル呼出し・実環境診断はpush時には行わない。
+既存のpre-pushやcore.hooksPathがある場合は保持して停止するので、手動で統合する。
+フックは各チェックアウトに導入が必要で、GitHub側での必須チェックではない。
+
 診断は版・登録・Skillリンク・Ponytail旧Extensionの無効化を確認する。
 `--smoke` は一時設定と実際のPi RPC/SDKを使い、スクリプト化したローカルモデルで
 pstackの指示合成、サブエージェント定義の発見、モード解除を確認する。

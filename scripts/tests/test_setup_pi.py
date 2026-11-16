@@ -243,6 +243,32 @@ cat "$HOME/installer.sh"
         self.assertTrue((skills / 'existing-change').is_symlink())
         self.assertTrue((skills / 'incident-fix').is_symlink())
 
+    def test_hook_setup_preserves_custom_hook_and_hooks_path(self):
+        self.fake('mise', 'echo invoked >> "$HOME/hook-mise-calls"\n')
+        self.fake('git', '''
+if [[ "$1" == config ]]; then
+    [[ ! -f "$HOME/custom-hooks-path" ]] || cat "$HOME/custom-hooks-path"
+elif [[ "$1" == rev-parse ]]; then
+    printf '%s\\n' "$HOME/hooks"
+else
+    exit 2
+fi
+''')
+        hooks = self.home / 'hooks'
+        hooks.mkdir()
+        hook = hooks / 'pre-push'
+        hook.write_text('#!/bin/sh\n# personal hook; lefthook migration later\necho personal hook\n')
+        command = ['bash', str(SCRIPTS / 'setup-hooks.sh')]
+        result = subprocess.run(command, env=self.env, text=True, capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('personal hook', hook.read_text())
+        self.assertFalse((self.home / 'hook-mise-calls').exists())
+        (self.home / 'custom-hooks-path').write_text('custom-hook-dir')
+        result = subprocess.run(command, env=self.env, text=True, capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('core.hooksPath', result.stderr)
+        self.assertFalse((self.home / 'hook-mise-calls').exists())
+
     def test_ponytail_configuration_preserves_other_settings_and_is_idempotent(self):
         settings = self.home / 'settings.json'
         source = 'git:github.com/DietrichGebert/ponytail@fixed'

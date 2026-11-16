@@ -10,7 +10,7 @@ Pi 1.4.0を使うTypeScriptのCoding Agentです。対話・会話履歴に加�
 
 他プロジェクトの関数・型を再利用する`assets`検索を追加しました。初期登録は0件で、本人がrepoと抜粋送信を許可する接続を登録してから使います。[資産の登録と利用](docs/operations.md#他プロジェクトの資産を再利用する)を参照してください。
 
-P4〜P8の機能を実装し、受入確認を進めています。ローカルのscripted SDK/Git試験、GitHub CI、実モデルと本人の日常利用受入は分けて記録します。過去の実モデル評価は[P2](docs/model-evaluation.md)・[P3](docs/p3-acceptance.md)、現在の残条件は[milestone](milestone.md)を参照してください。host実行はOS sandboxではありません。
+P4〜P8の機能を実装し、受入確認を進めています。ローカルのscripted SDK/Git試験、実モデルと本人の日常利用受入は分けて記録します。過去の実モデル評価は[P2](docs/model-evaluation.md)・[P3](docs/p3-acceptance.md)、現在の残条件は[milestone](milestone.md)を参照してください。host実行はOS sandboxではありません。
 
 - [マイルストーン](milestone.md): 実装順序、残作業、判断待ち・受入条件
 - [開発・ローカル確認](docs/development.md): 導入、ビルド、診断、実装ファイルの役割
@@ -25,3 +25,11 @@ P4〜P8の機能を実装し、受入確認を進めています。ローカル�
 - [P3受入記録](docs/p3-acceptance.md): 実装・ローカル試験・実モデル・本人受入の区別と操作手順
 
 構想中の仮称`forge`を、このディレクトリでは`beethoven`に統一しています。設計書のコマンド例には未実装のものを含みます。現在利用できる操作は開発手順を参照してください。
+
+## ローカル検証（Lefthook）
+
+GitHub ActionsのCIは削除し、push前にローカルで検証する方針です。
+依存は初回に `beethoven/` で `mise exec node@24.21.0 -- npm ci --ignore-scripts` で用意します。
+リポジトリルートで `bash scripts/setup-hooks.sh` を実行すると、関連変更のpush前に
+型検査・テスト・一時ランチャーでのPTY検証が動きます。手動実行は `bash scripts/check-beethoven-local.sh`。
+フックは依存をダウンロードせず、不足時はセットアップ方法を示して終了します。

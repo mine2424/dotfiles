@@ -69,4 +69,6 @@ yarn.lock
 **/state_*.sqlite*
 **/settings.local.json
 __pycache__/
+lefthook-local.yml
+lefthook-local.yaml
 *.pyc
