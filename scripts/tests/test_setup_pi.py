@@ -63,7 +63,7 @@ class PiSetupTests(unittest.TestCase):
             result = self.run_setup()
             self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((prompts / 'review.md').read_text(), 'personal review')
-        self.assertEqual((prompts / 'plan.md').resolve(), other)
+        self.assertEqual((prompts / 'plan.md').resolve(), other.resolve())
         self.assertEqual((prompts / 'work.md').resolve(), SCRIPTS.parent / 'pi/prompts/work.md')
         self.assertTrue((prompts / 'handoff.md').is_symlink())
 
@@ -93,6 +93,8 @@ mkdir -p "$prefix/bin"
 cat > "$prefix/bin/pi" <<'PI'
 #!/bin/bash
 set -eu
+node --version >/dev/null
+if [[ "${1:-}" == --check-child-pi ]]; then command -v pi; exit 0; fi
 printf '%s\\n' "$*" >> "$HOME/pi-calls"
 if [[ "$1" == install ]]; then
     [[ ! -e "$HOME/fail-install" ]] || exit 9
@@ -115,7 +117,9 @@ chmod +x "$prefix/bin/pi"
         self.assertEqual(len(backups), 1)
         self.assertEqual(backups[0].read_text(), 'previous launcher')
         self.assertIn('@earendil-works/pi-coding-agent@1.5.2', (self.home / 'npm-calls').read_text())
-        self.assertIn('@e3ba2aa6', (self.agent / 'registered').read_text())
+        self.assertIn('@e3ba2aa6', (self.home / 'pi-calls').read_text())
+        self.assertIn('install npm:@zenspc/pi-pstack@0.9.0', (self.home / 'pi-calls').read_text())
+        self.assertIn('install npm:pi-subagents@0.88.1', (self.home / 'pi-calls').read_text())
         self.assertEqual(json.loads((self.agent / 'settings.json').read_text()),
                          {'defaultProjectTrust': 'ask'})
         # The generated launcher must work with paths containing spaces.
@@ -165,6 +169,24 @@ cat "$HOME/installer.sh"
         self.assertIn('managed\\ node/bin', (self.home / '.local/share/dotfiles/pi/launch-pi').read_text())
         self.assertFalse((self.home / '.config/mise/config.toml').exists())
 
+    def test_launcher_prefers_managed_node_over_local_node(self):
+        self.prepare_install()
+        self.fake('pi', 'echo "wrong global Pi" >&2; exit 8\n')
+        local_bin = self.home / '.local/bin'
+        local_bin.mkdir(parents=True)
+        old_node = local_bin / 'node'
+        old_node.write_text('#!/bin/sh\necho "wrong local Node" >&2\nexit 7\n')
+        old_node.chmod(0o755)
+        result = self.run_setup('--install')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        child = subprocess.run([str(local_bin / 'pi'), '--check-child-pi'], env=self.env,
+                               text=True, capture_output=True, timeout=10)
+        self.assertEqual(child.returncode, 0, child.stderr)
+        self.assertEqual(child.stdout.strip(), str(self.home / '.local/share/dotfiles/pi/bin/pi'))
+        result = subprocess.run([str(local_bin / 'pi'), '--version'], env=self.env,
+                                text=True, capture_output=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_mise_and_download_failures_stop_before_npm(self):
         self.prepare_install()
         (self.home / 'fail-mise').touch()
@@ -202,9 +224,78 @@ cat "$HOME/installer.sh"
         report = json.loads(result.stdout)
         self.assertFalse(report['ok'])
         self.assertFalse(report['model_response_tested'])
-        self.assertEqual(len(report['checks']), 10)
+        self.assertEqual(len(report['checks']), 19)
         self.assertNotIn('private-value', result.stdout + result.stderr)
         self.assertNotIn('credential-must-not-appear', result.stdout + result.stderr)
+
+    def test_local_skills_and_principles_preserve_user_resources(self):
+        skills = self.agent / 'skills'
+        skills.mkdir(parents=True)
+        (self.agent / 'PRINCIPLES.md').write_text('personal principles')
+        custom = skills / 'new-development'
+        custom.mkdir()
+        (custom / 'SKILL.md').write_text('personal skill')
+        for _ in range(2):
+            result = self.run_setup()
+            self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.agent / 'PRINCIPLES.md').read_text(), 'personal principles')
+        self.assertEqual((custom / 'SKILL.md').read_text(), 'personal skill')
+        self.assertTrue((skills / 'existing-change').is_symlink())
+        self.assertTrue((skills / 'incident-fix').is_symlink())
+
+    def test_hook_setup_preserves_custom_hook_and_hooks_path(self):
+        self.fake('mise', 'echo invoked >> "$HOME/hook-mise-calls"\n')
+        self.fake('git', '''
+if [[ "$1" == config ]]; then
+    [[ ! -f "$HOME/custom-hooks-path" ]] || cat "$HOME/custom-hooks-path"
+elif [[ "$1" == rev-parse ]]; then
+    printf '%s\\n' "$HOME/hooks"
+else
+    exit 2
+fi
+''')
+        hooks = self.home / 'hooks'
+        hooks.mkdir()
+        hook = hooks / 'pre-push'
+        hook.write_text('#!/bin/sh\n# personal hook; lefthook migration later\necho personal hook\n')
+        command = ['bash', str(SCRIPTS / 'setup-hooks.sh')]
+        result = subprocess.run(command, env=self.env, text=True, capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('personal hook', hook.read_text())
+        self.assertFalse((self.home / 'hook-mise-calls').exists())
+        (self.home / 'custom-hooks-path').write_text('custom-hook-dir')
+        result = subprocess.run(command, env=self.env, text=True, capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('core.hooksPath', result.stderr)
+        self.assertFalse((self.home / 'hook-mise-calls').exists())
+
+    def test_ponytail_configuration_preserves_other_settings_and_is_idempotent(self):
+        settings = self.home / 'settings.json'
+        source = 'git:github.com/DietrichGebert/ponytail@fixed'
+        before = {'defaultModel': 'personal-model', 'packages': [
+            'npm:unrelated@1', {'source': source, 'skills': ['+skills/ponytail/SKILL.md']}],
+            'subagents': {'defaultModel': 'personal-provider/model'}}
+        settings.write_text(json.dumps(before))
+        alias = self.home / 'linked-settings.json'
+        alias.symlink_to(settings)
+        command = ['node', str(SCRIPTS / 'configure-pi.mjs'), str(alias), source]
+        for _ in range(2):
+            result = subprocess.run(command, text=True, capture_output=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        after = json.loads(settings.read_text())
+        self.assertEqual(after['defaultModel'], before['defaultModel'])
+        self.assertEqual(after['subagents'], before['subagents'])
+        self.assertEqual(after['packages'][0], before['packages'][0])
+        self.assertEqual(after['packages'][1], {**before['packages'][1], 'extensions': []})
+        self.assertTrue(alias.is_symlink())
+        backups = list(self.home.glob('settings.json.before-pstack.*'))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(json.loads(backups[0].read_text()), before)
+        settings.write_text('invalid private setting')
+        result = subprocess.run(command, text=True, capture_output=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(settings.read_text(), 'invalid private setting')
+        self.assertNotIn('invalid private setting', result.stdout + result.stderr)
 
 
 if __name__ == '__main__':

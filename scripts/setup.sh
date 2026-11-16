@@ -39,7 +39,7 @@ dotfilesの設定を適用し、必要なツールをインストールします
   --cli              CLIツール設定のみ（Git, Zellij等）
   --desktop          Cursor / Zed設定のみ
   --claude           Claude設定のみ
-  --pi               Pi + Ponytail（--install で固定版も導入）
+  --pi               Pi + pstack + Ponytail（--install で固定版も導入）
   --shogun           multi-agent-shogun設定のみ
   --ssh              SSH設定のみ（~/.ssh/config）
   --macos            macOSシステム設定のみ
@@ -951,7 +951,7 @@ confirm_setup() {
             echo "  - ターミナル設定（WezTerm + Ghostty）"
             echo "  - CLIツール設定（Git, Zellij等）"
             echo "  - Claude設定"
-            echo "  - Pi + Ponytail設定"
+            echo "  - Pi + pstack + Ponytail設定"
             echo "  - multi-agent-shogun設定"
             echo "  - SSH設定（~/.ssh/config）"
             echo "  - macOSシステム設定"
@@ -972,7 +972,7 @@ confirm_setup() {
             echo "  - Claude設定"
             ;;
         pi)
-            echo "  - Pi + Ponytail設定"
+            echo "  - Pi + pstack + Ponytail設定"
             ;;
         shogun)
             echo "  - multi-agent-shogun設定"

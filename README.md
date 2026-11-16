@@ -29,10 +29,16 @@ exec $SHELL
 
 ## スクリプト
 
+GitHub ActionsのCIは使わず、Pi・Beethovenの検証をLefthookでローカル実行します。
+各PCで `bash scripts/setup-hooks.sh` を一度実行すると、関連変更のpush前に検証が動きます。
+手動実行は `bash scripts/check-pi-local.sh` / `bash scripts/check-beethoven-local.sh`。
+Beethovenの依存は初回に `beethoven/` で `mise exec node@24.21.0 -- npm ci --ignore-scripts` を実行して用意します。
+
 - `scripts/setup.sh`: 設定適用と依存導入
 - `scripts/sync.sh`: dotfiles とローカル設定の双方向同期
 - `scripts/clean.sh`: 設定クリーニング
 - `scripts/verify-setup.sh`: セットアップ検証
+- `scripts/setup-hooks.sh`: mise管理のLefthookでローカルのpre-push検証を設定
 - `scripts/backup.sh`: ローカル環境のバックアップ
 - `scripts/disk-cleanup.sh`: キャッシュ・不要ファイル削除によるディスク容量回復
 
@@ -62,7 +68,7 @@ exec $SHELL
 - [Zellij ガイド](docs/zellij-guide.md)
 - [Ghostty ガイド](docs/ghostty-guide.md)
 - [OpenCode セットアップ](docs/opencode-setup.md)
-- [Pi + Ponytail セットアップ](pi/README.md)（`bash scripts/setup-pi.sh --install`）
+- [Pi + pstack + Ponytail セットアップ](pi/README.md)（`bash scripts/setup-pi.sh --install`）
 - [カラースキーム統合](docs/colorscheme-integration.md)
 - [Mac 移行手順](docs/guides/migration.md)
 - [ディスクメンテナンス](docs/disk-maintenance.md)

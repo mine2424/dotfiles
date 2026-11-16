@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Portable Pi + Ponytail setup. Bootstraps mise and its pinned Node runtime.
+# Portable Pi + pstack + Ponytail setup. Bootstraps mise and its pinned Node runtime.
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -14,7 +14,7 @@ for arg in "$@"; do
         --dry-run) dry_run=true ;;
         --help|-h)
             echo 'Usage: bash scripts/setup-pi.sh [--install] [--dry-run]'
-            echo 'Default: apply initial settings only. --install: install pinned Pi and Ponytail.'
+            echo 'Default: apply settings and local skills. --install: install pinned Pi, pstack, subagents and Ponytail.'
             exit 0 ;;
         *) log_error "不明なオプション: $arg"; exit 1 ;;
     esac
@@ -26,12 +26,17 @@ launcher="$HOME/.local/bin/pi"
 if [[ "$dry_run" == true ]]; then
     log_info "[DRY RUN] 初回設定: $agent_dir/settings.json（既存は保持）"
     log_info "[DRY RUN] 原則リンク: $agent_dir/AGENTS.md（既存は保持）"
+    log_info "[DRY RUN] 共通Principles: $agent_dir/PRINCIPLES.md（既存は保持）"
+    log_info "[DRY RUN] Playbook Skills: $agent_dir/skills/{new-development,existing-change,incident-fix}（既存は保持）"
     log_info "[DRY RUN] 開発Prompt: $agent_dir/prompts/{plan,work,review,handoff}.md（既存は保持）"
     if [[ "$install" == true ]]; then
         log_info "[DRY RUN] mise がなければ https://mise.run から ~/.local/bin/mise に導入"
-        log_info "[DRY RUN] mise install node@$PI_NODE_VERSION（既存Nodeの有無・版に関係なくmiseで管理）"
+        log_info "[DRY RUN] mise install node@${PI_NODE_VERSION}（既存Nodeの有無・版に関係なくmiseで管理）"
         log_info "[DRY RUN] npm install --global --prefix $prefix @earendil-works/pi-coding-agent@$PI_VERSION"
         log_info "[DRY RUN] pi install $PONYTAIL_SOURCE"
+        log_info "[DRY RUN] pi install $SUBAGENTS_SOURCE"
+        log_info "[DRY RUN] pi install $PSTACK_SOURCE"
+        log_info '[DRY RUN] PonytailのSkillsは保持し、プロンプト全体を差し替える旧Extensionは無効化'
         log_info "[DRY RUN] ランチャー: $launcher"
     fi
     exit 0
@@ -69,6 +74,22 @@ elif [[ "$(readlink "$agent_dir/AGENTS.md" || true)" != "$DOTFILES_ROOT/pi/agent
     log_warn "既存の $agent_dir/AGENTS.md を保持しました。原則は必要に応じて手動でマージしてください"
 fi
 
+# 共通原則と用途別Skillは個別リンクし、ユーザーの他の設定は保持する。
+if [[ ! -e "$agent_dir/PRINCIPLES.md" && ! -L "$agent_dir/PRINCIPLES.md" ]]; then
+    ln -s "$DOTFILES_ROOT/pi/principles.md" "$agent_dir/PRINCIPLES.md"
+elif [[ "$(readlink "$agent_dir/PRINCIPLES.md" || true)" != "$DOTFILES_ROOT/pi/principles.md" ]]; then
+    log_warn "既存Principlesを保持しました: $agent_dir/PRINCIPLES.md"
+fi
+mkdir -p "$agent_dir/skills"
+for skill in "$DOTFILES_ROOT/pi/skills/"*; do
+    target="$agent_dir/skills/$(basename "$skill")"
+    if [[ ! -e "$target" && ! -L "$target" ]]; then
+        ln -s "$skill" "$target"
+    elif [[ "$(readlink "$target" || true)" != "$skill" ]]; then
+        log_warn "既存Skillを保持しました: $target"
+    fi
+done
+
 # 個別リンクにして、利用者の他のPromptや同名ファイルを置換しない。
 mkdir -p "$agent_dir/prompts"
 for prompt in "$DOTFILES_ROOT/pi/prompts/"*.md; do
@@ -82,12 +103,15 @@ done
 
 if [[ "$install" == true ]]; then
     # An explicit agent directory also prevents project-local installation.
-    PI_CODING_AGENT_DIR="$agent_dir" "$prefix/bin/pi" install "$PONYTAIL_SOURCE"
+    for source in "$PONYTAIL_SOURCE" "$SUBAGENTS_SOURCE" "$PSTACK_SOURCE"; do
+        PI_CODING_AGENT_DIR="$agent_dir" "$prefix/bin/pi" install "$source"
+    done
+    "$node_bin/node" "$SCRIPT_DIR/configure-pi.mjs" "$agent_dir/settings.json" "$PONYTAIL_SOURCE"
     # Keep the selected Node available even outside a mise-enabled shell.
     mkdir -p "$prefix" "$HOME/.local/bin"
     {
         echo '#!/usr/bin/env bash'
-        printf 'export PATH=%q:"$PATH"\n' "$node_bin"
+        printf 'export PATH=%q:%q:%q:"$PATH"\n' "$prefix/bin" "$node_bin" "$HOME/.local/bin"
         printf 'exec %q "$@"\n' "$prefix/bin/pi"
     } > "$prefix/launch-pi"
     chmod +x "$prefix/launch-pi"
@@ -96,4 +120,4 @@ if [[ "$install" == true ]]; then
     "$launcher" list
 fi
 log_info "Pi設定を適用しました: $agent_dir"
-log_info 'PATH に ~/.local/bin を追加し、pi → /login → /model → /ponytail status を実行してください'
+log_info 'PATH に ~/.local/bin を追加し、新規piセッションで /login → /model → /pstack status → /poteto-mode <依頼> を実行してください'

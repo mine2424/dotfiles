@@ -1,6 +1,26 @@
 # 採用バージョン
 
-## 現行の開発構成（2026-11-16）
+## v2: pstack中心の構成（2026-11-16）
+
+- 固定元: versions.env。Pi 1.5.2、Node 24.21.0、pstack 0.9.0、pi-subagents 0.88.1。
+- Ponytail SHAは継続。旧Extensionは無効化し、専門Skillsだけを利用する。
+- New / Change / Fixの3つのSkillと共通PrinciplesをこのPCへ導入済み。
+- 第三者コードの確認範囲はresearch.mdを参照。
+- `python3 -m unittest discover -s scripts/tests -p test_setup_pi.py -v`: 13件成功。
+  既存設定・個人Skill・Principlesの保持、冪等性、Ponytailフィルター移行とバックアップ、失敗伝播を確認。
+- `python3 scripts/check-pi.py --smoke`: 19項目成功。
+  実際のPi RPCによるコマンド/Skill読込に加え、Pi SDKとスクリプト化したモデルで
+  pstack指示合成、共通原則への参照、subagentツール実行による同梱agent発見、Poteto Mode解除、Extensionイベントにエラーがないことを確認。
+- 3つの独自Skillはskill-creatorのquick_validate.pyで検証成功。
+- PRセルフレビューでローカルの旧Nodeが優先される問題を再現し、ランチャーのPATHを固定版Pi→miseのNode→ローカルbinの順へ修正。競合するNode/Piの回帰テストを追加。
+- Linux/macOSのPiセットアップCIで修正後の12件が成功したことを確認。その後、ユーザー方針によりPi・Beethovenを含むすべてのGitHub Actions CIを削除し、Lefthookのローカルpre-push検証へ移行。
+- Lefthook 2.2.2はmise/config.tomlに固定。ローカルフックの導入は各チェックアウトで明示的に行う。既存フックとcore.hooksPathの保持を回帰テストで確認。
+- macOS CIで検出したBashの日本語に隣接する変数参照と、/var→/private/varの別名パス比較を修正。
+- スモークは課金APIを使わず、子のモデル実行は行わない。ローカルでの再現手順はREADMEに記載。
+- 実モデルのPlaybook判断・子の実装実行と複数モデルの比較、macOS・WSL実機は未確認。
+- Outer Loopの自動スケジュールと改善PRの自動公開は未実装。
+
+## v1の検証記録（履歴）
 
 - Pi固定版: 1.5.2（確認時の導入版に合わせて更新）。Node 24.21.0、Ponytail SHAは初期構成を継続。
 - 追加Prompt: plan / work / review / handoff。設定適用を実行し、このPCにもリンク済み。

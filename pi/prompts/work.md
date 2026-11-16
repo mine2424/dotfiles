@@ -1,13 +1,10 @@
 ---
-description: 既存実装を調べ、最小変更から検証まで進める
+description: pstackで依頼を分類し、必要なPlaybookへ進む互換入口
 argument-hint: "<依頼・受入条件>"
 ---
 依頼: $ARGUMENTS
 
-cwd、ブランチ、未コミット差分とRepoの指示を確認する。既存変更を保持する。
-呼び出し元、類似実装、関連テスト、実際のCIから変更範囲と受入条件を確かめる。
-Ponytailの基準で既存・標準機能の再利用を検討し、依頼を満たす最小の修正を行う。
-非自明な変更は、実装前に再現手順か失敗を観測できる検証方法を定める。
-必要なテスト・型検査・ビルドを実在するコマンドで実行し、失敗時は原因を調べる。
-最後に差分を読み直し、変更内容、実行した検証と結果、未確認事項を報告する。
-commit・push・PR作成はユーザーが明示した範囲でのみ行う。
+pstackのpoteto-mode Skill本体と共通PRINCIPLES.mdを読み、依頼を分類する。
+新規開発はnew-development、既存改修はexisting-change、障害はincident-fixを読む。
+分類に応じてpstackのPlaybookと専門Skillを選び、状況から得た事実に応じて進め方を変更する。
+これは互換Promptで、拡張のstickyモードを切り替えるものではない。通常は /poteto-mode <依頼> を入口にする。

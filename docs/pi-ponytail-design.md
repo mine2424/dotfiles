@@ -4,6 +4,7 @@
 
 状態: 初期設計の記録。2026-11-16に自動セットアップを追加。
 現行の導入・更新方法は [pi/README.md](../pi/README.md) と `scripts/setup-pi.sh` を参照。
+同日にpstack中心のv2へ移行。PonytailはSkills専用とし、旧Extensionと手動の固定工程は現行構成に含めない。
 以下の「手動構築」「未実施」等は設計時点の記述であり、現行手順はREADMEを優先する。
 
 ## 1. 結論と設計方針

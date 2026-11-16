@@ -21,7 +21,7 @@
 ./setup.sh --cli         # Git, Zellij, Yazi 等
 ./setup.sh --desktop     # Cursor + Zed
 ./setup.sh --claude      # Claude 設定
-./setup.sh --pi --install # Pi + Ponytail 固定版の導入
+./setup.sh --pi --install # Pi + pstack + Ponytail 固定版の導入
 ./setup.sh --ssh         # SSH 設定（~/.ssh/config）
 ./setup.sh --macos       # macOS システム設定
 
@@ -31,12 +31,16 @@
 
 ### Pi開発環境の診断
 
+Pi・BeethovenのGitHub Actions CIは削除し、ローカルのLefthookへ移行。各チェックアウトで `bash scripts/setup-hooks.sh` を実行する。
+関連変更のpush前にPiは `bash scripts/check-pi-local.sh`、Beethovenは `bash scripts/check-beethoven-local.sh` が動く。手動実行も可能で、ダウンロードや課金API呼出しは行わない。
+Lefthookの版は `mise/config.toml` に固定し、既存の独自フックやcore.hooksPathは上書きしない。
+
 ```bash
 python3 scripts/check-pi.py --smoke
 ```
 
-リポジトリルートから実行。Node・Piの版、Ponytailの登録とSHA、4つの開発Promptを確認する。
-`--smoke` は一時設定で実際のPi RPCの読込を検証する。モデルへの質問は送らない。
+リポジトリルートから実行。Node・Pi・pstack・pi-subagentsの版、Ponytailの登録とSHA、共通原則・3つのSkill・4つのPromptを確認する。
+`--smoke` は一時設定で実際のPi RPC/SDKを使い、スクリプト化したモデルで指示合成とagent発見・モード解除を検証する。課金APIは使わない。
 結果はJSONで出力し、失敗時は終了コード1。詳細は [Piガイド](../pi/README.md) を参照。
 
 ### backup.sh
