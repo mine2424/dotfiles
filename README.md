@@ -68,7 +68,7 @@ Beethovenの依存は初回に `beethoven/` で `mise exec node@24.21.0 -- npm c
 - [Zellij ガイド](docs/zellij-guide.md)
 - [Ghostty ガイド](docs/ghostty-guide.md)
 - [OpenCode セットアップ](docs/opencode-setup.md)
-- [Pi + pstack + Ponytail セットアップ](pi/README.md)（`bash scripts/setup-pi.sh --install`）
+- [Pi + pstack + Ponytail + Plannotator セットアップ](pi/README.md)（`bash scripts/setup-pi.sh --install`）
 - [カラースキーム統合](docs/colorscheme-integration.md)
 - [Mac 移行手順](docs/guides/migration.md)
 - [ディスクメンテナンス](docs/disk-maintenance.md)

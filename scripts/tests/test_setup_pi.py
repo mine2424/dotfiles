@@ -120,6 +120,7 @@ chmod +x "$prefix/bin/pi"
         self.assertIn('@e3ba2aa6', (self.home / 'pi-calls').read_text())
         self.assertIn('install npm:@zenspc/pi-pstack@0.9.0', (self.home / 'pi-calls').read_text())
         self.assertIn('install npm:pi-subagents@0.88.1', (self.home / 'pi-calls').read_text())
+        self.assertIn('install npm:@plannotator/pi-extension@0.28.66', (self.home / 'pi-calls').read_text())
         self.assertEqual(json.loads((self.agent / 'settings.json').read_text()),
                          {'defaultProjectTrust': 'ask'})
         # The generated launcher must work with paths containing spaces.
@@ -164,8 +165,8 @@ cat "$HOME/installer.sh"
                 self.assertNotIn('old node invoked', result.stderr)
         self.assertEqual(len((self.home / 'curl-calls').read_text().splitlines()), 1)
         calls = (self.home / 'mise-calls').read_text()
-        self.assertIn('install node@24.21.0', calls)
-        self.assertIn('where node@24.21.0', calls)
+        self.assertIn('install node@24.22.1', calls)
+        self.assertIn('where node@24.22.1', calls)
         self.assertIn('managed\\ node/bin', (self.home / '.local/share/dotfiles/pi/launch-pi').read_text())
         self.assertFalse((self.home / '.config/mise/config.toml').exists())
 
@@ -211,6 +212,7 @@ cat "$HOME/installer.sh"
         result = self.run_setup('--pi', '--install', '--dry-run', main=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('pi install git:github.com/DietrichGebert/ponytail@', result.stdout)
+        self.assertIn('pi install npm:@plannotator/pi-extension@0.28.66', result.stdout)
         self.assertFalse(self.agent.exists())
         self.assertNotEqual(self.run_setup('--unknown').returncode, 0)
 
@@ -224,7 +226,10 @@ cat "$HOME/installer.sh"
         report = json.loads(result.stdout)
         self.assertFalse(report['ok'])
         self.assertFalse(report['model_response_tested'])
-        self.assertEqual(len(report['checks']), 19)
+        self.assertEqual(len(report['checks']), 21)
+        checks = {item['name']: item['ok'] for item in report['checks']}
+        self.assertFalse(checks['plannotator_registered'])
+        self.assertFalse(checks['plannotator_version'])
         self.assertNotIn('private-value', result.stdout + result.stderr)
         self.assertNotIn('credential-must-not-appear', result.stdout + result.stderr)
 

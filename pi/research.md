@@ -1,5 +1,14 @@
 # 公開事例を踏まえたPi + Ponytail構成
 
+## PlannotatorのPi導入（2026-11-17）
+
+- [公式README](https://github.com/backnotprop/plannotator) と [Pi連携README](https://github.com/backnotprop/plannotator/tree/main/apps/pi-extension) を確認。Piはnpm Extensionだけで導入でき、汎用インストーラーは不要。
+- npm配布物 `@plannotator/pi-extension@0.28.66` のmanifest、同梱README、index.tsの登録・セッション開始・終了処理、runtime-tls.tsを確認。Pi >=0.79.1、NodeのTLS修正推奨下限24.22.1を採用した。
+- 本体UIを同梱し、コマンド・`--plan`・計画提出ツールを追加する。Planモードを有効にしない限り、通常のpstack運用を続けられる。固定モデルや独自のphase設定は追加しない。
+- Planモードのbashは完全に制限されないためsandboxと扱わない。remoteモードの全interface待受にも注意する。
+- Piのパッケージ管理は既存設定をマージする標準 `pi install` を使う。ローカルで未固定版から固定版への更新を確認した。
+- 全依存・全ネットワーク経路・UIのセキュリティ監査はしていない。Inbox、共有、外部AIの利用は導入に含めない。
+
 ## v2: pstackを主軸にする（2026-11-16）
 
 [Ubieの記事（2026-11-12）](https://zenn.dev/ubie_dev/articles/45501469c9c044)は、

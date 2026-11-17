@@ -1,5 +1,16 @@
 # 採用バージョン
 
+## Plannotator追加（2026-11-17）
+
+- `PLANNOTATOR_SOURCE=npm:@plannotator/pi-extension@0.28.66` をversions.envに固定。
+- 公式Pi Extensionを既存のPiセットアップで導入。スタンドアロンCLI・他Agentのhookは導入しない。
+- Extensionの公式TLS推奨条件に合わせ、Pi専用Nodeを24.21.0から24.22.1へ更新。
+- このmacOS環境で `bash scripts/setup-pi.sh --install` が成功。既存の未固定Plannotator登録を固定版へ更新。
+- `bash scripts/check-pi-local.sh`: 13件成功。固定版導入・dry-run・診断項目の追加前は4件失敗することを確認。
+- `python3 scripts/check-pi.py --smoke`: 21項目成功。コマンド登録、Planモードのopt-in、pstack指示保持、解除時のツール復元を実際のSDKとローカルモデルで確認。
+- SDKスモークはPlannotatorのUI参照に必要な `initTheme` を初期化。ブラウザーは開かず、課金APIも呼ばない。
+- ブラウザー上の注釈・承認・Piへのフィードバック返却、実モデルの計画提出、Linux・WSL実機は未確認。
+
 ## v2: pstack中心の構成（2026-11-16）
 
 - 固定元: versions.env。Pi 1.5.2、Node 24.21.0、pstack 0.9.0、pi-subagents 0.88.1。

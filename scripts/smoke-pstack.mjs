@@ -14,7 +14,8 @@ const aiEntry = require.resolve.paths('@earendil-works/pi-ai')
 assert(aiEntry, 'Pi AI runtime missing');
 const ai = await import(pathToFileURL(aiEntry));
 const { fauxProvider, fauxAssistantMessage, fauxToolCall, getCurrentSystemPrompt } = ai;
-const { createAgentSession, DefaultResourceLoader, ModelRuntime, SessionManager, SettingsManager } = sdk;
+const { createAgentSession, DefaultResourceLoader, ModelRuntime, SessionManager, SettingsManager, initTheme } = sdk;
+initTheme('dark', false);
 const fake = fauxProvider({ tokensPerSecond: Infinity });
 const runtime = await ModelRuntime.create({ authPath: join(agentDir, 'auth.json'), modelsPath: null,
   refreshOnCreate: false, allowModelNetwork: false });
@@ -28,7 +29,7 @@ const { session } = await createAgentSession({ cwd, agentDir, modelRuntime: runt
   sessionManager: SessionManager.inMemory(cwd) });
 const errors = [];
 try {
-  await session.bindExtensions({ mode: 'rpc', onError: (event) => errors.push(event.event) });
+  await session.bindExtensions({ mode: 'rpc', onError: (event) => errors.push(`${event.event}: ${event.error}`) });
   assert(session.getAllTools().some((tool) => tool.name === 'subagent'), 'subagent tool missing');
   assert(!session.getAllTools().some((tool) => tool.name === 'ponytail'), 'unexpected Ponytail tool');
   session.setActiveToolsByName([...session.getActiveToolNames(), 'subagent']);
@@ -63,6 +64,21 @@ try {
     'reviewer tool restrictions changed');
   assert(prompt.includes('options.tools') && prompt.includes('agent: "reviewer"'),
     'subagent API compatibility instructions missing from effective prompt');
+  const toolsBeforePlanning = session.getActiveToolNames().sort();
+  assert(!toolsBeforePlanning.includes('plannotator_submit_plan'), 'Plannotator plan mode enabled by default');
+  await session.prompt('/plannotator-plan-mode');
+  assert(session.getActiveToolNames().includes('plannotator_submit_plan'), 'Plannotator plan mode did not activate');
+  fake.setResponses([(context) => {
+    assert(getCurrentSystemPrompt(context.messages).includes('Poteto Mode is ON.'),
+      'Plannotator replaced pstack instructions');
+    assert(JSON.stringify(context.messages).includes('[PLANNOTATOR - PLANNING PHASE]'),
+      'Plannotator planning instructions missing');
+    return fauxAssistantMessage('Planning integration verified without submitting a plan.');
+  }]);
+  await session.prompt('Check planning integration only. Do not write or submit a plan.');
+  await session.prompt('/plannotator-plan-mode');
+  assert.deepEqual(session.getActiveToolNames().sort(), toolsBeforePlanning,
+    'Plannotator did not restore active tools');
   await session.prompt('/poteto-mode off');
   fake.setResponses([(context) => {
     const text = getCurrentSystemPrompt(context.messages);
@@ -71,11 +87,12 @@ try {
     return fauxAssistantMessage('Mode off verified.');
   }]);
   await session.prompt('Check mode state only.');
-  assert.equal(errors.length, 0, 'extension event failed');
+  assert.deepEqual(errors, [], 'extension event failed');
   console.log(JSON.stringify({ ok: true, scriptedModel: true, paidModelTested: false,
     checks: ['pstack_prompt_composition', 'shared_principle_pointer', 'subagent_tool_execution',
       'pstack_agent_discovery', 'unsupported_tools_reproduced', 'read_only_reviewer_definition',
-      'subagent_compatibility_instructions', 'poteto_mode_off', 'extension_event_errors'] }));
+      'subagent_compatibility_instructions', 'plannotator_opt_in_plan_mode',
+      'plannotator_pstack_coexistence', 'plannotator_tool_restoration', 'poteto_mode_off', 'extension_event_errors'] }));
 } finally {
   await session.abort();
   await session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' });

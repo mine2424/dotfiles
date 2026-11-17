@@ -14,7 +14,7 @@ for arg in "$@"; do
         --dry-run) dry_run=true ;;
         --help|-h)
             echo 'Usage: bash scripts/setup-pi.sh [--install] [--dry-run]'
-            echo 'Default: apply settings and local skills. --install: install pinned Pi, pstack, subagents and Ponytail.'
+            echo 'Default: apply settings and local skills. --install: install pinned Pi, pstack, subagents, Ponytail and Plannotator.'
             exit 0 ;;
         *) log_error "不明なオプション: $arg"; exit 1 ;;
     esac
@@ -36,6 +36,7 @@ if [[ "$dry_run" == true ]]; then
         log_info "[DRY RUN] pi install $PONYTAIL_SOURCE"
         log_info "[DRY RUN] pi install $SUBAGENTS_SOURCE"
         log_info "[DRY RUN] pi install $PSTACK_SOURCE"
+        log_info "[DRY RUN] pi install $PLANNOTATOR_SOURCE"
         log_info '[DRY RUN] PonytailのSkillsは保持し、プロンプト全体を差し替える旧Extensionは無効化'
         log_info "[DRY RUN] ランチャー: $launcher"
     fi
@@ -103,7 +104,7 @@ done
 
 if [[ "$install" == true ]]; then
     # An explicit agent directory also prevents project-local installation.
-    for source in "$PONYTAIL_SOURCE" "$SUBAGENTS_SOURCE" "$PSTACK_SOURCE"; do
+    for source in "$PONYTAIL_SOURCE" "$SUBAGENTS_SOURCE" "$PSTACK_SOURCE" "$PLANNOTATOR_SOURCE"; do
         PI_CODING_AGENT_DIR="$agent_dir" "$prefix/bin/pi" install "$source"
     done
     "$node_bin/node" "$SCRIPT_DIR/configure-pi.mjs" "$agent_dir/settings.json" "$PONYTAIL_SOURCE"

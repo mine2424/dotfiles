@@ -23,7 +23,8 @@ def main():
     launcher = home / '.local/bin/pi'
     package = agent / 'git/github.com/DietrichGebert/ponytail'
     npm_packages = {'pstack': agent / 'npm/node_modules/@zenspc/pi-pstack',
-                    'subagents': agent / 'npm/node_modules/pi-subagents'}
+                    'subagents': agent / 'npm/node_modules/pi-subagents',
+                    'plannotator': agent / 'npm/node_modules/@plannotator/pi-extension'}
     local_skills = ['new-development', 'existing-change', 'incident-fix']
     prompts = ['plan', 'work', 'review', 'handoff']
     checks = []
@@ -108,7 +109,9 @@ def main():
                 commands = response['data']['commands']
                 expected = {(name, 'prompt') for name in prompts}
                 expected.update({('poteto-mode', 'extension'), ('setup-pstack', 'extension'),
-                                 ('pstack', 'extension'), ('subagents-doctor', 'extension')})
+                                 ('pstack', 'extension'), ('subagents-doctor', 'extension'),
+                                 ('plannotator-plan-mode', 'extension'), ('plannotator-review', 'extension'),
+                                 ('plannotator-annotate', 'extension'), ('plannotator-last', 'extension')})
                 expected.update({('skill:' + name, 'skill') for name in local_skills + [
                     'poteto-mode', 'how', 'why', 'architect', 'tdd', 'interrogate', 'arena',
                     'unslop', 'reflect', 'correct', 'ponytail', 'ponytail-review']})

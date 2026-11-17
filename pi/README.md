@@ -25,7 +25,8 @@ pi
 Ponytailのv2移行には `--install` が必要。
 
 固定版は [versions.env](versions.env) を唯一の設定元とする。
-Pi 1.5.2、pstack 0.9.0、pi-subagents 0.88.1、Ponytailは確認済みSHAを採用。
+Pi 1.5.2、Node 24.22.1、pstack 0.9.0、pi-subagents 0.88.1、Plannotator Pi Extension 0.28.66、
+Ponytailは確認済みSHAを採用。
 依存パッケージの全ツリーをlockするものではない。更新時は配布物を確認して固定値を変え、再検証する。
 
 ## 最初の利用
@@ -45,7 +46,37 @@ Piで `/login` → `/model` → `/pstack status` を実行する。
 新規セッションで開始することを推奨する。既存セッションへ `/reload` しただけでは
 pi-subagentsのツールが追加されない場合があるので、同梱のguideを参照する。
 
-### `unknown options key 'tools'` が出る場合
+## Plannotator
+
+[Plannotator](https://plannotator.ai/) は、計画・Markdown・差分をブラウザーで確認してPiへ注釈を返すために使う。
+[公式Pi Extension](https://github.com/backnotprop/plannotator/tree/main/apps/pi-extension) を
+`bash scripts/setup-pi.sh --install` で固定版として導入する。`--dry-run` で事前確認できる。
+`bash scripts/setup.sh --pi --install --force` と `--all --install` からも同じ導入を行う。
+既存のPi設定は保持し、Pi標準の `install` でパッケージ登録を追加・更新する。
+既に未固定版が登録されている場合も、固定版へ更新する。
+
+```text
+/plannotator-review                  # 作業差分をレビュー
+/plannotator-annotate path/to/plan.md # Markdownへ注釈
+/plannotator-last                    # 直前の回答へ注釈
+/plannotator-plan-mode               # 必要な時だけPlanモードへ切替、もう一度で解除
+```
+
+新規セッションでは `pi --plan` でも開始できる。通常起動ではPlanモードを有効にしない。
+計画の承認後は同じPiセッションで実装へ進む。pstackのPlaybook選択や共通Principlesは維持する。
+Planモードはセキュリティsandboxではない。bashや他Extensionのツール権限がすべて遮断されるとは限らない。
+Pi専用Nodeは公式がTLS修正済みとして案内する24.22.1以上の版を固定して使う。
+
+Pi内の計画レビュー・注釈・差分レビューにスタンドアロンの `plannotator` CLIやBunは不要。
+Inboxや他Agentへの導入は今回の対象外で、公式の汎用インストーラーは実行しない。
+モデルやPlannotator固有設定も自動では上書きしない。共有・外部AI・外部サービス連携は別途判断する。
+SSHでは自動的にremoteモードになる場合があり、公式実装は `0.0.0.0` で待受する。
+ポートを信頼できないネットワークへ公開しない。
+
+固定版の更新は `versions.env` を変更してセットアップと検証を再実行する。
+削除は `pi remove npm:@plannotator/pi-extension`。セットアップの再実行で再導入される。
+
+## `unknown options key 'tools'` が出る場合
 
 pstack 0.9.0の `pi-delegation.md` は起動時に `options.tools` を渡すよう案内するが、
 pi-subagents 0.88.1は対応していない。ツール制限はagent定義で指定する。
@@ -138,9 +169,11 @@ Lefthookは `mise/config.toml` に固定する。フックは関連ファイル�
 診断は版・登録・Skillリンク・Ponytail旧Extensionの無効化を確認する。
 `--smoke` は一時設定と実際のPi RPC/SDKを使い、スクリプト化したローカルモデルで
 pstackの指示合成、サブエージェント定義の発見、未対応の `options.tools` の拒否、
-読み取り専用reviewerの定義と互換性指示の読込、モード解除を確認する。
+読み取り専用reviewerの定義と互換性指示の読込、Plannotatorコマンドの登録、
+Planモードの切替とpstack指示の保持・ツール復元、Poteto Mode解除を確認する。
 他の個人Extensionや認証ファイルはロードせず、課金APIは呼ばない。
-実モデルによるPlaybook選択・子の実装品質・複数モデルのレビューは別の受入確認が必要。
+実モデルによるPlaybook選択・子の実装品質・複数モデルのレビューと、
+Plannotatorの実ブラウザーでの注釈・承認・Piへの返却は別の受入確認が必要。
 macOS・WSLの実機確認も未実施。結果は [versions.md](versions.md) に記録する。
 
 Outer Loopの自動スケジュールは次段階。まず対象セッションとRepoを明示してreflect / correctで
