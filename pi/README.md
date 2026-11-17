@@ -45,6 +45,16 @@ Piで `/login` → `/model` → `/pstack status` を実行する。
 新規セッションで開始することを推奨する。既存セッションへ `/reload` しただけでは
 pi-subagentsのツールが追加されない場合があるので、同梱のguideを参照する。
 
+### `unknown options key 'tools'` が出る場合
+
+pstack 0.9.0の `pi-delegation.md` は起動時に `options.tools` を渡すよう案内するが、
+pi-subagents 0.88.1は対応していない。ツール制限はagent定義で指定する。
+[共通AGENTS](agent/AGENTS.md) にこの案内を上書きする互換性指示を置き、
+読み取り専用の設計検討・調査には、定義を確認した `reviewer` を使う。
+`tools` を外して変更可能な `worker` をそのまま起動する対処はしない。
+この修正はモデルへの指示であり、APIに `options.tools` の対応を追加するものではない。
+AGENTSがリンク済みなら新規Piセッションで反映される。個人AGENTSを保持している場合は手動マージする。
+
 ## New / Change / Fix
 
 | 独自Skill | 適用する依頼 | 判断の重点 |
@@ -127,7 +137,8 @@ Lefthookは `mise/config.toml` に固定する。フックは関連ファイル�
 
 診断は版・登録・Skillリンク・Ponytail旧Extensionの無効化を確認する。
 `--smoke` は一時設定と実際のPi RPC/SDKを使い、スクリプト化したローカルモデルで
-pstackの指示合成、サブエージェント定義の発見、モード解除を確認する。
+pstackの指示合成、サブエージェント定義の発見、未対応の `options.tools` の拒否、
+読み取り専用reviewerの定義と互換性指示の読込、モード解除を確認する。
 他の個人Extensionや認証ファイルはロードせず、課金APIは呼ばない。
 実モデルによるPlaybook選択・子の実装品質・複数モデルのレビューは別の受入確認が必要。
 macOS・WSLの実機確認も未実施。結果は [versions.md](versions.md) に記録する。

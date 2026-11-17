@@ -38,15 +38,31 @@ try {
       prompt = getCurrentSystemPrompt(context.messages);
       return fauxAssistantMessage(fauxToolCall('subagent', { action: 'list' }), { stopReason: 'toolUse' });
     },
+    fauxAssistantMessage(fauxToolCall('subagent', {
+      action: 'list', options: { tools: 'read,grep,find,ls' },
+    }), { stopReason: 'toolUse' }),
+    fauxAssistantMessage(fauxToolCall('subagent', {
+      action: 'get', agent: 'reviewer',
+    }), { stopReason: 'toolUse' }),
     fauxAssistantMessage('Local smoke complete.'),
   ]);
   await session.prompt('/skill:poteto-mode Check local agent discovery only. Do not start a child.');
   assert(prompt.includes('Poteto Mode is ON.'), 'pstack instructions lost');
   assert(prompt.includes('PRINCIPLES.md'), 'shared principle pointer lost');
   const result = session.state.messages.filter((item) => item.role === 'toolResult' && item.toolName === 'subagent');
-  assert(result.length > 0 && result.every((item) => !item.isError), 'agent discovery tool failed');
-  const listed = JSON.stringify(result);
+  assert.equal(result.length, 3, 'subagent API checks missing');
+  assert(!result[0].isError, 'agent discovery tool failed');
+  const listed = JSON.stringify(result[0]);
   assert(listed.includes('poteto-agent') && listed.includes('comment-sicko'), 'pstack delegates not discovered');
+  assert(result[1].isError && JSON.stringify(result[1]).includes("unknown options key 'tools'"),
+    'unsupported options.tools no longer reproduces; revisit compatibility instructions');
+  assert(!result[2].isError, 'read-only reviewer definition lookup failed');
+  const reviewer = result[2].content.filter((item) => item.type === 'text').map((item) => item.text).join('\n');
+  assert(reviewer.includes('Acceptance role: read-only'), 'reviewer is not read-only');
+  assert(reviewer.split('\n').includes('Tools: read, grep, find, ls, watchdog_diff, contact_supervisor'),
+    'reviewer tool restrictions changed');
+  assert(prompt.includes('options.tools') && prompt.includes('agent: "reviewer"'),
+    'subagent API compatibility instructions missing from effective prompt');
   await session.prompt('/poteto-mode off');
   fake.setResponses([(context) => {
     const text = getCurrentSystemPrompt(context.messages);
@@ -58,7 +74,8 @@ try {
   assert.equal(errors.length, 0, 'extension event failed');
   console.log(JSON.stringify({ ok: true, scriptedModel: true, paidModelTested: false,
     checks: ['pstack_prompt_composition', 'shared_principle_pointer', 'subagent_tool_execution',
-      'pstack_agent_discovery', 'poteto_mode_off', 'extension_event_errors'] }));
+      'pstack_agent_discovery', 'unsupported_tools_reproduced', 'read_only_reviewer_definition',
+      'subagent_compatibility_instructions', 'poteto_mode_off', 'extension_event_errors'] }));
 } finally {
   await session.abort();
   await session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' });
