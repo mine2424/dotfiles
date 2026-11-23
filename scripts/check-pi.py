@@ -42,6 +42,8 @@ def main():
                               timeout=45, **kwargs).stdout.strip()
 
     check('pi_version', lambda: run([str(launcher), '--version']) == versions['PI_VERSION'])
+    path_pi = shutil.which('pi')
+    check('pi_on_path', lambda: path_pi is not None and Path(path_pi).samefile(launcher))
     mise = shutil.which('mise') or str(home / '.local/bin/mise')
 
     def node_version():

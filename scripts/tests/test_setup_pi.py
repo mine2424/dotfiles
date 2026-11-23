@@ -116,7 +116,7 @@ chmod +x "$prefix/bin/pi"
         backups = list((self.home / '.local/state/dotfiles/backups').glob('*/pi'))
         self.assertEqual(len(backups), 1)
         self.assertEqual(backups[0].read_text(), 'previous launcher')
-        self.assertIn('@earendil-works/pi-coding-agent@1.5.2', (self.home / 'npm-calls').read_text())
+        self.assertIn('@earendil-works/pi-coding-agent@1.6.0', (self.home / 'npm-calls').read_text())
         self.assertIn('@e3ba2aa6', (self.home / 'pi-calls').read_text())
         self.assertIn('install npm:@zenspc/pi-pstack@0.9.0', (self.home / 'pi-calls').read_text())
         self.assertIn('install npm:pi-subagents@0.88.1', (self.home / 'pi-calls').read_text())
@@ -224,7 +224,9 @@ cat "$HOME/installer.sh"
         report = json.loads(result.stdout)
         self.assertFalse(report['ok'])
         self.assertFalse(report['model_response_tested'])
-        self.assertEqual(len(report['checks']), 19)
+        self.assertEqual(len(report['checks']), 20)
+        self.assertFalse(next(check['ok'] for check in report['checks']
+                              if check['name'] == 'pi_on_path'))
         self.assertNotIn('private-value', result.stdout + result.stderr)
         self.assertNotIn('credential-must-not-appear', result.stdout + result.stderr)
 

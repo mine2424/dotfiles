@@ -25,14 +25,15 @@ pi
 Ponytailのv2移行には `--install` が必要。
 
 固定版は [versions.env](versions.env) を唯一の設定元とする。
-Pi 1.5.2、pstack 0.9.0、pi-subagents 0.88.1、Ponytailは確認済みSHAを採用。
+Pi 1.6.0、pstack 0.9.0、pi-subagents 0.88.1、Ponytailは確認済みSHAを採用。
 依存パッケージの全ツリーをlockするものではない。更新時は配布物を確認して固定値を変え、再検証する。
 
 ## 最初の利用
 
 Piで `/login` → `/model` → `/pstack status` を実行する。
 必要に応じ `/setup-pstack` で利用可能なモデルとthinkingを役割ごとに割り当てる。
-未設定の役割は親モデルを継承する。同一モデルの複数サンプルは複数モデルレビューではない。
+`auto` と `inherit-parent` は子へのモデル指定を省略する。標準の子エージェントは親モデルを継承する。
+pstackは依頼に応じてPlaybookや子の役割を選ぶ。役割ごとにモデルを割り当てると、委譲先のモデルを使い分けられる。
 モデル設定 `~/.pi/agent/pstack/models.json` と認証はPCごとに管理し、dotfilesへ同期しない。
 
 ```text
@@ -100,8 +101,10 @@ Ponytailのフィルター移行は対象の登録だけを変更し、他のモ
 認証・履歴・キャッシュ・モデル割当はGit管理しない。`PI_CODING_AGENT_DIR` にも対応する。
 
 Piは `~/.local/share/dotfiles/pi/`、起動は `~/.local/bin/pi`。
-ランチャーは固定版Piのbin、miseのNode、ローカルbinの順でPATHを選び、旧Nodeや別のグローバルPiの混入を防ぐ。既存ランチャーはローカルの
+ランチャーは管理下のPiのbin、miseのNode、ローカルbinの順でPATHを設定する。既存ランチャーはローカルの
 `~/.local/state/dotfiles/backups/` へ退避する。他のプロジェクトのNode既定版は変えない。
+別のPiがある場合は `type -a pi` で確認し、`~/.local/bin/pi` を使う。zshで起動リンクを変更した場合は `rehash` で検索キャッシュを更新する。
+`~/.local/bin/pi update` は端末上のPi本体を更新する。次回のセットアップにも反映するには `versions.env` の固定版も更新する。
 版や設定が壊れた場合は診断してから再実行する。ローカル退避ファイルを公開しない。
 Repo固有情報は [AGENTS雛形](project-AGENTS.example.md) を既存ルールへマージする。
 
